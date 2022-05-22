@@ -20,10 +20,10 @@ try {
 
 const db = {};
 
-fs.readdirSync(__dirname + '/../../models/')
+fs.readdirSync(__dirname + '/../../App/models/')
     .filter(file => file.indexOf(".") !== 0 && file !== "index.js")
     .forEach(file => {
-        const model = require(path.join(__dirname + '/../../models/', file))(sequelize, Sequelize.DataTypes);
+        const model = require(path.join(__dirname + '/../../App/models/', file))(sequelize, Sequelize.DataTypes);
         db[model.name] = model;
     });
 

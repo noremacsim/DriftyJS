@@ -26,7 +26,7 @@ const init = async (type) => {
         engines: {
             html: require('ejs')
         },
-        relativeTo: __dirname + '/../',
+        relativeTo: __dirname + '/../App/',
         path: 'views',
         layout: true,
         layoutPath: 'views/layouts',

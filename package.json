@@ -27,6 +27,6 @@
     "slug": "^5.3.0"
   },
   "bin": {
-    "drifty-run": "./bin/drifty-serve.js",
+    "drifty-run": "./bin/drifty-serve.js"
   }
 }

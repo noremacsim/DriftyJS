@@ -1,5 +1,5 @@
 "use strict";
-const {Note} = require("../lib/models");
+const {Note} = require("../../Core/models");
 
 module.exports = async (request, h) => {
     const allNotes = await Note.findAll({

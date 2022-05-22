@@ -1,6 +1,6 @@
 const Slugify = require("slug");
 const path = require("path");
-const {Note} = require(path.join(__dirname, '../lib/models/'));
+const {Note} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
