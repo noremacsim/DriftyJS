@@ -1,0 +1,29 @@
+{
+  "name": "DriftyJs",
+  "version": "1.0.0",
+  "description": "DriftyJS is a web framework making it easy to build enterprise applications following MVC design and using ORM",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "noremacsim",
+  "license": "MIT",
+  "dependencies": {
+    "@hapi/hapi": "^18.4.0",
+    "@hapi/vision": "^6.1.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.1",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "fs": "0.0.1-security",
+    "mariadb": "^3.0.0",
+    "moment": "^2.29.3",
+    "mongoose": "^6.3.4",
+    "mysql": "^2.18.1",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "sequelize": "^6.19.2",
+    "slug": "^5.3.0"
+  }
+}
