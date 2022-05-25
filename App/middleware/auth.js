@@ -8,7 +8,7 @@ dotenv.config();
 async function middle(request) {
 
     let userAgent = request.headers['user-agent']
-    let token = request.state[process.env.SESSION_NAME]['token'] || request.headers.authorization;
+    let token = request.headers.authorization;
 
     if (token && userAgent) {
 
