@@ -1,5 +1,6 @@
 const path = require("path");
 const Home = require(path.join(__dirname, '../controllers/homeController'));
+const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {
@@ -7,7 +8,8 @@ module.exports = [
         path: "/",
         handler: Home,
         config: {
-            description: "Gets all the notes available"
+            pre: [{ method: middleware.auth }],
+            description: "Gets all the notes available",
         }
     },
 ];
