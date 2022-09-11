@@ -1,0 +1,75 @@
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Playlist</h5>
+                    <p class="card-text">Manage your m3u Playlist.</p>
+                    <a href="/groups" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Users</h5>
+                    <p class="card-text">Manage Users accessing the playlist.</p>
+                    <a href="/users" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-xl-4 col-sm-4 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-header p-3 pt-2">
+                    <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                        <i class="material-icons opacity-10">tv</i>
+                    </div>
+                    <div class="text-end pt-1">
+                        <p class="text-sm mb-0 text-capitalize">Total Channels</p>
+                        <h4 class="mb-0"><%= channels.length %></h4>
+                    </div>
+                </div>
+                <div class="card-footer p-3">
+                    <hr class="dark horizontal my-0">
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-sm-4 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-header p-3 pt-2">
+                    <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                        <i class="material-icons opacity-10">table_view</i>
+                    </div>
+                    <div class="text-end pt-1">
+                        <p class="text-sm mb-0 text-capitalize">Total Groups</p>
+                        <h4 class="mb-0"><%= groups.length %></h4>
+                    </div>
+                </div>
+                <div class="card-footer p-3">
+                    <hr class="dark horizontal my-0">
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-sm-4 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-header p-3 pt-2">
+                    <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                        <i class="material-icons opacity-10">person</i>
+                    </div>
+                    <div class="text-end pt-1">
+                        <p class="text-sm mb-0 text-capitalize">Total Users</p>
+                        <h4 class="mb-0"><%= users.length %></h4>
+                    </div>
+                </div>
+                <div class="card-footer p-3">
+                    <hr class="dark horizontal my-0">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
