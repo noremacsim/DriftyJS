@@ -5,14 +5,13 @@ const Boom = require('boom')
 
 dotenv.config();
 
+//TODO: Possibly check token expiry and create new one.
 async function middle(request) {
 
     let userAgent = request.headers['user-agent']
-    let token = request.headers.authorization;
+    let token = request.state.jwt;
 
     if (token && userAgent) {
-
-        token = token.replace('Bearer ','');
 
         const authToken = await AuthToken.findOne(
             { where: { token, userAgent}, include: User}

@@ -1,14 +1,14 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item" aria-current="page">Users</li>
+        <li class="breadcrumb-item" aria-current="page">Clients</li>
     </ol>
 </nav>
 
 <div class="container-fluid">
     <div class="row mb-3">
         <div class="col-12">
-            <a type="button" href="/users/edit/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0" style="float: right;">New User</a>
+            <a type="button" href="/clients/edit/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0" style="float: right;">New Client</a>
         </div>
     </div>
 </div>
@@ -18,7 +18,7 @@
             <div class="card my-4">
                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                     <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                        <h6 class="text-white text-capitalize ps-3">Users table</h6>
+                        <h6 class="text-white text-capitalize ps-3">Clients table</h6>
                     </div>
                 </div>
                 <div class="card-body px-0 pb-2">
@@ -32,20 +32,20 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <% users.forEach((user)=> { %>
+                            <% clients.forEach((client)=> { %>
                             <tr>
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0 text-sm"><%= user.username %></h6>
+                                            <h6 class="mb-0 text-sm"><%= client.username %></h6>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="align-middle text-center text-sm">
-                                    <span class="badge badge-sm <% if(user.active === true){ %> bg-gradient-success  <% } else { %> bg-gradient-danger <% } %>"><% if(user.active === true){ %> Active <% } else { %> Offline <% } %></span>
+                                    <span class="badge badge-sm <% if(client.active === true){ %> bg-gradient-success  <% } else { %> bg-gradient-danger <% } %>"><% if(client.active === true){ %> Active <% } else { %> Offline <% } %></span>
                                 </td>
                                 <td class="align-middle">
-                                    <a href="/users/edit/<%= user.id %>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                                    <a href="/clients/edit/<%= client.id %>" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit client">
                                         Edit
                                     </a>
                                 </td>

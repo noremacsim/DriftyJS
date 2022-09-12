@@ -1,18 +1,18 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="/users">Users</a></li>
+        <li class="breadcrumb-item"><a href="/clients">Clients</a></li>
         <li class="breadcrumb-item" aria-current="page">Edit User</li>
     </ol>
 </nav>
 
 <div class="container">
-    <form action="/users/edit/<% if(user.id){ %><%= user.id %><% } %>" method="post">
+    <form action="/clients/edit/<% if(client.id){ %><%= client.id %><% } %>" method="post">
         <div class="card">
             <div class="card-body p-3">
                     <label class="form-label">Username</label>
                     <div class="input-group input-group-outline mb-3">
-                        <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="username" value="<% if(user.username){ %><%= user.username %><% } %>">
+                        <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="username" value="<% if(client.username){ %><%= client.username %><% } %>">
                     </div>
             </div>
         </div>
@@ -21,8 +21,8 @@
                 <label class="form-label">Groups</label>
                 <% groups.forEach((group)=> { %>
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="userGroups" value="<%= group.id %>" id="flexSwitchCheckDefault"
-                            <% if(userGroups.includes(group.id)){ %> checked <% } %> >
+                        <input class="form-check-input" type="checkbox" name="clientGroups" value="<%= group.id %>" id="flexSwitchCheckDefault"
+                            <% if(clientGroups.includes(group.id)){ %> checked <% } %> >
                         <label class="form-check-label" for="flexSwitchCheckDefault"><%= group.name %></label>
                     </div>
                 <% }) %>
@@ -32,16 +32,16 @@
             <div class="card-body p-3">
                 <label class="form-label">Additional</label>
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" name="activeUser" value="1" id="flexSwitchCheckDefault"
-                    <% if(user.active === true){ %> checked <% } %> >
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Activate User</label>
+                    <input class="form-check-input" type="checkbox" name="activeClient" value="1" id="flexSwitchCheckDefault"
+                    <% if(client.active === true){ %> checked <% } %> >
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Activate Client</label>
                 </div>
             </div>
         </div>
         <div class="text-center">
             <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save</button>
-            <% if(user.id){ %>
-            <a type="button" href="/users/delete/<%= user.id %>" class="btn btn-lg bg-gradient-danger btn-lg mt-4 mb-0" style="float: right;">Delete</a>
+            <% if(client.id){ %>
+            <a type="button" href="/clients/delete/<%= client.id %>" class="btn btn-lg bg-gradient-danger btn-lg mt-4 mb-0" style="float: right;">Delete</a>
             <% } %>
         </div>
     </form>

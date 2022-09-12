@@ -1,7 +1,9 @@
 const Hapi = require("@hapi/hapi");
 const path = require("path");
 const {CustomRoutes, Models} = require(path.join(__dirname, './'));
+const {Helpers} = require(path.join(__dirname, './helpers'));
 const PORT = process.env.PORT || 4101;
+
 
 const init = async (type) => {
 
@@ -17,6 +19,16 @@ const init = async (type) => {
     }
 
     const server = new Hapi.Server(options);
+
+    // Setup Cookies - Possibly move to new helper script?
+    server.state('jwt', {
+        ttl: null,
+        isSecure: false,
+        isHttpOnly: true,
+        encoding: 'base64json',
+        clearInvalid: true,
+        strictHeader: true
+    });
 
     await Models.sequelize.sync();
     await server.register(require('@hapi/vision'));
@@ -35,6 +47,8 @@ const init = async (type) => {
         partialsPath: 'views/partials',
         helpersPath: 'views/helpers'
     });
+
+
 
     await server.start();
     console.log(`Server running at: ${server.info.uri}`);

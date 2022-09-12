@@ -3,8 +3,8 @@ const path = require("path");
 const fs = require('fs');
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
-const {UserGroups} = require(path.join(__dirname, '../../Core/models/'));
-const {User} = require(path.join(__dirname, '../../Core/models/'));
+const {ClientGroups} = require(path.join(__dirname, '../../Core/models/'));
+const {Client} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
     parseToDB: async(request, h) => {
@@ -46,9 +46,9 @@ module.exports = {
 
     // TODO: Add Options to hide channels and groups for certain users.
     downloadM3u: async(request, h) => {
-        const userID = request.params.userID;
-        const user = await User.findOne({ where: { id: userID } });
-        const username = user.username;
+        const clientID = request.params.clientID;
+        const client = await Client.findOne({ where: { id: clientID } });
+        const username = client.username;
 
         const stream = fs.createWriteStream(path.join(__dirname, `../Storage/${username}.m3u`));
 
@@ -62,16 +62,16 @@ module.exports = {
             return string;
         }
 
-        const userGroups = await UserGroups.findAll({ where: { UserId: userID }, attributes: ["GroupId"], raw: true, nest: true })
-            .then(function(userGroups) {
-                return userGroups.map(function(userGroups) { return userGroups.GroupId; })
+        const clientGroups = await ClientGroups.findAll({ where: { ClientId: clientID }, attributes: ["GroupId"], raw: true, nest: true })
+            .then(function(clientGroups) {
+                return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
 
         stream.write('#EXTM3U url-tvg="http://m3u4u.com/epg/4z2xnjw6jqad9gwvyv15" \n');
 
         const groups = await Groups.findAll();
         for (const group of groups) {
-            if (userGroups.includes(group.id)) {
+            if (clientGroups.includes(group.id)) {
                 let string = await createM3uGroups(group);
                 stream.write(string);
             }

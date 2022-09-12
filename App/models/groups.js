@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Groups.associate = function(models) {
         Groups.hasMany(models.Channels);
-        Groups.hasMany(models.UserGroups);
+        Groups.hasMany(models.ClientGroups);
     };
 
     return Groups;

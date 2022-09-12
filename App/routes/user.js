@@ -3,51 +3,27 @@ const User = require(path.join(__dirname, '../controllers/userController'));
 
 module.exports = [
     {
-        method: "GET",
-        path: "/users",
-        handler: User.view,
+        method: "POST",
+        path: "/login",
+        handler: User.login,
         config: {
-            description: "view Users",
+            description: "Login User",
         }
     },
     {
         method: "GET",
-        path: "/users/edit/{userID}",
-        handler: User.edit,
+        path: "/login",
+        handler: User.signinView,
         config: {
-            description: "edit User",
-        }
-    },
-    {
-        method: "GET",
-        path: "/users/edit/",
-        handler: User.edit,
-        config: {
-            description: "New User",
+            description: "Login User",
         }
     },
     {
         method: "POST",
-        path: "/users/edit/{userID}",
-        handler: User.saveEdit,
+        path: "/register",
+        handler: User.register,
         config: {
-            description: "edit User",
-        }
-    },
-    {
-        method: "GET",
-        path: "/users/delete/{userID}",
-        handler: User.deleteUser,
-        config: {
-            description: "Delete User",
-        }
-    },
-    {
-        method: "POST",
-        path: "/users/edit/",
-        handler: User.saveEdit,
-        config: {
-            description: "New User",
+            description: "Register User",
         }
     },
 ];

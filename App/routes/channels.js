@@ -1,5 +1,6 @@
 const path = require("path");
 const channels = require(path.join(__dirname, '../controllers/channelsController'));
+const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {
@@ -7,6 +8,7 @@ module.exports = [
         path: "/channels/edit/{channelID}",
         handler: channels.editView,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Edit Channel",
         }
     },
@@ -15,6 +17,7 @@ module.exports = [
         path: "/channels/new/{groupID}",
         handler: channels.editView,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "New Channel",
         }
     },
@@ -23,6 +26,7 @@ module.exports = [
         path: "/channels/new/",
         handler: channels.editView,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "New Channel",
         }
     },
@@ -39,6 +43,7 @@ module.exports = [
         path: "/channels/edit/",
         handler: channels.editSave,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Edit Channel",
         }
     },
@@ -47,6 +52,7 @@ module.exports = [
         path: "/channels/delete/{channelID}",
         handler: channels.deleteChannel,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Delete Channel",
         }
     },

@@ -1,6 +1,7 @@
 const path = require("path");
 const groups = require(path.join(__dirname, '../controllers/groupsController'));
 const channels = require(path.join(__dirname, '../controllers/channelsController'));
+const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {
@@ -8,6 +9,7 @@ module.exports = [
         path: "/groups",
         handler: groups.view,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Gets all the groups available",
         }
     },
@@ -16,6 +18,7 @@ module.exports = [
         path: "/groups/{groupID}",
         handler: channels.viewByGroup,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Gets all the channels available in group",
         }
     },
@@ -24,6 +27,7 @@ module.exports = [
         path: "/groups/edit/{groupID}",
         handler: groups.editView,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Edit Group",
         }
     },
@@ -32,6 +36,7 @@ module.exports = [
         path: "/groups/edit/{groupID}",
         handler: groups.editSave,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Save Group",
         }
     },
@@ -40,6 +45,7 @@ module.exports = [
         path: "/groups/edit/",
         handler: groups.editSave,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Save Group",
         }
     },
@@ -48,6 +54,7 @@ module.exports = [
         path: "/groups/delete/{groupID}",
         handler: groups.deleteGroup,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Delete Group",
         }
     },
@@ -56,6 +63,7 @@ module.exports = [
         path: "/groups/edit/",
         handler: groups.editView,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "New Group",
         }
     },
