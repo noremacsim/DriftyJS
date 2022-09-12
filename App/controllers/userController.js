@@ -7,14 +7,17 @@ const Boom = require('boom')
 module.exports = {
 
     signinView: async (request, h) => {
-      return h.view('signin');
+        return h.simsView('signin');
     },
 
     login: async (request, h) => {
 
         if (!request.payload.username || !request.payload.password) {
+            global.isLoggedIn = false;
             throw Boom.badRequest('Request missing username or password param')
         }
+
+
 
         const {username, password} = request.payload;
 
@@ -23,16 +26,14 @@ module.exports = {
 
             h.state('jwt', user.authToken['token']);
 
-            return h.response(user).code(200)
-
+            return h.redirect('/');
         } catch (err) {
+            global.isLoggedIn = false;
             throw Boom.badRequest('invalid username or password')
         }
     },
 
     register: async (request, h) => {
-
-      console.log(request.payload);
 
         if (!request.payload.password) {
             let error = {
@@ -65,7 +66,6 @@ module.exports = {
                 }
                 return h.response(error).code(400)
             }
-            console.log(err);
             return h.response('Invalid Request').code(400)
         }
     }

@@ -11,7 +11,7 @@ module.exports = {
                     ]
                 }
             );
-        return h.view('groups', {groups: groups, activePage: 'playlists'});
+        return h.simsView('groups', {groups: groups, activePage: 'playlists'});
     },
 
     editView: async(request, h) => {
@@ -20,7 +20,7 @@ module.exports = {
         if (groupID) {
             group = await Groups.findOne({ where: { id: groupID } });
         }
-        return h.view('editGroup', {group: group, activePage: 'playlists'});
+        return h.simsView('editGroup', {group: group, activePage: 'playlists'});
     },
 
     editSave: async(request, h) => {

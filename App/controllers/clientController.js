@@ -7,7 +7,7 @@ module.exports = {
 
     view: async (request, h) => {
         const clients = await Client.findAll();
-        return h.view('clients', {clients: clients, activePage: 'clients'});
+        return h.simsView('clients', {clients: clients, activePage: 'clients'});
     },
 
     edit: async (request, h) => {
@@ -22,7 +22,7 @@ module.exports = {
                 });
         }
         const groups = await Groups.findAll();
-        return h.view('editclient', {client: client, clientGroups: clientGroups, groups: groups, activePage: 'client'});
+        return h.simsView('editclient', {client: client, clientGroups: clientGroups, groups: groups, activePage: 'client'});
     },
 
     saveEdit: async (request, h) => {

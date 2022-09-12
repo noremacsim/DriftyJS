@@ -42,6 +42,8 @@ module.exports = (sequelize, DataTypes) => {
     User.associate = function(models) {
         User.hasMany(models.AuthToken);
         User.hasMany(models.Client);
+        User.hasMany(models.Groups);
+        User.hasMany(models.Channels);
     };
 
     User.authenticate = async function(username, password, request) {

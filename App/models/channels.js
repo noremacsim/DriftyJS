@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Channels.associate = function(models) {
         Channels.belongsTo(models.Groups);
+        Channels.belongsTo(models.User);
     };
 
 

@@ -18,11 +18,14 @@ async function middle(request) {
         );
 
         if (!authToken) {
+            global.isLoggedIn = false;
             throw Boom.unauthorized('You cannot access this resource')
         }
 
+        global.isLoggedIn = true;
         return true;
     } else {
+        global.isLoggedIn = false;
         throw Boom.unauthorized('You cannot access this resource')
     }
 }

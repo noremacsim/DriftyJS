@@ -8,5 +8,5 @@ module.exports = async (request, h) => {
     const groups = await Groups.findAll();
     const clients = await Client.findAll();
     const channels = await Channels.findAll();
-    return h.view('home', {channels: channels, clients: clients, groups: groups, activePage: 'home'});
+    return h.simsView('home', {channels: channels, clients: clients, groups: groups, activePage: 'home'});
 };

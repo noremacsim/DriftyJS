@@ -24,9 +24,9 @@
     <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.0.4" rel="stylesheet" />
 </head>
 <body class="g-sidenav-show  bg-gray-200">
-  <%= test() %>
-  <%- include('../partials/nav.html', {active:activePage}) %>
-
+  <% if(helpers.isLoggedIn()){ %>
+    <%- include('../partials/nav.html', {active:activePage}) %>
+  <% } %>
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg mt-3">
     <%- content %>
 </main>

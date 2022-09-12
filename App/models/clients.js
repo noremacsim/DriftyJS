@@ -29,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
     Client.associate = function(models) {
         Client.hasMany(models.ClientGroups);
         Client.belongsTo(models.User);
-
     };
 
     return Client;

@@ -14,7 +14,7 @@ module.exports = {
         });
         const group = await Groups.findOne({ where: { id: GroupId } });
 
-        return h.view('channels', {channels: channels, GroupId: GroupId, group: group, activePage: 'playlists'});
+        return h.simsView('channels', {channels: channels, GroupId: GroupId, group: group, activePage: 'playlists'});
     },
 
     editView: async(request, h) => {
@@ -29,7 +29,7 @@ module.exports = {
             group = await Groups.findOne({ where: { id: channel.GroupId } });
         }
 
-        return h.view('editChannel', {channel: channel, groupId: groupId, groups: groups, group: group, activePage: 'playlists'});
+        return h.simsView('editChannel', {channel: channel, groupId: groupId, groups: groups, group: group, activePage: 'playlists'});
     },
 
     editSave: async(request, h) => {
