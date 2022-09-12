@@ -6,7 +6,7 @@ const {Groups} = require(path.join(__dirname, '../../Core/models/'));
 module.exports = {
 
     view: async (request, h) => {
-        const clients = await Client.findAll();
+        const clients = await Client.findAll({ where: { UserId: global.userID } });
         return h.simsView('clients', {clients: clients, activePage: 'clients'});
     },
 
