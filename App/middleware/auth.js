@@ -23,6 +23,7 @@ async function middle(request) {
         }
 
         global.isLoggedIn = true;
+        global.userID = authToken.UserId;
         return true;
     } else {
         global.isLoggedIn = false;

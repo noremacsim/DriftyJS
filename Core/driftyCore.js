@@ -21,6 +21,7 @@ const init = async (type) => {
 
     // Move globals to somewhere better?
     global.isLoggedIn = false;
+    global.userID = false;
 
     const server = new Hapi.Server(options);
 
