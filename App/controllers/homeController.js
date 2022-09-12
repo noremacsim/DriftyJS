@@ -3,7 +3,6 @@ const {Groups} = require(path.join(__dirname, '../../Core/models/'));
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 const {Client} = require(path.join(__dirname, '../../Core/models/'));
 
-
 module.exports = async (request, h) => {
     const groups = await Groups.findAll({where: { UserId: global.userID }});
     const clients = await Client.findAll({where: { UserId: global.userID }});

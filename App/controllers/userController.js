@@ -2,11 +2,15 @@ const path = require("path");
 const bcrypt = require('bcrypt');
 const {User} = require(path.join(__dirname, '../../Core/models/'));
 const {ValidationError} = require('sequelize');
-const Boom = require('boom')
+const Boom = require('boom');
+const auth = require(path.join(__dirname, '../middleware/auth'));
 
 module.exports = {
 
     signinView: async (request, h) => {
+        if (auth.function(request)) {
+            return h.redirect('/');
+        }
         return h.simsView('signin');
     },
 

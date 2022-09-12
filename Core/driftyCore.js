@@ -43,6 +43,7 @@ const init = async (type) => {
     await server.register(require('@hapi/vision'));
     await server.register(require('@hapi/inert'));
     await server.register(plugins.simsView);
+    await server.register(plugins.fullView);
 
     // Build Server Routes
     server.route(CustomRoutes);

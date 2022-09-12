@@ -19,15 +19,15 @@ async function middle(request) {
 
         if (!authToken) {
             global.isLoggedIn = false;
-            throw Boom.unauthorized('You cannot access this resource')
+            return false;
         }
 
         global.isLoggedIn = true;
-        global.userID = authToken.UserId;
+        global.userID = true;
         return true;
     } else {
         global.isLoggedIn = false;
-        throw Boom.unauthorized('You cannot access this resource')
+        return false;
     }
 }
 
