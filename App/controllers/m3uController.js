@@ -13,7 +13,8 @@ module.exports = {
             const [groups, created] = await Groups.findOrCreate({
                 where: { name: group },
                 defaults: {
-                    name: group
+                    name: group,
+                    UserId: global.userID
                 }
             });
             return groups;
@@ -31,6 +32,7 @@ module.exports = {
                         logo: channel.tvg['logo'],
                         url: channel.url,
                         GroupId: group.id,
+                        UserId: global.userID,
                     }
                 );
             }
