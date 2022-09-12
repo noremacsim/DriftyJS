@@ -9,10 +9,11 @@ module.exports = {
 
         const channels = await Channels.findAll({
             where: {
-                GroupId: GroupId
+                GroupId: GroupId,
+                UserId: global.userID
             },
         });
-        const group = await Groups.findOne({ where: { id: GroupId } });
+        const group = await Groups.findOne({ where: { id: GroupId, UserId: global.userID } });
 
         return h.simsView('channels', {channels: channels, GroupId: GroupId, group: group, activePage: 'playlists'});
     },
@@ -25,8 +26,8 @@ module.exports = {
         let group = [];
 
         if (channelID) {
-            channel = await Channels.findOne({ where: { id: channelID } });
-            group = await Groups.findOne({ where: { id: channel.GroupId } });
+            channel = await Channels.findOne({ where: { id: channelID, UserId: global.userID } });
+            group = await Groups.findOne({ where: { id: channel.GroupId, UserId: global.userID } });
         }
 
         return h.simsView('editChannel', {channel: channel, groupId: groupId, groups: groups, group: group, activePage: 'playlists'});
@@ -46,7 +47,7 @@ module.exports = {
                     GroupId: group,
                 },
                 {
-                    where: {id: channelID}
+                    where: {id: channelID, UserId: global.userID}
                 }
             );
         } else {
@@ -56,6 +57,7 @@ module.exports = {
                     logo: logo,
                     url: url,
                     GroupId: group,
+                    UserId: global.userID
                 }
             );
         }
@@ -65,7 +67,7 @@ module.exports = {
 
     deleteChannel: async(request, h) => {
         const channelID = request.params.channelID
-        await Channels.destroy({ where: { id: channelID } });
+        await Channels.destroy({ where: { id: channelID, UserId: global.userID } });
         return 'test';
     },
 };

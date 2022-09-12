@@ -15,13 +15,13 @@ module.exports = {
         let client = [];
         let clientGroups = [];
         if (clientID) {
-            client = await Client.findOne({ where: { id: clientID } });
+            client = await Client.findOne({ where: { id: clientID, UserId: global.userID } });
             clientGroups = await ClientGroups.findAll({ where: { ClientId: clientID }, attributes: ["GroupId"], raw: true, nest: true })
                 .then(function(clientGroups) {
                     return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
                 });
         }
-        const groups = await Groups.findAll();
+        const groups = await Groups.findAll({ where: { UserId: global.userID } });
         return h.simsView('editclient', {client: client, clientGroups: clientGroups, groups: groups, activePage: 'client'});
     },
 
@@ -41,7 +41,7 @@ module.exports = {
                     active: active,
                 },
                 {
-                    where: {id: clientID}
+                    where: {id: clientID, UserId: global.userID}
                 }
             );
         } else {
@@ -49,6 +49,7 @@ module.exports = {
                 {
                     username: username,
                     active: active,
+                    UserId: global.userID,
                 }
             );
             clientID = newClient.id;
@@ -71,7 +72,7 @@ module.exports = {
     deleteUser: async(request, h) => {
         let clientID = request.params.clientID
         await ClientGroups.destroy({ where: { clientId: clientID } });
-        await Client.destroy({ where: { id: clientID } });
+        await Client.destroy({ where: { id: clientID, UserId: global.userID } });
         return true;
     },
 }

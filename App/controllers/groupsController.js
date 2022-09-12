@@ -8,7 +8,8 @@ module.exports = {
             {
                     include: [
                         'Channels'
-                    ]
+                    ],
+                    where: { UserId: global.userID }
                 }
             );
         return h.simsView('groups', {groups: groups, activePage: 'playlists'});
@@ -18,7 +19,7 @@ module.exports = {
         const groupID = request.params.groupID;
         let group = [];
         if (groupID) {
-            group = await Groups.findOne({ where: { id: groupID } });
+            group = await Groups.findOne({ where: { id: groupID, UserId: global.userID } });
         }
         return h.simsView('editGroup', {group: group, activePage: 'playlists'});
     },
@@ -33,13 +34,14 @@ module.exports = {
                     name: name
                 },
                 {
-                    where: {id: groupID}
+                    where: {id: groupID, UserId: global.userID}
                 }
             );
         } else {
             await Groups.create(
                 {
                     name: name,
+                    UserId: global.userID
                 }
             );
         }
@@ -49,7 +51,7 @@ module.exports = {
 
     deleteGroup: async(request, h) => {
         const groupID = request.params.groupID;
-        await Groups.destroy({ where: { id: groupID } });
+        await Groups.destroy({ where: { id: groupID, UserId: global.userID } });
         return 'test';
     },
 };
