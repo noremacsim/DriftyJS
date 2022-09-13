@@ -1,3 +1,24 @@
+
+<input type="file" id="uploadPlaylist">
+<script>
+    const inputElement = document.querySelector('input[type="file"]');
+
+    // Create a FilePond instance
+    const pond = FilePond.create(inputElement, {
+        server: {
+            process: {
+                url: './upload',
+                method: 'POST',
+                withCredentials: false,
+                onload: null,
+                onerror: null,
+                ondata: null,
+            },
+        },
+    });
+
+    console.log(pond);
+</script>
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-sm-6">

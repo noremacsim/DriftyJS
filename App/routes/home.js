@@ -14,13 +14,17 @@ module.exports = [
         }
     },
     {
-        method: "GET",
-        path: "/parse",
-        handler: m3u.parseToDB,
+        method: 'POST',
+        path: '/upload',
         config: {
-            pre: [{ method: middleware.auth }],
-            description: "Parse existing to db",
-        }
+            payload: {
+                maxBytes: 209715200,
+                output: 'file',
+                parse: true,
+                multipart: true
+            }
+        },
+        handler: m3u.parseToDB,
     },
     {
         method: "GET",

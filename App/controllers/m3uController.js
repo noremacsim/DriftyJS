@@ -36,14 +36,20 @@ module.exports = {
                     }
                 );
             }
+
+             return true;
         };
 
+        const data = request.payload.filepond[1];
+        if (data) {
+            const m3uFile = fs.readFileSync(data.path, 'utf-8');
+            const result = await parser.parse(m3uFile);
+            const channels = result.items;
+            await addChannels(channels);
+            return h.response(result).code(200)
+        }
 
-        const m3uFile = fs.readFileSync(path.join(__dirname, '../Storage/cameronsim.m3u'), 'utf-8')
-        const result = parser.parse(m3uFile);
-        const channels = result.items;
-        addChannels(channels);
-        return h.response(result).code(200)
+        return h.response('no File').code(400);
     },
 
     // TODO: Add Options to hide channels and groups for certain users.
