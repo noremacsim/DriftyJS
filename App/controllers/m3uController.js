@@ -54,11 +54,8 @@ module.exports = {
 
     // TODO: Add Options to hide channels and groups for certain users.
     downloadM3u: async(request, h) => {
-        const clientID = request.params.clientID;
-        const client = await Client.findOne({ where: { id: clientID } });
-        const username = client.username;
-
-        const stream = fs.createWriteStream(path.join(__dirname, `../Storage/${username}.m3u`));
+        const clients = await Client.findAll();
+        console.log(clients);
 
         async function createM3uGroups(group) {
             let string = '';
@@ -70,26 +67,28 @@ module.exports = {
             return string;
         }
 
-        const clientGroups = await ClientGroups.findAll({ where: { ClientId: clientID }, attributes: ["GroupId"], raw: true, nest: true })
-            .then(function(clientGroups) {
-                return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
-            });
+        for (const client of clients) {
+          let clientID = client.id;
+          let username = client.username;
+          let stream = fs.createWriteStream(path.join(__dirname, `../Storage/${username}.m3u`));
 
-        stream.write('#EXTM3U url-tvg="http://m3u4u.com/epg/4z2xnjw6jqad9gwvyv15" \n');
+          let clientGroups = await ClientGroups.findAll({ where: { ClientId: clientID }, attributes: ["GroupId"], raw: true, nest: true })
+              .then(function(clientGroups) {
+                  return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+              });
 
-        const groups = await Groups.findAll();
-        for (const group of groups) {
-            if (clientGroups.includes(group.id)) {
-                let string = await createM3uGroups(group);
-                stream.write(string);
-            }
+          stream.write('#EXTM3U url-tvg="http://m3u4u.com/epg/4z2xnjw6jqad9gwvyv15" \n');
+
+          let groups = await Groups.findAll();
+          for (const group of groups) {
+              if (clientGroups.includes(group.id)) {
+                  let string = await createM3uGroups(group);
+                  stream.write(string);
+              }
+          }
+          stream.end();
         }
-        stream.end();
 
-        await stream.on('finish', async function () {
-            return h.file(path.join(__dirname, `../Storage/${username}.m3u`));
-        });
-
-        return h.file(path.join(__dirname, `../Storage/${username}.m3u`));
+        return 'done';
     },
 }

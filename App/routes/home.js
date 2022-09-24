@@ -27,7 +27,7 @@ module.exports = [
         handler: m3u.parseToDB,
     },
     {
-        method: "GET",
+        method: "POST",
         path: "/download",
         handler: m3u.downloadM3u,
         config: {

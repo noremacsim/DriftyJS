@@ -9,6 +9,7 @@
     <div class="row mb-3">
         <div class="col-12">
             <a type="button" href="/clients/edit/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0" style="float: right;">New Client</a>
+            <button type="button" id="update-clients" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0 m-2" style="float: right;">Update M3U</button>
         </div>
     </div>
 </div>
@@ -60,15 +61,17 @@
     </div>
 </div>
 
-<!--<script>-->
-<!--    $('.generateM3u').on('click', function (e) {-->
-<!--       e.preventDefault();-->
-<!--        Swal.fire({-->
-<!--            position: 'bottom-end',-->
-<!--            title: 'M3u Has Been Generated',-->
-<!--            showConfirmButton: false,-->
-<!--            timer: 1500-->
-<!--        })-->
-<!--       console.log('clicked');-->
-<!--    });-->
-<!--</script>-->
+<script>
+  $('#update-clients').on('click', function (e) {
+    e.preventDefault();
+    $.post("/download", function(data, status){
+      Swal.fire({
+        position: 'bottom-end',
+        title: 'M3u Has Been Generated',
+        showConfirmButton: false,
+        timer: 1500
+      })
+      console.log('clicked');
+    });
+  });
+</script>
