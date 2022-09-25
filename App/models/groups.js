@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        mapped: DataTypes.STRING,
     });
 
     Groups.associate = function(models) {

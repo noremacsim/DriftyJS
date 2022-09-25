@@ -56,4 +56,13 @@ module.exports = [
             description: "Delete Channel",
         }
     },
+    {
+        method: "GET",
+        path: "/channels/activate/{channelID}",
+        handler: channels.activateChannel,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Activate Channel",
+        }
+    },
 ];

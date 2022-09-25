@@ -2,19 +2,22 @@ const parser = require('iptv-playlist-parser');
 const path = require("path");
 const fs = require('fs');
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
+const {Settings} = require(path.join(__dirname, '../../Core/models/'));
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
 const {ClientGroups} = require(path.join(__dirname, '../../Core/models/'));
 const {Client} = require(path.join(__dirname, '../../Core/models/'));
+const { Op } = require("sequelize");
 
 module.exports = {
     parseToDB: async(request, h) => {
 
         async function addGroup(group) {
-            const [groups, created] = await Groups.findOrCreate({
-                where: { name: group },
-                defaults: {
-                    name: group,
-                    UserId: global.userID
+            const groups = await Groups.findOne({
+                where: {
+                  [Op.or]: [
+                      { name: group },
+                      { mapped: group }
+                    ]
                 }
             });
             return groups;
@@ -22,22 +25,51 @@ module.exports = {
 
         async function addChannels(channels) {
             let group = ''; // channel->group->title
+            let groupTitle = '';
+            let skipTVShows = false;
+            let tvShowRegex = new RegExp("[Ss][0-9]{2}[Ee][0-9]{2}");
 
-             for (const channel of channels) {
-                group = await addGroup(channel.group['title']);
-                await Channels.create(
-                    {
-                        name: channel.name,
-                        tvgid: channel.tvg['id'],
-                        logo: channel.tvg['logo'],
-                        url: channel.url,
-                        GroupId: group.id,
-                        UserId: global.userID,
-                    }
-                );
+            const settings = await Settings.findAll({where: {type: 'TVShows'}});
+
+            if (!settings.Active) {
+              skipTVShows = true;
             }
 
-             return true;
+
+           for (const channel of channels) {
+             if (channel.group['title'] !== groupTitle) {
+               group = await addGroup(channel.group['title']);
+               groupTitle = channel.group['title']
+             }
+
+              //TODO: If group doesn't exist don't addGroup Can probably think of a way to overide this for a full import ui side
+              if (!group) {
+                continue;
+              }
+
+              if (skipTVShows) {
+                if (tvShowRegex.test(channel.name)) {
+                    continue;
+                }
+              }
+
+              await Channels.findOrCreate({
+                  where: {
+                    name: channel.name,
+                    GroupId: group.id,
+                  },
+                  defaults: {
+                    name: channel.name,
+                    tvgid: channel.tvg['id'],
+                    logo: channel.tvg['logo'],
+                    url: channel.url,
+                    GroupId: group.id,
+                    UserId: global.userID,
+                  }
+              });
+          }
+
+           return true;
         };
 
         const data = request.payload.filepond[1];
@@ -55,14 +87,17 @@ module.exports = {
     // TODO: Add Options to hide channels and groups for certain users.
     downloadM3u: async(request, h) => {
         const clients = await Client.findAll();
-        console.log(clients);
 
-        async function createM3uGroups(group) {
+        async function createM3uGroups(group, active = true) {
             let string = '';
-            const channels = await Channels.findAll({where: {groupID: group.id}});
+            const channels = await Channels.findAll({where: {groupID: group.id, deleted: false}});
             for (const channel of channels) {
-                string += `#EXTINF:-1 tvg-id="${channel.tvgid}" tvg-name="${channel.name}" tvg-logo="${channel.logo}" group-title="${group.name}",${channel.name} \n`;
-                string += channel.url + '\n';
+                string += `#EXTINF:-1 tvg-id="${channel.tvgid}" tvg-name="${channel.name}" tvg-type="${channel.tvgtype}" tvg-logo="${channel.logo}" group-title="${group.name}",${channel.name} \n`;
+                if (!active) {
+                  string += 'https://drive.google.com/uc?export=download&id=15INXyplB6vc7Mu00jtZvbJpr7pxyMOJH' + '\n';
+                } else {
+                  string += channel.url + '\n';
+                }
             }
             return string;
         }
@@ -82,7 +117,7 @@ module.exports = {
           let groups = await Groups.findAll();
           for (const group of groups) {
               if (clientGroups.includes(group.id)) {
-                  let string = await createM3uGroups(group);
+                  let string = await createM3uGroups(group, client.active);
                   stream.write(string);
               }
           }

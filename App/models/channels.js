@@ -16,6 +16,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        tvgtype: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        deleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
     });
 
     Channels.associate = function(models) {

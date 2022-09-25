@@ -10,7 +10,7 @@ module.exports = {
         const channels = await Channels.findAll({
             where: {
                 GroupId: GroupId,
-                UserId: global.userID
+                UserId: global.userID,
             },
         });
         const group = await Groups.findOne({ where: { id: GroupId, UserId: global.userID } });
@@ -36,7 +36,7 @@ module.exports = {
     editSave: async(request, h) => {
         const channelID = request.params.channelID
 
-        const {name, logo, url, group, tvgid} = request.payload;
+        const {name, logo, url, group, tvgid, tvgtype} = request.payload;
 
         if (channelID) {
             await Channels.update(
@@ -46,6 +46,7 @@ module.exports = {
                     url: url,
                     GroupId: group,
                     tvgid: tvgid,
+                    tvgtype: tvgtype,
                 },
                 {
                     where: {id: channelID, UserId: global.userID}
@@ -58,7 +59,8 @@ module.exports = {
                     logo: logo,
                     url: url,
                     GroupId: group,
-                    tvgid, tvgid,
+                    tvgid: tvgid,
+                    tvgtype: tvgtype,
                     UserId: global.userID,
                 }
             );
@@ -69,7 +71,27 @@ module.exports = {
 
     deleteChannel: async(request, h) => {
         const channelID = request.params.channelID
-        await Channels.destroy({ where: { id: channelID, UserId: global.userID } });
+        await Channels.update(
+            {
+                deleted: true,
+            },
+            {
+                where: { id: channelID, UserId: global.userID }
+            }
+        );
+        return 'test';
+    },
+
+    activateChannel: async(request, h) => {
+        const channelID = request.params.channelID
+        await Channels.update(
+            {
+                deleted: false,
+            },
+            {
+                where: { id: channelID, UserId: global.userID }
+            }
+        );
         return 'test';
     },
 };

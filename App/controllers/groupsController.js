@@ -1,15 +1,16 @@
 const path = require("path");
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
+const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 
 
 module.exports = {
     view: async(request, h) => {
         const groups = await Groups.findAll(
-            {
-                    include: [
-                        'Channels'
-                    ],
-                    where: { UserId: global.userID }
+              {
+                  include: {
+                      model: Channels,
+                  },
+                  where: { UserId: global.userID }
                 }
             );
         return h.simsView('groups', {groups: groups, activePage: 'playlists'});
@@ -26,12 +27,13 @@ module.exports = {
 
     editSave: async(request, h) => {
         const groupID = request.params.groupID;
-        const {name} = request.payload;
+        const {name, mapped} = request.payload;
 
         if (groupID) {
             await Groups.update(
                 {
-                    name: name
+                    name: name,
+                    mapped, mapped,
                 },
                 {
                     where: {id: groupID, UserId: global.userID}
@@ -41,6 +43,7 @@ module.exports = {
             await Groups.create(
                 {
                     name: name,
+                    mapped, mapped,
                     UserId: global.userID
                 }
             );
@@ -51,6 +54,7 @@ module.exports = {
 
     deleteGroup: async(request, h) => {
         const groupID = request.params.groupID;
+        await Channels.destroy({ where: { GroupId: groupID, UserId: global.userID } });
         await Groups.destroy({ where: { id: groupID, UserId: global.userID } });
         return 'test';
     },

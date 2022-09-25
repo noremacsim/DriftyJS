@@ -64,14 +64,20 @@
 <script>
   $('#update-clients').on('click', function (e) {
     e.preventDefault();
+    Swal.fire({
+            title: 'Please Wait !',
+            html: 'Genarating M3U files',// add html attribute if you want or remove
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading()
+            },
+        });
     $.post("/download", function(data, status){
-      Swal.fire({
-        position: 'bottom-end',
-        title: 'M3u Has Been Generated',
-        showConfirmButton: false,
-        timer: 1500
-      })
-      console.log('clicked');
+      Swal.fire(
+        'Complete!',
+        'm3u files have been created.',
+        'success'
+      )
     });
   });
 </script>

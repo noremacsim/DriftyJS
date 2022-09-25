@@ -36,7 +36,7 @@
                             </thead>
                             <tbody>
                             <% channels.forEach((channel)=> { %>
-                            <tr>
+                            <tr <% if(channel.deleted){ %> class="bg-danger bg-gradient" <% } %>>
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>

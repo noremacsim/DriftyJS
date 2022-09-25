@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         firstname: DataTypes.STRING,
         middlename: DataTypes.STRING,
         lastname: DataTypes.STRING,
+        email: DataTypes.STRING,
         active: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

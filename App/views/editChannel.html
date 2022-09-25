@@ -29,6 +29,10 @@
                 <div class="input-group input-group-outline mb-3">
                     <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="tvgid" value="<% if(channel.tvgid){ %><%= channel.tvgid %><% } %>">
                 </div>
+                <label class="form-label">tvg Type</label>
+                <div class="input-group input-group-outline mb-3">
+                    <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="tvgtype" value="<% if(channel.tvgtype){ %><%= channel.tvgtype %><% } %>">
+                </div>
                 <label class="form-label">Group</label>
                 <div class="input-group input-group-outline mb-3">
                     <select class="form-select input-group-outline" name="group" aria-label="Default select example">
@@ -46,10 +50,49 @@
                 <div class="text-center">
                     <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save</button>
                     <% if(channel.id){ %>
-                        <a type="button" href="/channels/delete/<%= channel.id %>" class="btn btn-lg bg-gradient-danger btn-lg mt-4 mb-0" style="float: right;">Delete</a>
+                      <% if(channel.deleted){ %>
+                        <a type="button" href="/channels/activate/<%= channel.id %>" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0" style="float: right;">Activate</a>
+                      <% } else { %>
+                        <a type="button" href="/channels/delete/<%= channel.id %>" class="btn btn-lg bg-gradient-danger btn-lg mt-4 mb-0" style="float: right;">De-Activate</a>
+                      <% } %>
                     <% } %>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+  $("form").submit(function(e) {
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    var form = $(this);
+    var actionUrl = form.attr('action');
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-right',
+      iconColor: 'white',
+      customClass: {
+        popup: 'colored-toast'
+      },
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true
+    })
+
+    $.ajax({
+        type: "POST",
+        url: actionUrl,
+        data: form.serialize(), // serializes the form's elements.
+        success: function(data)
+        {
+          Toast.fire({
+            icon: 'success',
+            title: 'Saved successfully'
+          })
+        }
+    });
+
+  });
+</script>
