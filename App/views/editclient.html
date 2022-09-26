@@ -40,6 +40,18 @@
                     <% if(client.active === true){ %> checked <% } %> >
                     <label class="form-check-label" for="flexSwitchCheckDefault">Activate Client</label>
                 </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" name="trial" value="1" id="flexSwitchCheckDefault"
+                    <% if(client.trial === true){ %> checked <% } %> >
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Trial</label>
+                </div>
+                <label class="form-label">Expiary Date</label>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                  </div>
+                  <input class="form-control datePicker" id="date" name="exp_date" placeholder="YYYY-MM-DD" value="<% if(client.exp_date){ %><%= client.exp_date %><% } %>" type="text" aria-describedby="basic-addon1">
+                </div>
             </div>
         </div>
         <div class="text-center">
@@ -84,4 +96,17 @@
     });
 
   });
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css">
+<script>
+  $(document).ready(function(){
+  	var date_input=$('.datePicker'); //our date input has the name "date"
+  	var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+  	date_input.datepicker({
+  		format: 'yyyy-mm-dd',
+  		todayHighlight: true,
+  		autoclose: true,
+  	})
+  })
 </script>

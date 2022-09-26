@@ -27,11 +27,15 @@ module.exports = {
 
     saveEdit: async (request, h) => {
         let clientID = request.params.clientID
-        const {username, email, clientGroups, activeClient} = request.payload;
+        let {username, email, clientGroups, activeClient, trial, exp_date} = request.payload;
 
         let active = false
         if (activeClient) {
             active = true;
+        }
+
+        if (!trial) {
+            trial = false;
         }
 
         if (clientID) {
@@ -40,6 +44,8 @@ module.exports = {
                     username: username,
                     email: email,
                     active: active,
+                    trial: trial,
+                    exp_date: exp_date,
                 },
                 {
                     where: {id: clientID, UserId: global.userID}
@@ -52,6 +58,8 @@ module.exports = {
                     email: email,
                     active: active,
                     UserId: global.userID,
+                    trial: trial,
+                    exp_date: exp_date,
                 }
             );
             clientID = newClient.id;

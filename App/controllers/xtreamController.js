@@ -92,6 +92,17 @@ module.exports = {
     let liveCategories = [];
     let liveChannels = [];
     let vodChannels = [];
+    console.log(request.query);
+    console.log(request.payload);
+
+    if (typeof request.payload != 'undefined') {
+      if (
+        (typeof request.payload.username != 'undefined' && typeof request.payload.password != 'undefined') &&
+        (!request.query.username && !request.query.password)
+      ) {
+        request.query = request.payload;
+      }
+    }
 
     if (request.query.username && request.query.password) {
 
@@ -106,6 +117,9 @@ module.exports = {
         return Boom.unauthorized('invalid login');
       }
 
+      let clientCreated = Math.round(new Date(client.createdAt).getTime()/1000);
+      let clientExpDate = Math.round(new Date(client.exp_date).getTime()/1000);
+
       if (request.query.action === 'get_live_categories') {
 
         clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
@@ -113,12 +127,10 @@ module.exports = {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
 
-        console.log(clientGroups);
-
         const lives = await Groups.findAll(
           {
             where: {
-              VOD: 0,
+              type: 'live',
               id: {
                 [Op.or]: clientGroups
               }
@@ -149,7 +161,7 @@ module.exports = {
         const vods = await Groups.findAll(
           {
             where: {
-              VOD: 1,
+              type: 'movie',
               id: {
                 [Op.or]: clientGroups
               }
@@ -168,6 +180,10 @@ module.exports = {
         }
 
         return h.response(vodCategories).code(200);
+      }
+
+      if (request.query.action === 'get_series_categories') {
+        return h.response([]).code(200);
       }
 
       if (request.query.action === 'get_live_streams') {
@@ -214,7 +230,7 @@ module.exports = {
         }
 
       if (request.query.action === 'get_vod_streams') {
-          console.log(request.query);
+          console.log(request.query.category_id);
           let channels = await Channels.findAll(
             {
                 where: {
@@ -255,11 +271,21 @@ module.exports = {
             return h.response(vodChannels).code(200);
         }
 
-      if (request.query.action === 'get_vod_info') {}
+      if (request.query.action === 'get_series') {
+        return h.response([]).code(200);
+      }
 
-      if (request.query.action === 'get_short_epg') {}
+      if (request.query.action === 'get_vod_info') {
+        return h.response({}).code(200);
+      }
 
-      if (request.query.action === 'get_simple_data_table') {}
+      if (request.query.action === 'get_short_epg') {
+        return h.response([]).code(200);
+      }
+
+      if (request.query.action === 'get_simple_data_table') {
+        return h.response([]).code(200);
+      }
 
       let userInfo = {
           "user_info": {
@@ -268,10 +294,10 @@ module.exports = {
             "message":"Welcome to SIMS IPTV",
             "auth":1,
             "status":client.active ? 'Active' : 'Suspended',
-            "exp_date":"1666615446",
-            "is_trial":"0",
+            "exp_date":clientExpDate,
+            "is_trial": client.trial ? 1 : 0,
             "active_cons":"0",
-            "created_at":"1661341391",
+            "created_at":clientCreated,
             "max_connections":"1",
             "allowed_output_formats":["m3u8"]
           },
@@ -283,7 +309,7 @@ module.exports = {
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"https",
-            "rtmp_port":"4101",
+            "rtmp_port":"",
             "timestamp_now": Date.now(),
             "time_now": dateString,
             "timezone":"Europe\/London"

@@ -25,6 +25,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
         },
+        trial: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        exp_date: {
+         type: DataTypes.DATEONLY,
+         allowNull: true,
+       },
     });
 
     Client.associate = function(models) {

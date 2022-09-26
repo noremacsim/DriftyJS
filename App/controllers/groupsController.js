@@ -27,7 +27,7 @@ module.exports = {
 
     editSave: async(request, h) => {
         const groupID = request.params.groupID;
-        let {name, mapped, VOD} = request.payload;
+        let {name, mapped, VOD, type} = request.payload;
 
         if (!VOD) {
           VOD = 0;
@@ -39,6 +39,7 @@ module.exports = {
                     name: name,
                     mapped: mapped,
                     VOD: VOD,
+                    type: type,
                 },
                 {
                     where: {id: groupID, UserId: global.userID}
@@ -50,7 +51,8 @@ module.exports = {
                     name: name,
                     mapped: mapped,
                     VOD: VOD,
-                    UserId: global.userID
+                    UserId: global.userID,
+                    type: type,
                 }
             );
         }

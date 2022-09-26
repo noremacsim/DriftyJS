@@ -61,6 +61,11 @@ const init = async (type) => {
         helpersPath: 'views/helpers'
     });
 
+    server.events.on('response', function (request) {
+        // you can use request.log or server.log it's depends
+        console.log(request.info.remoteAddress + ': ' + request.method.toUpperCase() + ' ' + request.url.path + ' --> ' + request.response.statusCode);
+    });
+
     // Start Server
     await server.start();
     console.log(`Server running at: ${server.info.uri}`);
