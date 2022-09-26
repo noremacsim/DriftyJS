@@ -52,24 +52,4 @@ module.exports = [
             description: "xtream stream any",
         }
     },
-    {
-        method: "GET",
-        path: '/{any*}',
-        handler: (request, h) => {
-          const accept = request.headers.accept
-
-          console.log(request);
-          return 'done';
-        }
-    },
-    {
-        method: "POST",
-        path: '/{any*}',
-        handler: (request, h) => {
-          const accept = request.headers.accept
-
-          console.log(request);
-          return 'done';
-        }
-    },
 ];
