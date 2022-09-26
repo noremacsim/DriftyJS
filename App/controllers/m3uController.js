@@ -53,19 +53,10 @@ module.exports = {
                 }
               }
 
-              await Channels.findOrCreate({
-                  where: {
-                    name: channel.name,
-                    GroupId: group.id,
-                  },
-                  defaults: {
-                    name: channel.name,
-                    tvgid: channel.tvg['id'],
-                    logo: channel.tvg['logo'],
-                    url: channel.url,
-                    GroupId: group.id,
-                    UserId: global.userID,
-                  }
+              await Channels.update({
+                tvgid: channel.tvg['id'],
+              }, {
+                where: { name: channel.name, GroupId: group.id }
               });
           }
 
