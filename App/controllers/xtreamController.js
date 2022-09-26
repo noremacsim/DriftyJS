@@ -40,6 +40,14 @@ module.exports = {
     return h.redirect(channels.url).temporary();
   },
 
+  apk: async (request, h) => {
+    let stream = fs.createReadStream(path.join(__dirname, `../Storage/app.apk`));
+    let streamData = new Readable().wrap(stream);
+    return h.response(streamData)
+      .header('Content-Type', 'application/apk')
+      .header('Content-Disposition', 'attachment; filename=app.apk');
+  },
+
   xmltv: async (request, h) => {
     if (request.query.username && request.query.password) {
 
