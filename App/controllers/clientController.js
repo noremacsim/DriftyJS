@@ -27,7 +27,7 @@ module.exports = {
 
     saveEdit: async (request, h) => {
         let clientID = request.params.clientID
-        let {username, email, clientGroups, activeClient, trial, exp_date} = request.payload;
+        let {username, password, email, clientGroups, activeClient, trial, exp_date} = request.payload;
 
         let active = false
         if (activeClient) {
@@ -42,6 +42,7 @@ module.exports = {
             const updated = await Client.update(
                 {
                     username: username,
+                    password: password,
                     email: email,
                     active: active,
                     trial: trial,
@@ -55,6 +56,7 @@ module.exports = {
             const newClient = await Client.create(
                 {
                     username: username,
+                    password: password,
                     email: email,
                     active: active,
                     UserId: global.userID,
