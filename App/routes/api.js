@@ -60,4 +60,11 @@ module.exports = [
             description: "xtream stream any",
         }
     },
+    {
+        method: [ 'GET', 'POST' ],
+        path: '/{any*}',
+        handler: (request, h) => {
+          console.log(request);
+        }
+    },
 ];
