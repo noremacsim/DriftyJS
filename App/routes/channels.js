@@ -35,6 +35,7 @@ module.exports = [
         path: "/channels/edit/{channelID}",
         handler: channels.editSave,
         config: {
+            pre: [{ method: middleware.auth }],
             description: "Edit Channel",
         }
     },

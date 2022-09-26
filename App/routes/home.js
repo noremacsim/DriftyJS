@@ -17,6 +17,7 @@ module.exports = [
         method: 'POST',
         path: '/upload',
         config: {
+            pre: [{ method: middleware.auth }],
             payload: {
                 maxBytes: 209715200,
                 output: 'file',

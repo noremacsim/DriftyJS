@@ -18,12 +18,4 @@ module.exports = [
             description: "Login User",
         }
     },
-    {
-        method: "POST",
-        path: "/register",
-        handler: User.register,
-        config: {
-            description: "Register User",
-        }
-    },
 ];

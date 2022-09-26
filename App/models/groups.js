@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         mapped: DataTypes.STRING,
+        VOD: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
     });
 
     Groups.associate = function(models) {
