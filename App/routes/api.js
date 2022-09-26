@@ -38,6 +38,14 @@ module.exports = [
     },
     {
         method: "GET",
+        path: '/{TYPE}/{username}/{password}/{channelID}.m3u8',
+        handler: xtream.playChannel,
+        config: {
+            description: "xtream stream m3u8",
+        }
+    },
+    {
+        method: "GET",
         path: '/{TYPE}/{username}/{password}/{channelID}.ts',
         handler: xtream.playChannel,
         config: {
