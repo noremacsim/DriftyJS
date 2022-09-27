@@ -4,7 +4,6 @@ const path = require("path");
 const fs = require('fs');
 const Boom = require('boom');
 const util = require('util');
-const findRemoveSync = require('find-remove')
 const { Readable } = require('stream');
 const { Op } = require("sequelize");
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
@@ -20,9 +19,6 @@ module.exports = {
   },
 
   playChannel: async (request, h) => {
-    const a = findRemoveSync(path.join(__dirname, `../Temp`));
-    console.log(a);
-
     const channelID = request.params.channelID;
     const username = request.params.username;
     const password = request.params.password;
@@ -58,7 +54,6 @@ module.exports = {
             response.pipe(file);
             file.on("finish", async () => {
                 file.close();
-                console.log('done');
                 resolve();
             });
           }).on("error", reject);
@@ -121,7 +116,6 @@ module.exports = {
        // after download completed close filestream
        file.on("finish", () => {
            file.close();
-           console.log("Download Completed");
        });
     }).on('error', function(err) { // Handle errors
       if (cb) cb(err.message);
@@ -141,8 +135,6 @@ module.exports = {
     let liveCategories = [];
     let liveChannels = [];
     let vodChannels = [];
-    console.log(request.query);
-    console.log(request);
 
     if (typeof request.payload != 'undefined') {
       if (
@@ -236,7 +228,6 @@ module.exports = {
       }
 
       if (request.query.action === 'get_live_streams') {
-        console.log(request.query);
         let channels = await Channels.findAll(
           {
               where: {
@@ -279,7 +270,6 @@ module.exports = {
         }
 
       if (request.query.action === 'get_vod_streams') {
-          console.log(request.query.category_id);
           let channels = await Channels.findAll(
             {
                 where: {
@@ -354,7 +344,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"cameronsim.uk",
+            "url":"192.168.1.218",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
