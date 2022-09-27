@@ -61,6 +61,10 @@ module.exports = {
       });
     }
 
+    if (!client.active) {
+      return h.redirect('https://drive.google.com/uc?export=download&id=15INXyplB6vc7Mu00jtZvbJpr7pxyMOJH').temporary();
+    }
+
     if (type === 'movie') {
       return h.redirect(channels.url).temporary();
     }
@@ -344,7 +348,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"192.168.1.218",
+            "url":"cameronsim.uk",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
