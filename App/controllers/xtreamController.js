@@ -1,7 +1,10 @@
 const http = require('http');
+const https = require('https');
 const path = require("path");
 const fs = require('fs');
-const Boom = require('boom')
+const Boom = require('boom');
+const util = require('util');
+const findRemoveSync = require('find-remove')
 const { Readable } = require('stream');
 const { Op } = require("sequelize");
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
@@ -11,10 +14,20 @@ const {ClientGroups} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
+  playHls: async (request, h) => {
+    const id = request.params.ID;
+    return h.redirect(`https://cart.beastdevs.biz/hls/${id}`).temporary();
+  },
+
   playChannel: async (request, h) => {
+    const a = findRemoveSync(path.join(__dirname, `../Temp`));
+    console.log(a);
+
     const channelID = request.params.channelID;
     const username = request.params.username;
     const password = request.params.password;
+    const type = request.params.TYPE;
+
 
     if (username && password) {
       client = await Client.findOne({
@@ -37,7 +50,35 @@ module.exports = {
         },
     });
 
-    return h.redirect(channels.url).temporary();
+    function processm3u8(tempFileName) {
+      return new Promise((resolve, reject) => {
+        const file = fs.createWriteStream(path.join(__dirname, `../Temp/${tempFileName}`));
+        const original = https.get(channels.url, async function(response) {
+        const streamData = https.get(response.headers.location, function(response) {
+            response.pipe(file);
+            file.on("finish", async () => {
+                file.close();
+                console.log('done');
+                resolve();
+            });
+          }).on("error", reject);
+        }).on("error", reject);
+      });
+    }
+
+    if (type === 'movie') {
+      return h.redirect(channels.url).temporary();
+    }
+
+
+    tempFileName = `${username}${Date.now()}.m3u8`
+    await processm3u8(tempFileName);
+    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/${tempFileName}`));
+    let streamDataT = await new Readable().wrap(streamT);
+    return h.response(streamDataT)
+      .header('Content-Type', 'application/x-mpegurl')
+      .header('Connection', `keep-alive`)
+      .header('Cache-Control', `no-store, no-cache, must-revalidate`)
   },
 
   apk: async (request, h) => {

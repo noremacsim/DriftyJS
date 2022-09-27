@@ -69,6 +69,14 @@ module.exports = [
         }
     },
     {
+        method: "GET",
+        path: '/hls/{ID}',
+        handler: xtream.playHls,
+        config: {
+            description: "xtream stream hls",
+        }
+    },
+    {
         method: [ 'GET', 'POST' ],
         path: '/{any*}',
         handler: (request, h) => {
