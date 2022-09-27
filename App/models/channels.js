@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
+        imbdid: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         deleted: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

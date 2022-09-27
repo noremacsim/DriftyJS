@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require('fs');
 const Boom = require('boom');
 const util = require('util');
+const getJSON = require('get-json')
 const { Readable } = require('stream');
 const { Op } = require("sequelize");
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
@@ -302,7 +303,7 @@ module.exports = {
                     "rating":"",
                     "rating_5based":0,
                     "container_extension":"mp4",
-                    "added":"1641811540",
+                    "added": Math.round(new Date(channel.createdAt).getTime()/1000),
                     "custom_sid":"",
                     "direct_source":"",
                     "category_id":channel.GroupId,
@@ -319,7 +320,64 @@ module.exports = {
       }
 
       if (request.query.action === 'get_vod_info') {
-        return h.response({}).code(200);
+        const vodID = request.query.vod_id
+        let channel = await Channels.findOne(
+          {
+              where: {
+                  id: vodID,
+              },
+          }
+        );
+
+        const imbd = await getJSON(`https://api.themoviedb.org/3/movie/${channel.imbdid}?api_key=16c1dc83a80675faa65ac467f40d4868`, function(error, response){
+            return response;
+        });
+
+        let vodInfo = { "info":
+         {
+           "kinopoisk_url":`https://www.themoviedb.org/movie/${imbd.id}`,
+           "tmdb_id":imbd.id,
+           "name":imbd.original_title,
+           "o_name":imbd.original_title,
+           "cover_big":`https://image.tmdb.org/t/p/w600_and_h900_bestv2${imbd.backdrop_path}`,
+           "movie_image":`https://image.tmdb.org/t/p/w600_and_h900_bestv2${imbd.poster_path}`,
+           "release_date":imbd.release_date,
+           "episode_run_time":imbd.runtime,
+           "youtube_trailer":"",
+           "director":"",
+           "actors":"",
+           "cast":"",
+           "description":imbd.overview,
+           "plot":imbd.overview,
+           "age":"",
+           "mpaa_rating":"",
+           "rating_count_kinopoisk":0,
+           "country":imbd.original_language,
+           "genre":"",
+           "backdrop_path":[`https://image.tmdb.org/t/p/w1280/${imbd.backdrop_path}`],
+           "duration_secs":imbd.runtime * 60,
+           "duration":"",
+           "bitrate":7115,
+           "rating":imbd.vote_average,
+           "releasedate":imbd.release_date,
+           "subtitles":[]
+         },
+         "movie_data":
+           {
+             "stream_id":channel.id,
+             "name":channel.name,
+             "title":channel.name,
+             "year":"2022",
+             "added":Math.round(new Date(channel.createdAt).getTime()/1000),
+             "category_id":channel.GroupId,
+             "category_ids":[channel.GroupId],
+             "container_extension":"mp4",
+             "custom_sid":"",
+             "direct_source":""
+           }
+         }
+
+        return h.response(vodInfo).code(200);
       }
 
       if (request.query.action === 'get_short_epg') {

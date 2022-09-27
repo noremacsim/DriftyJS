@@ -36,7 +36,7 @@ module.exports = {
     editSave: async(request, h) => {
         const channelID = request.params.channelID
 
-        const {name, logo, url, group, tvgid, tvgtype} = request.payload;
+        const {name, logo, url, group, tvgid, tvgtype, imbdid} = request.payload;
 
         if (channelID) {
             await Channels.update(
@@ -47,6 +47,7 @@ module.exports = {
                     GroupId: group,
                     tvgid: tvgid,
                     tvgtype: tvgtype,
+                    imbdid: imbdid,
                 },
                 {
                     where: {id: channelID, UserId: global.userID}
@@ -61,6 +62,7 @@ module.exports = {
                     GroupId: group,
                     tvgid: tvgid,
                     tvgtype: tvgtype,
+                    imbdid: imbdid,
                     UserId: global.userID,
                 }
             );
