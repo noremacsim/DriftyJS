@@ -101,7 +101,7 @@ module.exports = {
     let liveChannels = [];
     let vodChannels = [];
     console.log(request.query);
-    console.log(request.payload);
+    console.log(request);
 
     if (typeof request.payload != 'undefined') {
       if (
@@ -310,14 +310,14 @@ module.exports = {
             "allowed_output_formats":["m3u8", "ts"]
           },
           "server_info":{
-            "xui":false,
+            "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"192.168.1.218",
+            "url":"cameronsim.uk",
             "port":"4101",
             "https_port":"4101",
-            "server_protocol":"https",
-            "rtmp_port":"",
+            "server_protocol":"http",
+            "rtmp_port":"4101",
             "timestamp_now": Date.now(),
             "time_now": dateString,
             "timezone":"Europe\/London"
