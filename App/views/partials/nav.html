@@ -22,7 +22,31 @@
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
-                    <span class="nav-link-text ms-1">Playlist</span>
+                    <span class="nav-link-text ms-1">All</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white <% if(active === 'movies'){%>active bg-gradient-primary<%}%>" href="/movies">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">movie</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Movies</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white <% if(active === 'series'){%>active bg-gradient-primary<%}%>" href="/series">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">tv</i>
+                    </div>
+                    <span class="nav-link-text ms-1">TV Shows</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white <% if(active === 'live'){%>active bg-gradient-primary<%}%>" href="/live">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">live_tv</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Live TV</span>
                 </a>
             </li>
             <li class="nav-item">

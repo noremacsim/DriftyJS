@@ -15,6 +15,33 @@ module.exports = [
     },
     {
         method: "GET",
+        path: "/movies",
+        handler: groups.movies,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Gets all the movie groups available",
+        }
+    },
+    {
+        method: "GET",
+        path: "/series",
+        handler: groups.series,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Gets all the series groups available",
+        }
+    },
+    {
+        method: "GET",
+        path: "/live",
+        handler: groups.live,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Gets all the groups available",
+        }
+    },
+    {
+        method: "GET",
         path: "/groups/{groupID}",
         handler: channels.viewByGroup,
         config: {
