@@ -14,12 +14,15 @@ const {ClientGroups} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
+  // FOR LIVE STREAMS THROUGH PANDAFY
   playHls: async (request, h) => {
     const id = request.params.ID;
     return h.redirect(`https://cart.beastdevs.biz/hls/${id}`).temporary();
   },
 
+  //Handles the rest of the channel play requests
   playChannel: async (request, h) => {
+
     const channelID = request.params.channelID;
     const username = request.params.username;
     const password = request.params.password;
@@ -62,15 +65,19 @@ module.exports = {
       });
     }
 
+    // We will want to stop there streams if they arent active
+    // TODO: add a stop if account has expired
     if (!client.active) {
       return h.redirect('https://drive.google.com/uc?export=download&id=15INXyplB6vc7Mu00jtZvbJpr7pxyMOJH').temporary();
     }
 
-    if (type === 'movie') {
+    // If its a movie or tvshow we will just redirect to the url provided since we manage this ourselves
+    if (type === 'movie' || type === 'tv') {
       return h.redirect(channels.url).temporary();
     }
 
-
+    // For Live TV we will return the m3u8 stream output and create a buffer to allow constan streaming from
+    // multiple devices
     tempFileName = `${username}${Date.now()}.m3u8`
     await processm3u8(tempFileName);
     let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/${tempFileName}`));
@@ -81,6 +88,7 @@ module.exports = {
       .header('Cache-Control', `no-store, no-cache, must-revalidate`)
   },
 
+  // TODO: Improve this or remove
   apk: async (request, h) => {
     let stream = fs.createReadStream(path.join(__dirname, `../Storage/app.apk`));
     let streamData = new Readable().wrap(stream);
@@ -89,6 +97,7 @@ module.exports = {
       .header('Content-Disposition', 'attachment; filename=app.apk');
   },
 
+  // TODO: xmltv guide needs updating and more tests
   xmltv: async (request, h) => {
     if (request.query.username && request.query.password) {
 
@@ -113,6 +122,7 @@ module.exports = {
     }
   },
 
+  // TODO: Might not be required we can just redirect since this is only for the live tv
   syncxmltv: async (request, h) => {
     const file = fs.createWriteStream(path.join(__dirname, `../Storage/epg.xml`));
     const epg = http.get("http://tanmedia.watch:8880/xmltv.php?username=mrcameronsim@gmail.com&password=lhE787Y5hu", function(response) {
@@ -127,7 +137,9 @@ module.exports = {
     });
   },
 
+  // xtream api here. all requests are being hadnled.
   player_api: async (request, h) => {
+
     const dateNow = new Date;
     const dd = dateNow.getDate();
     const mm = dateNow.getMonth()+1;
@@ -233,10 +245,19 @@ module.exports = {
       }
 
       if (request.query.action === 'get_live_streams') {
+
+        clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
+            .then(function(clientGroups) {
+                return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+            });
+
         let channels = await Channels.findAll(
           {
               where: {
                   tvgtype: 'live',
+                  GroupId: {
+                    [Op.or]: clientGroups
+                  }
               },
           }
         );
@@ -275,10 +296,19 @@ module.exports = {
         }
 
       if (request.query.action === 'get_vod_streams') {
+
+        clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
+            .then(function(clientGroups) {
+                return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+            });
+
           let channels = await Channels.findAll(
             {
                 where: {
                     tvgtype: 'movie',
+                    GroupId: {
+                      [Op.or]: clientGroups
+                    }
                 },
             }
           );
