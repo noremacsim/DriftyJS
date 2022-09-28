@@ -1,0 +1,68 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item" aria-current="page">Series</li>
+    </ol>
+</nav>
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-12">
+            <a type="button" href="/channels/new/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0" style="float: right;">New Sesson</a>
+            <a type="button" href="/series/edit/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0 m-2" style="float: right;">New Series</a>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Series table</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Series Name</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sessons</th>
+                                <th class="text-secondary opacity-7"></th>
+                                <th class="text-secondary opacity-7"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% series.forEach((serie)=> { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2 py-1">
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-sm"><%= serie.name %></h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center text-sm">
+                                        <span>0 Sessons</span>
+                                    </td>
+                                    <td class="align-right">
+                                        <a href="/series/edit/<%= serie.id %>" class="text-white badge badge-sm bg-gradient-danger" data-toggle="tooltip" data-original-title="Edit Group">
+                                            Edit
+                                        </a>
+                                    </td>
+                                    <td class="align-right">
+                                        <a href="/series/<%= serie.id %>" class="text-white badge badge-sm bg-gradient-success" data-toggle="tooltip" data-original-title="View Groups">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

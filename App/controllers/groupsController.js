@@ -19,21 +19,6 @@ module.exports = {
         return h.simsView('groups', {groups: groups, activePage: 'movies'});
     },
 
-    series: async(request, h) => {
-        const groups = await Groups.findAll(
-              {
-                  include: {
-                      model: Channels,
-                  },
-                  where: {
-                    UserId: global.userID,
-                    type: 'tv',
-                  }
-                }
-            );
-        return h.simsView('groups', {groups: groups, activePage: 'series'});
-    },
-
     live: async(request, h) => {
         const groups = await Groups.findAll(
               {
