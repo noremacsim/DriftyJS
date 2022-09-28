@@ -16,6 +16,34 @@ const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
+  playm3uMovie: async (request, h) => {
+    const file = request.params.file
+    const username = request.params.username;
+    const password = request.params.password;
+
+    if (username && password) {
+      client = await Client.findOne({
+        where: {
+            username: request.params.username,
+            password: request.params.password
+          }
+      });
+    } else {
+      return Boom.unauthorized('invalid login');
+    }
+
+    if (!client) {
+      return Boom.unauthorized('invalid login');
+    }
+
+    let streamT = await fs.createReadStream(path.join(__dirname, `../m3u/Movies/${file}`));
+    let streamDataT = await new Readable().wrap(streamT);
+    return h.response(streamDataT)
+      .header('Content-Type', 'application/x-mpegurl')
+      .header('Connection', `keep-alive`)
+      .header('Cache-Control', `no-store, no-cache, must-revalidate`)
+  },
+
   // FOR LIVE STREAMS THROUGH PANDAFY
   playHls: async (request, h) => {
     const id = request.params.ID;
@@ -109,7 +137,14 @@ module.exports = {
     }
 
     // If its a movie or tvshow we will just redirect to the url provided since we manage this ourselves
-    if (type === 'movie' || type === 'series') {
+    if (type === 'movie') {
+      if (!channels.url.includes('https://') && !channels.url.includes('https://')) {
+        return h.redirect(`/${username}/${password}${channels.url}`).temporary();
+      }
+      return h.redirect(channels.url).temporary();
+    }
+
+    if (type === 'series') {
       return h.redirect(channels.url).temporary();
     }
 

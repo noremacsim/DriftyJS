@@ -83,4 +83,9 @@ module.exports = [
           console.log('unkown url');
         }
     },
+    {
+        method: "GET",
+        path: "/{username}/{password}/m3u8/Movies/{file}",
+        handler: xtream.playm3uMovie
+    },
 ];
