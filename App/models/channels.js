@@ -24,6 +24,26 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
+        episode: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        releaseDate: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        plot: {
+            type: DataTypes.TEXT('medium'),
+            allowNull: true,
+        },
+        runtime: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        coverImg: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         deleted: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
@@ -33,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
     Channels.associate = function(models) {
         Channels.belongsTo(models.Groups);
         Channels.belongsTo(models.User);
+        Channels.belongsTo(models.Sessons);
     };
 
 

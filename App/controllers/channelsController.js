@@ -36,18 +36,33 @@ module.exports = {
     editSave: async(request, h) => {
         const channelID = request.params.channelID
 
-        const {name, logo, url, group, tvgid, tvgtype, imbdid} = request.payload;
+        const {name, logo, url, group, tvgid, tvgtype, imbdid, episode, SessonId, SeriesId, releaseDate, plot, runtime, coverImg} = request.payload;
+
+        if (SeriesId) {
+          parseInt(SeriesId)
+        }
+
+        if (SessonId) {
+          parseInt(SessonId)
+        }
 
         if (channelID) {
             await Channels.update(
                 {
-                    name: name,
-                    logo: logo,
-                    url: url,
-                    GroupId: group,
-                    tvgid: tvgid,
-                    tvgtype: tvgtype,
-                    imbdid: imbdid,
+                    name: name ?? null,
+                    logo: logo ?? null,
+                    url: url ?? null,
+                    GroupId: group ?? null,
+                    tvgid: tvgid ?? null,
+                    tvgtype: tvgtype ?? null,
+                    imbdid: imbdid ?? null,
+                    episode: episode ?? null,
+                    releaseDate: releaseDate ?? null,
+                    plot: plot ?? null,
+                    runtime: runtime ?? null,
+                    coverImg: coverImg ?? null,
+                    SeriesId: SeriesId ?? null,
+                    SessonId: SessonId ?? null,
                 },
                 {
                     where: {id: channelID, UserId: global.userID}
@@ -56,13 +71,20 @@ module.exports = {
         } else {
             await Channels.create(
                 {
-                    name: name,
-                    logo: logo,
-                    url: url,
-                    GroupId: group,
-                    tvgid: tvgid,
-                    tvgtype: tvgtype,
-                    imbdid: imbdid,
+                    name: name ?? null,
+                    logo: logo ?? null,
+                    url: url ?? null,
+                    GroupId: group ?? null,
+                    tvgid: tvgid ?? null,
+                    tvgtype: tvgtype ?? null,
+                    imbdid: imbdid ?? null,
+                    episode: episode ?? null,
+                    releaseDate: releaseDate ?? null,
+                    plot: plot ?? null,
+                    runtime: runtime ?? null,
+                    coverImg: coverImg ?? null,
+                    SeriesId: SeriesId ?? null,
+                    SessonId: SessonId ?? null,
                     UserId: global.userID,
                 }
             );

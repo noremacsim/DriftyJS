@@ -80,7 +80,7 @@ module.exports = [
         method: [ 'GET', 'POST' ],
         path: '/{any*}',
         handler: (request, h) => {
-          console.log(request);
+          console.log('unkown url');
         }
     },
 ];

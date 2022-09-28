@@ -11,13 +11,41 @@ const {Groups} = require(path.join(__dirname, '../../Core/models/'));
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 const {Client} = require(path.join(__dirname, '../../Core/models/'));
 const {ClientGroups} = require(path.join(__dirname, '../../Core/models/'));
+const {Series} = require(path.join(__dirname, '../../Core/models/'));
+const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
   // FOR LIVE STREAMS THROUGH PANDAFY
   playHls: async (request, h) => {
     const id = request.params.ID;
-    return h.redirect(`https://cart.beastdevs.biz/hls/${id}`).temporary();
+
+    const domains = [
+      'https://cart.beastdevs.biz/hls/',
+      'http://185.229.241.224/hls/'
+    ]
+
+    let useDomain = '';
+    let requestType = http;
+
+    for (const domain of domains) {
+      let status = null;
+      requestType = http;
+      useDomain = domain;
+
+      if (domain.includes('https://')) {
+        requestType = https;
+      }
+
+      status = requestType.get(`${domain}${id}`, function(res) {
+        return res.statusCode
+      })
+
+      if (status === 200) {
+        break;
+      }
+    }
+    return h.redirect(`${useDomain}${id}`).temporary();
   },
 
   //Handles the rest of the channel play requests
@@ -27,7 +55,6 @@ module.exports = {
     const username = request.params.username;
     const password = request.params.password;
     const type = request.params.TYPE;
-
 
     if (username && password) {
       client = await Client.findOne({
@@ -53,8 +80,18 @@ module.exports = {
     function processm3u8(tempFileName) {
       return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(path.join(__dirname, `../Temp/${tempFileName}`));
-        const original = https.get(channels.url, async function(response) {
-        const streamData = https.get(response.headers.location, function(response) {
+
+        let request = http;
+        if (channels.url.includes('https://')) {
+          request = https;
+        }
+
+        const original = request.get(channels.url, async function(response) {
+          let request = http;
+          if (response.headers.location.includes('https://')) {
+            request = https;
+          }
+          const streamData = request.get(response.headers.location, function(response) {
             response.pipe(file);
             file.on("finish", async () => {
                 file.close();
@@ -72,7 +109,7 @@ module.exports = {
     }
 
     // If its a movie or tvshow we will just redirect to the url provided since we manage this ourselves
-    if (type === 'movie' || type === 'tv') {
+    if (type === 'movie' || type === 'series') {
       return h.redirect(channels.url).temporary();
     }
 
@@ -152,6 +189,8 @@ module.exports = {
     let liveCategories = [];
     let liveChannels = [];
     let vodChannels = [];
+    let tvCategories = [];
+    let tvSeries = [];
 
     if (typeof request.payload != 'undefined') {
       if (
@@ -241,7 +280,34 @@ module.exports = {
       }
 
       if (request.query.action === 'get_series_categories') {
-        return h.response([]).code(200);
+
+        clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
+            .then(function(clientGroups) {
+                return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+            });
+
+        const tvcats = await Groups.findAll(
+          {
+            where: {
+              type: 'tv',
+              id: {
+                [Op.or]: clientGroups
+              }
+            }
+          }
+        );
+
+        for (const tvcat of tvcats) {
+          tvCategories.push(
+                {
+                  "category_id":tvcat.id,
+                  "category_name":tvcat.name,
+                  "parent_id":0
+                }
+              );
+        }
+
+        return h.response(tvCategories).code(200);
       }
 
       if (request.query.action === 'get_live_streams') {
@@ -346,7 +412,164 @@ module.exports = {
         }
 
       if (request.query.action === 'get_series') {
-        return h.response([]).code(200);
+
+        clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
+            .then(function(clientGroups) {
+                return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+            });
+
+        let series = await Series.findAll(
+          {
+              where: {
+                  GroupId: {
+                    [Op.or]: clientGroups
+                  }
+              },
+          }
+        );
+
+        // TODO: Pull IMBD Data
+
+        for (const serie of series) {
+          tvSeries.push({
+              "num":serie.id,
+              "name":serie.name,
+              "title":serie.name,
+              "year": serie.releaseDate,
+              "stream_type":"series",
+              "series_id":serie.id,
+              "cover": serie.coverImg,
+              "plot": serie.plot,
+              "cast":"",
+              "director":"",
+              "genre":"",
+              "release_date": serie.releaseDate,
+              "releaseDate": serie.releaseDate,
+              "last_modified":"1664354413",
+              "rating":"",
+              "rating_5based":0,
+              "backdrop_path":[serie.backdropImg],
+              "youtube_trailer":"",
+              "episode_run_time":serie.runtime,
+              "category_id":serie.GroupId,
+              "category_ids":[serie.GroupId]
+          })
+        }
+
+        return h.response(tvSeries).code(200);
+      }
+
+      if (request.query.action === 'get_series_info') {
+
+        const series_id = request.query.series_id;
+
+        let series = await Series.findOne(
+          {
+              where: {
+                  id: series_id
+              },
+          }
+        );
+
+        let sessons = await Sessons.findAll(
+          {
+              where: {
+                  SeriesId: series_id
+              },
+          }
+        );
+
+        let episodes = await Channels.findAll(
+          {
+            where: {
+              SeriesId: series_id
+            }
+          }
+        )
+
+        let sessonsData = [];
+        for (const sesson of sessons) {
+          sessonsData.push({
+            "air_date":"",
+            "episode_count":sesson.episodes,
+            "id":sesson.id,
+            "name":sesson.name,
+            "overview":sesson.overview,
+            "season_number":sesson.season,
+            "cover":sesson.coverImg,
+            "cover_big":sesson.coverImg
+          })
+        }
+
+        let info =
+        {
+          "name":series.name,
+          "title":series.name,
+          "year":series.releaseDate,
+          "cover":series.coverImg,
+          "plot":series.plot,
+          "cast":"",
+          "director":"",
+          "genre":"",
+          "release_date":series.releaseDate,
+          "releaseDate":series.releaseDate,
+          "last_modified":"",
+          "rating":"",
+          "rating_5based":0,
+          "backdrop_path":[series.backdropImg],
+          "youtube_trailer":series.youtubeID,
+          "episode_run_time":series.runtime,
+          "category_id":series.GroupId,
+          "category_ids":[series.GroupId]
+        }
+
+        // THIS WILL BE CHANNELS
+        let episodesData = [];
+        let seasoninfo = '';
+
+        for (const episode of episodes) {
+
+          seasoninfo = await Sessons.findOne(
+            {
+              where: {
+                id: episode.SessonId
+              }
+            }
+          )
+
+          episodesData.push({
+            "id":episode.id,
+            "episode_num":episode.episode,
+            "title":episode.name,
+            "container_extension":"mp4",
+            "info": {
+              "tmdb_id":episode.imbdid,
+              "release_date":episode.releaseDate,
+              "plot":episode.plot,
+              "duration_secs":episode.runtime,
+              "duration":`${episode.runtime / 60} minutes`,
+              "movie_image":episode.logo,
+              "bitrate":0,
+              "rating":0,
+              "season":seasoninfo.season,
+              "cover_big":episode.coverImg
+            },
+            "subtitles":[],
+            "custom_sid":"",
+            "added":"1654606507",
+            "season":seasoninfo.season,
+            "direct_source":""
+          })
+        }
+
+
+        let all = {
+          'seasons': sessonsData,
+          'info': info,
+          "episodes": {"1" : episodesData}
+        }
+
+        return h.response(all).code(200);
       }
 
       if (request.query.action === 'get_vod_info') {
@@ -386,7 +609,7 @@ module.exports = {
            "genre":"",
            "backdrop_path":[`https://image.tmdb.org/t/p/w1280/${imbd.backdrop_path}`],
            "duration_secs":imbd.runtime * 60,
-           "duration":"",
+           "duration":imbd.runtime,
            "bitrate":7115,
            "rating":imbd.vote_average,
            "releasedate":imbd.release_date,
@@ -436,7 +659,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"cameronsim.uk",
+            "url":"192.168.1.218",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
