@@ -72,6 +72,7 @@ module.exports = {
         break;
       }
     }
+    console.log(`${useDomain}${id}`);
     return h.redirect(`${useDomain}${id}`).temporary();
   },
 
@@ -693,7 +694,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"192.168.1.218",
+            "url":"cameronsim.uk",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
