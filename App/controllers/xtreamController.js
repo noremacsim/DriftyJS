@@ -40,8 +40,8 @@ module.exports = {
     let streamDataT = await new Readable().wrap(streamT);
     return h.response(streamDataT)
       .header('Content-Type', 'application/x-mpegurl')
-      .header('Connection', `keep-alive`)
       .header('Cache-Control', `no-store, no-cache, must-revalidate`)
+      .header('Content-Disposition', 'attachment; filename=index.m3u8');
   },
 
   // FOR LIVE STREAMS THROUGH PANDAFY
