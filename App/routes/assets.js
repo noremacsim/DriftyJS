@@ -31,4 +31,14 @@ module.exports = [
             }
         }
     },
+    {
+        method: "GET",
+        path: "/m3u8/Movies/{file*}",
+        handler: {
+            directory: {
+                path: path.join(__dirname, '../m3u/Movies/'),
+                listing: true
+            }
+        }
+    },
 ];
