@@ -37,8 +37,8 @@ module.exports = {
     }
 
     let streamT = await fs.createReadStream(path.join(__dirname, `../m3u/Movies/${file}`));
-    let streamDataT = await new Readable().wrap(streamT);
-    return h.response(streamDataT)
+    //let streamDataT = await new Readable().wrap(streamT);
+    return h.response(streamT)
       .header('Content-Type', 'application/x-mpegurl')
       .header('Content-Disposition', 'attachment; filename=index.m3u8');
   },
