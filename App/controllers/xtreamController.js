@@ -130,8 +130,12 @@ module.exports = {
       });
     }
 
-    // We will want to stop there streams if they arent active
-    // TODO: add a stop if account has expired
+    const ToDate = new Date();
+    const userExpDate = new Date(client.exp_date).getTime();
+    if (new Date(client.exp_date).getTime() <= ToDate.getTime()) {
+      return h.redirect('https://drive.google.com/uc?export=download&id=15INXyplB6vc7Mu00jtZvbJpr7pxyMOJH').temporary();
+     }
+
     if (!client.active) {
       return h.redirect('https://drive.google.com/uc?export=download&id=15INXyplB6vc7Mu00jtZvbJpr7pxyMOJH').temporary();
     }
