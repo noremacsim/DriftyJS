@@ -16,8 +16,9 @@ const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
-  playm3uMovie: async (request, h) => {
+  playm3u8: async (request, h) => {
     const file = request.params.file
+    const type = request.params.type
     const username = request.params.username;
     const password = request.params.password;
 
@@ -36,7 +37,7 @@ module.exports = {
       return Boom.unauthorized('invalid login');
     }
 
-    let streamT = await fs.createReadStream(path.join(__dirname, `../m3u/Movies/${file}`));
+    let streamT = await fs.createReadStream(path.join(__dirname, `../m3u/${type}/${file}`));
     //let streamDataT = await new Readable().wrap(streamT);
     return h.response(streamT)
       .header('Content-Type', 'application/x-mpegurl')
