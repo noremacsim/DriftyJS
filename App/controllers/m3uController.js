@@ -11,52 +11,15 @@ const { Op } = require("sequelize");
 module.exports = {
     parseToDB: async(request, h) => {
 
-        async function addGroup(group) {
-            const groups = await Groups.findOne({
-                where: {
-                  [Op.or]: [
-                      { name: group },
-                      { mapped: group }
-                    ]
-                }
-            });
-            return groups;
-        }
-
         async function addChannels(channels) {
-            let group = ''; // channel->group->title
-            let groupTitle = '';
-            let skipTVShows = false;
-            let tvShowRegex = new RegExp("[Ss][0-9]{2}[Ee][0-9]{2}");
-
-            const settings = await Settings.findAll({where: {type: 'TVShows'}});
-
-            if (!settings.Active) {
-              skipTVShows = true;
-            }
-
-
            for (const channel of channels) {
-             if (channel.group['title'] !== groupTitle) {
-               group = await addGroup(channel.group['title']);
-               groupTitle = channel.group['title']
-             }
 
-              //TODO: If group doesn't exist don't addGroup Can probably think of a way to overide this for a full import ui side
-              if (!group) {
-                continue;
-              }
-
-              if (skipTVShows) {
-                if (tvShowRegex.test(channel.name)) {
-                    continue;
-                }
-              }
+              let name = channel.name.replace("UK: ", "");
 
               await Channels.update({
                 tvgid: channel.tvg['id'],
               }, {
-                where: { name: channel.name, GroupId: group.id }
+                where: { name: channel.name, tvgtype: 'live' }
               });
           }
 
