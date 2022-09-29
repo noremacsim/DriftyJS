@@ -6,6 +6,18 @@ const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
+    viewByGroup: async(request, h) => {
+        const GroupId = request.params.groupID;
+
+        const movies = await Channels.findAll(
+              {
+                where: { tvgtype: 'movies', UserId: global.userID, GroupId: GroupId }
+              }
+          );
+
+        return h.simsView('movies', {channels: movies, GroupId: GroupId, activePage: 'movies'});
+    },
+
     view: async(request, h) => {
         const movies = await Channels.findAll(
               {
@@ -14,8 +26,10 @@ module.exports = {
           );
         return h.simsView('movies', {channels: movies, activePage: 'movies'});
     },
+
     editView: async(request, h) => {
         const movieID = request.params.movieID;
+        const groupID = request.params.groupID;
         const groups = await Groups.findAll();
 
         let channel = [];
@@ -23,9 +37,8 @@ module.exports = {
 
         if (movieID) {
             channel = await Channels.findOne({ where: { id: movieID, UserId: global.userID } });
-            group = await Groups.findOne({ where: { id: channel.GroupId, UserId: global.userID } });
         }
 
-        return h.simsView('editMovie', {channel: channel, groups: groups, group: group, activePage: 'movies'});
+        return h.simsView('editMovie', {channel: channel, type: 'movies', groupID: groupID, activePage: 'movies'});
     },
 };

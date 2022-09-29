@@ -1,11 +1,30 @@
 const path = require("path");
 const channels = require(path.join(__dirname, '../controllers/channelsController'));
+const groups = require(path.join(__dirname, '../controllers/groupsController'));
 const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {
         method: "GET",
-        path: "/channels/edit/{channelID}",
+        path: "/groups/live",
+        handler: groups.live,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Gets all the groups available",
+        }
+    },
+    {
+        method: "GET",
+        path: "/live/{groupID}",
+        handler: channels.viewByGroup,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Gets all the groups available",
+        }
+    },
+    {
+        method: "GET",
+        path: "/channels/{groupID}/edit/{channelID}",
         handler: channels.editView,
         config: {
             pre: [{ method: middleware.auth }],
@@ -15,15 +34,6 @@ module.exports = [
     {
         method: "GET",
         path: "/channels/new/{groupID}",
-        handler: channels.editView,
-        config: {
-            pre: [{ method: middleware.auth }],
-            description: "New Channel",
-        }
-    },
-    {
-        method: "GET",
-        path: "/channels/new/",
         handler: channels.editView,
         config: {
             pre: [{ method: middleware.auth }],

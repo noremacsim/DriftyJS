@@ -12,11 +12,11 @@ module.exports = {
                   },
                   where: {
                     UserId: global.userID,
-                    type: 'movie'
+                    type: 'movies'
                   }
                 }
             );
-        return h.simsView('groups', {groups: groups, activePage: 'movies'});
+        return h.simsView('groups', {groups: groups, type: 'movies', activePage: 'movies'});
     },
 
     live: async(request, h) => {
@@ -31,28 +31,33 @@ module.exports = {
                   }
                 }
             );
-        return h.simsView('groups', {groups: groups, activePage: 'live'});
+        return h.simsView('groups', {groups: groups, type: 'live', activePage: 'live'});
     },
 
-    view: async(request, h) => {
+    series: async(request, h) => {
         const groups = await Groups.findAll(
               {
                   include: {
                       model: Channels,
                   },
-                  where: { UserId: global.userID }
+                  where: {
+                    UserId: global.userID,
+                    type: 'series'
+                  }
                 }
             );
-        return h.simsView('groups', {groups: groups, activePage: 'playlists'});
+        return h.simsView('groups', {groups: groups, type: 'series', activePage: 'series'});
     },
 
     editView: async(request, h) => {
         const groupID = request.params.groupID;
+        const type = request.params.type;
+
         let group = [];
         if (groupID) {
             group = await Groups.findOne({ where: { id: groupID, UserId: global.userID } });
         }
-        return h.simsView('editGroup', {group: group, activePage: 'playlists'});
+        return h.simsView('editGroup', {group: group, type: type, activePage: type});
     },
 
     editSave: async(request, h) => {

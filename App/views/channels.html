@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="/groups">Groups</a></li>
+        <li class="breadcrumb-item"><a href="/groups/live">Groups</a></li>
         <li class="breadcrumb-item" aria-current="page"><%= group.name %></li>
     </ol>
 </nav>
@@ -59,7 +59,7 @@
                                     <span class="text-secondary text-xs font-weight-bold"><%= channel.tvgID %></span>
                                 </td>
                                 <td class="align-middle">
-                                    <a href="/channels/edit/<%= channel.id %>" class="text-white badge badge-sm bg-gradient-danger" data-toggle="tooltip" data-original-title="Edit user">
+                                    <a href="/channels/<%= GroupId %>/edit/<%= channel.id %>" class="text-white badge badge-sm bg-gradient-danger" data-toggle="tooltip" data-original-title="Edit user">
                                         Edit
                                     </a>
                                 </td>

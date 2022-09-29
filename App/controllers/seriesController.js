@@ -6,26 +6,26 @@ const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
-    view: async(request, h) => {
+    viewByGroup: async(request, h) => {
+        const GroupId = request.params.groupID;
+
         const series = await Series.findAll(
               {
-                  include: {
-                      model: Sessons,
-                  },
-                  where: { UserId: global.userID }
-                }
-            );
-        return h.simsView('series', {series: series, activePage: 'series'});
+                where: { UserId: global.userID, GroupId: GroupId }
+              }
+          );
+
+        return h.simsView('series', {series: series, GroupId: GroupId, activePage: 'series'});
     },
 
     editView: async(request, h) => {
         const seriesID = request.params.seriesID;
-        const groups = await Groups.findAll();
+        const groupID = request.params.groupID;
         let series = [];
         if (seriesID) {
             series = await Series.findOne({ where: { id: seriesID, UserId: global.userID } });
         }
-        return h.simsView('editSeries', {series: series, groups: groups, activePage: 'series'});
+        return h.simsView('editSeries', {series: series, groupID: groupID, activePage: 'series'});
     },
 
     editSave: async(request, h) => {

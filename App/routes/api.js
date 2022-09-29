@@ -4,14 +4,6 @@ const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {
-        method: "GET",
-        path: "/iptv",
-        handler: xtream.apk,
-        config: {
-            description: "Download Apk",
-        }
-    },
-    {
         method: ['GET', 'POST'],
         path: "/player_api.php",
         handler: xtream.player_api,

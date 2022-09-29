@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="/series">Series</a></li>
+        <li class="breadcrumb-item"><a href="/groups/series">Series</a></li>
         <li class="breadcrumb-item" aria-current="page">Edit Series</li>
     </ol>
 </nav>
@@ -42,19 +42,8 @@
                 <div class="input-group input-group-outline mb-3">
                     <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="runtime" value="<% if(series.runtime){ %><%= series.runtime %><% } %>">
                 </div>
-                <label class="form-label">Group</label>
-                <div class="input-group input-group-outline mb-3">
-                    <select class="form-select input-group-outline" name="group" aria-label="Default select example">
-                        <option>Select Series Group</option>
-                        <% groups.forEach((group)=> { %>
-                            <option class="input-group-outline" value="<%= group.id %>"
-                                <% if(group.id === series.GroupId){ %>selected<% } %>
-                        >
-                                <%= group.name %>
-                            </option>
-                        <% }) %>
-                    </select>
-                </div>
+
+                <input type="hidden" name="group" value="<%= groupID %>">
             </div>
         </div>
         <div class="text-center">

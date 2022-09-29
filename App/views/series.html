@@ -1,6 +1,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/groups/series">Groups</a></li>
         <li class="breadcrumb-item" aria-current="page">Series</li>
     </ol>
 </nav>
@@ -8,8 +9,7 @@
 <div class="container-fluid">
     <div class="row mb-3">
         <div class="col-12">
-            <a type="button" href="/channels/new/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0" style="float: right;">New Sesson</a>
-            <a type="button" href="/series/edit/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0 m-2" style="float: right;">New Series</a>
+            <a type="button" href="/series/<%= GroupId %>/edit/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0 m-2" style="float: right;">New Series</a>
         </div>
     </div>
 </div>
@@ -47,12 +47,12 @@
                                         <span>0 Sessons</span>
                                     </td>
                                     <td class="align-right">
-                                        <a href="/series/edit/<%= serie.id %>" class="text-white badge badge-sm bg-gradient-danger" data-toggle="tooltip" data-original-title="Edit Group">
+                                        <a href="/series/<%= GroupId %>/edit/<%= serie.id %>" class="text-white badge badge-sm bg-gradient-danger" data-toggle="tooltip" data-original-title="Edit Group">
                                             Edit
                                         </a>
                                     </td>
                                     <td class="align-right">
-                                        <a href="/series/<%= serie.id %>" class="text-white badge badge-sm bg-gradient-success" data-toggle="tooltip" data-original-title="View Groups">
+                                        <a href="/series/<%= GroupId %>/<%= serie.id %>" class="text-white badge badge-sm bg-gradient-success" data-toggle="tooltip" data-original-title="View Groups">
                                             View
                                         </a>
                                     </td>

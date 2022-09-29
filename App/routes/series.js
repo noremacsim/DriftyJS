@@ -1,13 +1,14 @@
 const path = require("path");
 const series = require(path.join(__dirname, '../controllers/seriesController'));
 const sessons = require(path.join(__dirname, '../controllers/sessonsController'));
+const groups = require(path.join(__dirname, '../controllers/groupsController'));
 const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
   {
       method: "GET",
-      path: "/series",
-      handler: series.view,
+      path: "/groups/series",
+      handler: groups.series,
       config: {
           pre: [{ method: middleware.auth }],
           description: "Gets all the groups available",
@@ -15,7 +16,16 @@ module.exports = [
   },
   {
       method: "GET",
-      path: "/series/edit/",
+      path: "/series/{groupID}",
+      handler: series.viewByGroup,
+      config: {
+          pre: [{ method: middleware.auth }],
+          description: "Gets all the groups available",
+      }
+  },
+  {
+      method: "GET",
+      path: "/series/{groupID}/edit/",
       handler: series.editView,
       config: {
           pre: [{ method: middleware.auth }],
@@ -33,7 +43,7 @@ module.exports = [
   },
   {
       method: "GET",
-      path: "/series/edit/{seriesID}",
+      path: "/series/{groupID}/edit/{seriesID}",
       handler: series.editView,
       config: {
           pre: [{ method: middleware.auth }],
@@ -60,7 +70,7 @@ module.exports = [
   },
   {
       method: "GET",
-      path: "/series/{seriesID}",
+      path: "/series/{groupID}/{seriesID}",
       handler: sessons.view,
       config: {
           pre: [{ method: middleware.auth }],

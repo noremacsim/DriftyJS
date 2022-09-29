@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="/groups">Groups</a></li>
+        <li class="breadcrumb-item"><a href="/groups/<%= type %>">Groups</a></li>
         <li class="breadcrumb-item" aria-current="page">Edit Group</li>
     </ol>
 </nav>
@@ -18,13 +18,7 @@
                 <div class="input-group input-group-outline mb-3">
                     <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="mapped" value="<%= group.mapped %>">
                 </div>
-                <label class="form-label">Group Type</label>
-                <select class="form-select" aria-label="Select Group Type" name='type'>
-                  <option>Select Group Type</option>
-                  <option value="movie" <% if(group.type === 'movie'){ %> selected <% } %>>Movies</option>
-                  <option value="live"<% if(group.type === 'live'){ %> selected <% } %> >Live TV</option>
-                  <option value="tv" <% if(group.type === 'tv'){ %> selected <% } %> >TV Shows</option>
-                </select>
+                <input type="hidden" name="type" value="<%= type %>">
             </div>
         </div>
         <div class="text-center">

@@ -8,8 +8,7 @@
 <div class="container-fluid">
     <div class="row mb-3">
         <div class="col-12">
-            <a type="button" href="/channels/new/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0" style="float: right;">New Channel</a>
-            <a type="button" href="/groups/edit/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0 m-2" style="float: right;">New Group</a>
+            <a type="button" href="/groups/<%= type %>/edit/" class="btn btn-lg bg-gradient-success btn-lg mt-4 mb-0 m-2" style="float: right;">New Group</a>
         </div>
     </div>
 </div>
@@ -47,15 +46,17 @@
                                         <span><%= group.Channels.length %> Channels</span>
                                     </td>
                                     <td class="align-right">
-                                        <a href="/groups/edit/<%= group.id %>" class="text-white badge badge-sm bg-gradient-danger" data-toggle="tooltip" data-original-title="Edit Group">
+                                        <a href="/groups/<%= type %>/edit/<%= group.id %>" class="text-white badge badge-sm bg-gradient-danger" data-toggle="tooltip" data-original-title="Edit Group">
                                             Edit
                                         </a>
                                     </td>
-                                    <td class="align-right">
-                                        <a href="/groups/<%= group.id %>" class="text-white badge badge-sm bg-gradient-success" data-toggle="tooltip" data-original-title="View Groups">
-                                            View
-                                        </a>
-                                    </td>
+                                    <% if(type !== 'groups'){ %>
+                                      <td class="align-right">
+                                          <a href="/<%= type %>/<%= group.id %>" class="text-white badge badge-sm bg-gradient-success" data-toggle="tooltip" data-original-title="View Groups">
+                                              View
+                                          </a>
+                                      </td>
+                                    <% } %>
                                 </tr>
                             <% }) %>
                             </tbody>

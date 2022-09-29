@@ -72,7 +72,6 @@ module.exports = {
         break;
       }
     }
-    console.log(`${useDomain}${id}`);
     return h.redirect(`${useDomain}${id}`).temporary();
   },
 
@@ -138,9 +137,12 @@ module.exports = {
 
     // If its a movie or tvshow we will just redirect to the url provided since we manage this ourselves
     if (type === 'movie') {
+
+      //If no domain its a local file.
       if (!channels.url.includes('https://') && !channels.url.includes('https://')) {
         return h.redirect(`/${username}/${password}${channels.url}`).temporary();
       }
+
       return h.redirect(channels.url).temporary();
     }
 
@@ -158,15 +160,6 @@ module.exports = {
       .header('Content-Type', 'application/x-mpegurl')
       .header('Connection', `keep-alive`)
       .header('Cache-Control', `no-store, no-cache, must-revalidate`)
-  },
-
-  // TODO: Improve this or remove
-  apk: async (request, h) => {
-    let stream = fs.createReadStream(path.join(__dirname, `../Storage/app.apk`));
-    let streamData = new Readable().wrap(stream);
-    return h.response(streamData)
-      .header('Content-Type', 'application/apk')
-      .header('Content-Disposition', 'attachment; filename=app.apk');
   },
 
   // TODO: xmltv guide needs updating and more tests
@@ -293,7 +286,7 @@ module.exports = {
         const vods = await Groups.findAll(
           {
             where: {
-              type: 'movie',
+              type: 'movies',
               id: {
                 [Op.or]: clientGroups
               }
@@ -324,7 +317,7 @@ module.exports = {
         const tvcats = await Groups.findAll(
           {
             where: {
-              type: 'tv',
+              type: 'series',
               id: {
                 [Op.or]: clientGroups
               }
@@ -406,7 +399,7 @@ module.exports = {
           let channels = await Channels.findAll(
             {
                 where: {
-                    tvgtype: 'movie',
+                    tvgtype: 'movies',
                     GroupId: {
                       [Op.or]: clientGroups
                     }
@@ -418,7 +411,7 @@ module.exports = {
             channels = await Channels.findAll({
                 where: {
                     GroupId: request.query.category_id,
-                    tvgtype: 'movie',
+                    tvgtype: 'movies',
                 },
             });
           }

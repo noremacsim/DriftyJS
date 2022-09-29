@@ -1,15 +1,16 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="/groups">Groups</a></li>
-        <li class="breadcrumb-item" aria-current="page">TODO</li>
+        <li class="breadcrumb-item"><a href="/groups/movies">Groups</a></li>
+        <li class="breadcrumb-item"><a href="/movies/<%= groupID %>">Group</a></li>
+        <li class="breadcrumb-item" aria-current="page">channel</li>
     </ol>
 </nav>
 
 <div class="container">
     <div class="card">
         <div class="card-body p-3">
-            <form action="/movies/edit/<% if(channel.id){ %><%= channel.id %><% } %>" method="post">
+            <form action="/channels/edit/<% if(channel.id){ %><%= channel.id %><% } %>" method="post">
                 <label class="form-label">Name</label>
                 <div class="input-group input-group-outline mb-3">
                     <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="name" value="<% if(channel.name){ %><%= channel.name %><% } %>">
@@ -26,27 +27,8 @@
                 <div class="input-group input-group-outline mb-3">
                     <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="imbdid" value="<% if(channel.imbdid){ %><%= channel.imbdid %><% } %>">
                 </div>
-                <label class="form-label">tvgid</label>
-                <div class="input-group input-group-outline mb-3">
-                    <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="tvgid" value="<% if(channel.tvgid){ %><%= channel.tvgid %><% } %>">
-                </div>
-                <label class="form-label">tvg Type</label>
-                <div class="input-group input-group-outline mb-3">
-                    <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="tvgtype" value="<% if(channel.tvgtype){ %><%= channel.tvgtype %><% } %>">
-                </div>
-                <label class="form-label">Group</label>
-                <div class="input-group input-group-outline mb-3">
-                    <select class="form-select input-group-outline" name="group" aria-label="Default select example">
-                        <option>Select Channel Group</option>
-                        <% groups.forEach((group)=> { %>
-                            <option class="input-group-outline" value="<%= group.id %>"
-                                <% if(group.id === channel.GroupId){ %>selected<% } %>
-                        >
-                                <%= group.name %>
-                            </option>
-                        <% }) %>
-                    </select>
-                </div>
+                <input type='hidden' name='tvgtype' value='<%= type %>'>
+                <input type='hidden' name='group' value='<%= groupID %>'>
                 <div class="text-center">
                     <button type="submit" class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save</button>
                     <% if(channel.id){ %>

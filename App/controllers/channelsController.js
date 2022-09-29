@@ -9,13 +9,14 @@ module.exports = {
 
         const channels = await Channels.findAll({
             where: {
+                tvgtype: 'live',
                 GroupId: GroupId,
                 UserId: global.userID,
             },
         });
         const group = await Groups.findOne({ where: { id: GroupId, UserId: global.userID } });
 
-        return h.simsView('channels', {channels: channels, GroupId: GroupId, group: group, activePage: 'playlists'});
+        return h.simsView('channels', {channels: channels, GroupId: GroupId, group: group, activePage: 'live'});
     },
 
     editView: async(request, h) => {
@@ -30,7 +31,7 @@ module.exports = {
             group = await Groups.findOne({ where: { id: channel.GroupId, UserId: global.userID } });
         }
 
-        return h.simsView('editChannel', {channel: channel, groupId: groupId, groups: groups, group: group, activePage: 'playlists'});
+        return h.simsView('editChannel', {channel: channel, groupId: groupId, groups: groups, group: group, type: 'live', activePage: 'live'});
     },
 
     editSave: async(request, h) => {
@@ -45,6 +46,23 @@ module.exports = {
         if (SessonId) {
           parseInt(SessonId)
         }
+
+        console.log({
+            name: name ?? null,
+            logo: logo ?? null,
+            url: url ?? null,
+            GroupId: group ?? null,
+            tvgid: tvgid ?? null,
+            tvgtype: tvgtype ?? null,
+            imbdid: imbdid ?? null,
+            episode: episode ?? null,
+            releaseDate: releaseDate ?? null,
+            plot: plot ?? null,
+            runtime: runtime ?? null,
+            coverImg: coverImg ?? null,
+            SeriesId: SeriesId ?? null,
+            SessonId: SessonId ?? null,
+        });
 
         if (channelID) {
             await Channels.update(

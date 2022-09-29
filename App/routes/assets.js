@@ -21,14 +21,4 @@ module.exports = [
             }
         }
     },
-    {
-        method: "GET",
-        path: "/Storage/{file*}",
-        handler: {
-            directory: {
-                path: path.join(__dirname, '../Storage/'),
-                listing: true
-            }
-        }
-    },
 ];
