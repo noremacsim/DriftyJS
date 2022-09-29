@@ -17,11 +17,13 @@ module.exports = {
               let name = channel.name.replace("UK: ", "");
               console.log(name);
 
-              await Channels.update({
+              let a = await Channels.update({
                 tvgid: channel.tvg['id'],
               }, {
                 where: { name: channel.name, tvgtype: 'live' }
               });
+
+              console.log(a);
           }
 
            return true;
