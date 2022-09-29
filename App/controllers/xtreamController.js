@@ -165,6 +165,7 @@ module.exports = {
 
   // TODO: xmltv guide needs updating and more tests
   xmltv: async (request, h) => {
+    console.log(request.query);
     if (request.query.username && request.query.password) {
 
       client = await Client.findOne({
@@ -190,6 +191,7 @@ module.exports = {
 
   // TODO: Might not be required we can just redirect since this is only for the live tv
   syncxmltv: async (request, h) => {
+    fs.unlinkSync(path.join(__dirname, `../Storage/epg.xml`));
     const file = fs.createWriteStream(path.join(__dirname, `../Storage/epg.xml`));
     const epg = http.get("http://tanmedia.watch:8880/xmltv.php?username=mrcameronsim@gmail.com&password=lhE787Y5hu", function(response) {
        response.pipe(file);
@@ -688,10 +690,12 @@ module.exports = {
       }
 
       if (request.query.action === 'get_short_epg') {
+        console.log(request.query);
         return h.response([]).code(200);
       }
 
       if (request.query.action === 'get_simple_data_table') {
+        console.log(request.query);
         return h.response([]).code(200);
       }
 
