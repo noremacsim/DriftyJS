@@ -15,6 +15,7 @@ module.exports = {
            for (const channel of channels) {
 
               let name = channel.name.replace("UK: ", "");
+              console.log(name);
 
               await Channels.update({
                 tvgid: channel.tvg['id'],
