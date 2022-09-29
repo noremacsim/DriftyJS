@@ -137,17 +137,13 @@ module.exports = {
     }
 
     // If its a movie or tvshow we will just redirect to the url provided since we manage this ourselves
-    if (type === 'movie') {
+    if (type === 'movie' || type === 'series') {
 
       //If no domain its a local file.
       if (!channels.url.includes('https://') && !channels.url.includes('https://')) {
         return h.redirect(`/${username}/${password}${channels.url}`).temporary();
       }
 
-      return h.redirect(channels.url).temporary();
-    }
-
-    if (type === 'series') {
       return h.redirect(channels.url).temporary();
     }
 
