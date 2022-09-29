@@ -20,7 +20,7 @@ module.exports = {
               let a = await Channels.update({
                 tvgid: channel.tvg['id'],
               }, {
-                where: { name: channel.name, tvgtype: 'live' }
+                where: { name: name, tvgtype: 'live' }
               });
 
               console.log(a);
