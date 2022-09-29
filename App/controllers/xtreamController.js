@@ -226,6 +226,10 @@ module.exports = {
       }
     }
 
+    console.log(request)
+    console.log(request.query)
+
+
     if (request.query.username && request.query.password) {
 
       client = await Client.findOne({
