@@ -226,10 +226,6 @@ module.exports = {
       }
     }
 
-    console.log(request)
-    console.log(request.query)
-
-
     if (request.query.username && request.query.password) {
 
       client = await Client.findOne({
@@ -252,6 +248,10 @@ module.exports = {
             .then(function(clientGroups) {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
+
+        if (clientGroups.length < 1) {
+          return h.response([]).code(200);
+        }
 
         const lives = await Groups.findAll(
           {
@@ -284,6 +284,11 @@ module.exports = {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
 
+
+        if (clientGroups.length < 1) {
+          return h.response([]).code(200);
+        }
+
         const vods = await Groups.findAll(
           {
             where: {
@@ -314,6 +319,10 @@ module.exports = {
             .then(function(clientGroups) {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
+
+        if (clientGroups.length < 1) {
+          return h.response([]).code(200);
+        }
 
         const tvcats = await Groups.findAll(
           {
@@ -346,6 +355,10 @@ module.exports = {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
 
+        if (clientGroups.length < 1) {
+          return h.response([]).code(200);
+        }
+
         let channels = await Channels.findAll(
           {
               where: {
@@ -375,7 +388,7 @@ module.exports = {
                   "stream_id":channel.id,
                   "stream_icon":channel.logo,
                   "epg_channel_id":channel.tvgid,
-                  "added":"1641811540",
+                  "added":Math.round(new Date(channel.createdAt).getTime()/1000),
                   "custom_sid":"",
                   "tv_archive":1,
                   "direct_source":"",
@@ -396,6 +409,10 @@ module.exports = {
             .then(function(clientGroups) {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
+
+          if (clientGroups.length < 1) {
+            return h.response([]).code(200);
+          }
 
           let channels = await Channels.findAll(
             {
@@ -422,7 +439,7 @@ module.exports = {
                   {
                     "num":channel.id,
                     "name":channel.name,
-                    "stream_type":channel.tvgtype,
+                    "stream_type":'movie',
                     "stream_id":channel.id,
                     "stream_icon":channel.logo,
                     "rating":"",
@@ -446,6 +463,10 @@ module.exports = {
             .then(function(clientGroups) {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
+
+        if (clientGroups.length < 1) {
+          return h.response([]).code(200);
+        }
 
         let series = await Series.findAll(
           {
@@ -585,7 +606,7 @@ module.exports = {
             },
             "subtitles":[],
             "custom_sid":"",
-            "added":"1654606507",
+            "added":Math.round(new Date(episode.createdAt).getTime()/1000),
             "season":seasoninfo.season,
             "direct_source":""
           })
