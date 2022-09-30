@@ -5,6 +5,7 @@ const fs = require('fs');
 const Boom = require('boom');
 const util = require('util');
 const getJSON = require('get-json')
+const parser = require('iptv-playlist-parser');
 const { Readable } = require('stream');
 const { Op } = require("sequelize");
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
@@ -16,6 +17,7 @@ const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
+  // Play Movie Or TV SHOW.
   playm3u8: async (request, h) => {
     const file = request.params.file
     const type = request.params.type
@@ -65,7 +67,7 @@ module.exports = {
         requestType = https;
       }
 
-      status = requestType.get(`${domain}${id}`, function(res) {
+      status = await requestType.get(`${domain}${id}`, function(res) {
         return res.statusCode
       })
 
@@ -73,12 +75,14 @@ module.exports = {
         break;
       }
     }
+
+
+    // TODO: add a check if the stream is up if not update the stream. Double check we will need it here though.
     return h.redirect(`${useDomain}${id}`).temporary();
   },
 
   //Handles the rest of the channel play requests
   playChannel: async (request, h) => {
-
     const channelID = request.params.channelID;
     const username = request.params.username;
     const password = request.params.password;
@@ -104,6 +108,26 @@ module.exports = {
             id: channelID,
         },
     });
+
+    async function getUpdated(tempFileName) {
+      return new Promise((resolve, reject) => {
+        const m3uFile = fs.readFileSync(path.join(__dirname, `../Temp/${tempFileName}`), 'utf-8');
+        const lines = m3uFile.split("\n");
+        const result = parser.parse(m3uFile);
+        updatedFile = fs.createWriteStream(path.join(__dirname, `../Temp/1${tempFileName}`));
+        updatedFile.write('#EXTM3U \n');
+        updatedFile.write('#EXT-X-VERSION:3 \n');
+        updatedFile.write(`${lines[2]} \n`);
+        updatedFile.write('#EXT-X-ALLOW-CACHE:NO \n');
+        updatedFile.write('#EXT-X-TARGETDURATION:5 \n');
+        updatedFile.write('#EXTINF:10.000000, \n');
+        updatedFile.write(result.items[0].url);
+        updatedFile.end();
+        updatedFile.on('finish', function () {
+          resolve();
+        });
+      });
+    }
 
     function processm3u8(tempFileName) {
       return new Promise((resolve, reject) => {
@@ -147,7 +171,6 @@ module.exports = {
       if (!channels.url.includes('https://') && !channels.url.includes('https://')) {
         return h.redirect(`/${username}/${password}${channels.url}`).temporary();
       }
-
       return h.redirect(channels.url).temporary();
     }
 
@@ -155,8 +178,11 @@ module.exports = {
     // multiple devices
     tempFileName = `${username}${Date.now()}.m3u8`
     await processm3u8(tempFileName);
-    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/${tempFileName}`));
+    await getUpdated(tempFileName);
+
+    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/1${tempFileName}`));
     let streamDataT = await new Readable().wrap(streamT);
+    console.log('Updating');
     return h.response(streamDataT)
       .header('Content-Type', 'application/x-mpegurl')
       .header('Connection', `keep-alive`)
@@ -165,7 +191,6 @@ module.exports = {
 
   // TODO: xmltv guide needs updating and more tests
   xmltv: async (request, h) => {
-    console.log(request.query);
     if (request.query.username && request.query.password) {
 
       client = await Client.findOne({
@@ -690,12 +715,10 @@ module.exports = {
       }
 
       if (request.query.action === 'get_short_epg') {
-        console.log(request.query);
         return h.response([]).code(200);
       }
 
       if (request.query.action === 'get_simple_data_table') {
-        console.log(request.query);
         return h.response([]).code(200);
       }
 
@@ -710,7 +733,7 @@ module.exports = {
             "is_trial": client.trial ? 1 : 0,
             "active_cons":"0",
             "created_at":clientCreated,
-            "max_connections":"1",
+            "max_connections":"20",
             "allowed_output_formats":["m3u8", "ts"]
           },
           "server_info":{
