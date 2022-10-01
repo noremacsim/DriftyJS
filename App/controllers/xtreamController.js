@@ -119,7 +119,7 @@ module.exports = {
         updatedFile.write('#EXT-X-VERSION:3 \n');
         updatedFile.write(`${lines[2]} \n`);
         updatedFile.write('#EXT-X-ALLOW-CACHE:NO \n');
-        updatedFile.write('#EXT-X-TARGETDURATION:5 \n');
+        updatedFile.write('#EXT-X-TARGETDURATION:3 \n');
         updatedFile.write('#EXTINF:10.000000, \n');
         updatedFile.write(result.items[0].url);
         updatedFile.end();
