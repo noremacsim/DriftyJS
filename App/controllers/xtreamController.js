@@ -178,6 +178,7 @@ module.exports = {
     // multiple devices
     tempFileName = `${username}${Date.now()}.m3u8`
     await processm3u8(tempFileName);
+    await getUpdated(tempFileName);
 
     let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/1${tempFileName}`));
     let streamDataT = await new Readable().wrap(streamT);
