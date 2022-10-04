@@ -122,12 +122,6 @@ module.exports = {
         updatedFile.write('#EXT-X-TARGETDURATION:8 \n');
         updatedFile.write('#EXTINF:10.000000, \n');
         updatedFile.write(result.items[0].url);
-        updatedFile.write('#EXTINF:8.000000, \n');
-        updatedFile.write(result.items[1].url);
-        updatedFile.write('#EXTINF:8.000000, \n');
-        updatedFile.write(result.items[2].url);
-        updatedFile.write('#EXTINF:8.000000, \n');
-        updatedFile.write(result.items[3].url);
         updatedFile.end();
         updatedFile.on('finish', function () {
           resolve();
