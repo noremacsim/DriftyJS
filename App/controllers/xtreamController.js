@@ -119,7 +119,7 @@ module.exports = {
         updatedFile.write('#EXT-X-VERSION:3 \n');
         updatedFile.write(`${lines[2]} \n`);
         updatedFile.write('#EXT-X-ALLOW-CACHE:NO \n');
-        updatedFile.write('#EXT-X-TARGETDURATION:10 \n');
+        updatedFile.write('#EXT-X-TARGETDURATION:8 \n');
         updatedFile.write('#EXTINF:10.000000, \n');
         updatedFile.write(result.items[0].url);
         updatedFile.write('#EXTINF:8.000000, \n');
@@ -186,7 +186,7 @@ module.exports = {
     await processm3u8(tempFileName);
     await getUpdated(tempFileName);
 
-    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/${tempFileName}`));
+    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/1${tempFileName}`));
     let streamDataT = await new Readable().wrap(streamT);
     console.log('Updating');
     return h.response(streamDataT)
