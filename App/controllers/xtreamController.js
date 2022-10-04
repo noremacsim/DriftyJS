@@ -186,7 +186,7 @@ module.exports = {
     await processm3u8(tempFileName);
     await getUpdated(tempFileName);
 
-    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/1${tempFileName}`));
+    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/${tempFileName}`));
     let streamDataT = await new Readable().wrap(streamT);
     console.log('Updating');
     return h.response(streamDataT)
