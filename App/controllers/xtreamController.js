@@ -144,6 +144,7 @@ module.exports = {
           if (!response.headers) {reject}
           if (!response.headers.location) {reject}
           console.log(response.headers);
+          console.log(channels.url);
           if (response.headers.href.includes('https://')) {
             request = https;
           }
