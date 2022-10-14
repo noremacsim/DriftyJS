@@ -1,5 +1,6 @@
 const http = require('http');
 const https = require('https');
+const { exec } = require("child_process");
 const path = require("path");
 const fs = require('fs');
 const Boom = require('boom');
@@ -131,20 +132,13 @@ module.exports = {
 
     function processm3u8(tempFileName) {
       return new Promise((resolve, reject) => {
-        const file = fs.createWriteStream(path.join(__dirname, `../Temp/${tempFileName}`));
-
-        let request = http;
-        if (channels.url.includes('https://')) {
-          request = https;
-        }
-
-        const original = request.get(channels.url, async function(response) {
-          response.pipe(file);
-          file.on("finish", async () => {
-              file.close();
-              resolve();
-          });
-        }).on("error", reject);
+        return exec(`wget -O ${path.join(__dirname, `../Temp/${tempFileName}`)} ${channels.url}`, (error, stdout, stderr) => {
+          if (error) {
+              return reject;
+          }
+          return resolve();
+        });
+        return resolve();
       });
     }
 
@@ -733,7 +727,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"cameronsim.uk",
+            "url":"192.168.1.191",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
