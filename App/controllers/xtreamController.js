@@ -140,6 +140,9 @@ module.exports = {
 
         const original = request.get(channels.url, async function(response) {
           let request = http;
+          if (!response) {reject}
+          if (!response.headers) {reject}
+          if (!response.headers.location) {reject}
           if (response.headers.location.includes('https://')) {
             request = https;
           }
