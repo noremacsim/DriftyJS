@@ -139,22 +139,11 @@ module.exports = {
         }
 
         const original = request.get(channels.url, async function(response) {
-          let request = http;
-          if (!response) {reject}
-          if (!response.headers) {reject}
-          if (!response.headers.location) {reject}
-          console.log(response.headers);
-          console.log(response);
-          if (response.headers.href.includes('https://')) {
-            request = https;
-          }
-          const streamData = request.get(response.headers.location, function(response) {
-            response.pipe(file);
-            file.on("finish", async () => {
-                file.close();
-                resolve();
-            });
-          }).on("error", reject);
+          response.pipe(file);
+          file.on("finish", async () => {
+              file.close();
+              resolve();
+          });
         }).on("error", reject);
       });
     }
