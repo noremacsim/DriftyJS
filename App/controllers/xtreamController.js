@@ -143,7 +143,7 @@ module.exports = {
           if (!response) {reject}
           if (!response.headers) {reject}
           if (!response.headers.location) {reject}
-          console.log(response);
+          console.log(response.headers);
           if (response.headers.href.includes('https://')) {
             request = https;
           }
