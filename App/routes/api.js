@@ -21,15 +21,6 @@ module.exports = [
     },
     {
         method: "GET",
-        path: "/epg",
-        handler: xtream.syncxmltv,
-        config: {
-            pre: [{ method: middleware.auth }],
-            description: "Download EPG Data",
-        }
-    },
-    {
-        method: "GET",
         path: '/{TYPE}/{username}/{password}/{channelID}.m3u8',
         handler: xtream.playChannel,
         config: {
@@ -72,7 +63,7 @@ module.exports = [
         method: [ 'GET', 'POST' ],
         path: '/{any*}',
         handler: (request, h) => {
-          console.log('unkown url');
+          console.log(request);
         }
     },
     {

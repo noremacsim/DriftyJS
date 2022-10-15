@@ -191,30 +191,10 @@ module.exports = {
         return Boom.unauthorized('invalid login');
       }
 
-      let stream = fs.createReadStream(path.join(__dirname, `../Storage/epg.xml`));
-      let streamData = new Readable().wrap(stream);
-      return h.response(streamData)
-        .header('Content-Type', 'application/xml')
-        .header('Content-Disposition', 'attachment; filename=epg.xml');
+      return h.redirect('http://tanmedia.watch:8880/xmltv.php?username=mrcameronsim@gmail.com&password=lhE787Y5hu').temporary();
     } else {
       return Boom.unauthorized('invalid login');
     }
-  },
-
-  // TODO: Might not be required we can just redirect since this is only for the live tv
-  syncxmltv: async (request, h) => {
-    fs.unlinkSync(path.join(__dirname, `../Storage/epg.xml`));
-    const file = fs.createWriteStream(path.join(__dirname, `../Storage/epg.xml`));
-    const epg = http.get("http://tanmedia.watch:8880/xmltv.php?username=mrcameronsim@gmail.com&password=lhE787Y5hu", function(response) {
-       response.pipe(file);
-
-       // after download completed close filestream
-       file.on("finish", () => {
-           file.close();
-       });
-    }).on('error', function(err) { // Handle errors
-      if (cb) cb(err.message);
-    });
   },
 
   // xtream api here. all requests are being hadnled.
@@ -727,7 +707,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"192.168.1.191",
+            "url":"cameronsim.uk",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
