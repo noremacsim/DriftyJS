@@ -71,4 +71,14 @@ module.exports = [
         path: "/{username}/{password}/m3u8/{type}/{file}",
         handler: xtream.playm3u8
     },
+    {
+        method: "GET",
+        path: "/import/movies",
+        handler: xtream.importMovies
+    },
+    {
+        method: "GET",
+        path: "/import/recentmovies",
+        handler: xtream.updateRecentMovies
+    },
 ];

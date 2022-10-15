@@ -1,6 +1,8 @@
 const http = require('http');
 const https = require('https');
 const { exec } = require("child_process");
+const xml2js = require('xml2js');
+const xmlParser = new xml2js.Parser({ attrkey: "ATTR" });
 const path = require("path");
 const fs = require('fs');
 const Boom = require('boom');
@@ -17,6 +19,228 @@ const {Series} = require(path.join(__dirname, '../../Core/models/'));
 const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
+
+  importMovies: async (request, h) => {
+
+    async function downloadMovieList() {
+      return new Promise((resolve, reject) => {
+        const movieListUrl = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/library/sections/1/all?type=1&includeCollections=1&includeExternalMedia=1&includeAdvanced=1&includeMeta=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1530x929%2C1920x1080&X-Plex-Container-Start=0&X-Plex-Container-Size=3000&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Provider-Version=5.1&X-Plex-Text-Format=plain&X-Plex-Drm=widevine&X-Plex-Language=en-GB`;
+
+
+        let req = https.get(movieListUrl, function(res) {
+          let data = '';
+          res.on('data', function(stream) {
+              data += stream;
+          });
+          res.on('end', function(){
+              xmlParser.parseString(data, function(error, result) {
+                  if(error === null) {
+                      return resolve(result);
+                  }
+                  else {
+                      return reject;
+                  }
+              });
+          });
+        });
+      });
+    }
+
+    async function addGroup(group) {
+        let groups = await Groups.findOne({
+            where: {
+              type: 'movies',
+              [Op.or]: [
+                  { name: group },
+                  { mapped: group },
+                ]
+            }
+        });
+
+        if (groups) {
+          return groups;
+        }
+
+        groups = await Groups.create(
+            {
+                name: group,
+                mapped: null,
+                VOD: 1,
+                UserId: 1,
+                type: 'movies',
+            }
+        );
+
+        return groups;
+    }
+
+    async function addMovies(moviesJson) {
+      return new Promise(async (resolve, reject) => {
+        for (const movieItem of moviesJson.MediaContainer.Video) {
+
+          let title = movieItem.ATTR.title;
+          let url = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/video/:/transcode/universal/start.mpd?hasMDE=1&path=${movieItem.ATTR.key}&mediaIndex=0&partIndex=0&protocol=dash&fastSeek=1&directPlay=0&directStream=1&subtitleSize=100&audioBoost=100&location=wan&addDebugOverlay=0&autoAdjustQuality=0&directStreamAudio=1&mediaBufferSize=102400&session=pdno4gtixhue98yjmt35jwwa&subtitles=burn&Accept-Language=en-GB&X-Plex-Session-Identifier=lhzj8ii7rhoy2gpok36yp5oh&X-Plex-Client-Profile-Extra=append-transcode-target-codec%28type%3DvideoProfile%26context%3Dstreaming%26audioCodec%3Daac%26protocol%3Ddash%29&X-Plex-Incomplete-Segments=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1920x929%2C1920x1080&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Language=en-GB`
+          let logo = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${movieItem.ATTR.thumb}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`;
+
+          if (movieItem.Genre) {
+
+            for (const movieCategorie of movieItem.Genre) {
+              let group = await addGroup(movieCategorie.ATTR.tag);
+              let channel = await Channels.findOne({ where: { name: title, GroupId: group.id ?? 520, UserId: 1 } });
+              if (channel) {
+                continue;
+              }
+              await Channels.create(
+                  {
+                      name: title,
+                      logo: logo,
+                      url: url,
+                      GroupId: group.id ?? 520,
+                      tvgid: null,
+                      tvgtype: 'movies',
+                      imbdid: null,
+                      UserId: 1,
+                  }
+              );
+            }
+          } else {
+            let channel = await Channels.findOne({ where: { name: title, GroupId: 520, UserId: 1 } });
+            if (channel) {
+              continue;
+            }
+            await Channels.create(
+                {
+                    name: title,
+                    logo: logo,
+                    url: url,
+                    GroupId: 520,
+                    tvgid: null,
+                    tvgtype: 'movies',
+                    imbdid: null,
+                    UserId: 1,
+                }
+            );
+          }
+        }
+        return resolve();
+      });
+    }
+
+    let moviesJson = await downloadMovieList();
+    await addMovies(moviesJson);
+    return moviesJson;
+
+  },
+
+  updateRecentMovies: async (request, h) => {
+    async function downloadMovieList() {
+      return new Promise((resolve, reject) => {
+
+        const movieListUrl = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/library/sections/1/all?sort=originallyAvailableAt:desc&originallyAvailableAt%3E=-1y&includeCollections=1&includeExternalMedia=1&includeAdvanced=1&includeMeta=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1530x929%2C1920x1080&X-Plex-Container-Start=0&X-Plex-Container-Size=100&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Provider-Version=5.1&X-Plex-Text-Format=plain&X-Plex-Drm=widevine&X-Plex-Language=en-GB`;
+
+        let req = https.get(movieListUrl, function(res) {
+          let data = '';
+          res.on('data', function(stream) {
+              data += stream;
+          });
+          res.on('end', function(){
+              xmlParser.parseString(data, function(error, result) {
+                  if(error === null) {
+                      return resolve(result);
+                  }
+                  else {
+                      return reject;
+                  }
+              });
+          });
+        });
+      });
+    }
+
+    async function addGroup() {
+        let groups = await Groups.findOne({
+            where: {
+              type: 'movies',
+              name: 'Recently Released',
+            }
+        });
+
+        if (groups) {
+          return groups;
+        }
+
+        groups = await Groups.create(
+            {
+                name: 'Recently Released',
+                mapped: null,
+                VOD: 1,
+                UserId: 1,
+                type: 'movies',
+            }
+        );
+
+        return groups;
+    }
+
+    async function addMovies(moviesJson) {
+      return new Promise(async (resolve, reject) => {
+        for (const movieItem of moviesJson.MediaContainer.Video) {
+
+          let title = movieItem.ATTR.title;
+          let url = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/video/:/transcode/universal/start.mpd?hasMDE=1&path=${movieItem.ATTR.key}&mediaIndex=0&partIndex=0&protocol=dash&fastSeek=1&directPlay=0&directStream=1&subtitleSize=100&audioBoost=100&location=wan&addDebugOverlay=0&autoAdjustQuality=0&directStreamAudio=1&mediaBufferSize=102400&session=pdno4gtixhue98yjmt35jwwa&subtitles=burn&Accept-Language=en-GB&X-Plex-Session-Identifier=lhzj8ii7rhoy2gpok36yp5oh&X-Plex-Client-Profile-Extra=append-transcode-target-codec%28type%3DvideoProfile%26context%3Dstreaming%26audioCodec%3Daac%26protocol%3Ddash%29&X-Plex-Incomplete-Segments=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1920x929%2C1920x1080&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Language=en-GB`
+          let logo = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${movieItem.ATTR.thumb}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`;
+
+          if (movieItem.Genre) {
+
+            for (const movieCategorie of movieItem.Genre) {
+
+              let group = await addGroup();
+              let channel = await Channels.findOne({ where: { name: title, GroupId: group.id ?? 520, UserId: 1 } });
+              if (channel) {
+                continue;
+              }
+              await Channels.create(
+                  {
+                      name: title,
+                      logo: logo,
+                      url: url,
+                      GroupId: group.id ?? 520,
+                      tvgid: null,
+                      tvgtype: 'movies',
+                      imbdid: null,
+                      UserId: 1,
+                  }
+              );
+            }
+          } else {
+            let channel = await Channels.findOne({ where: { name: title, GroupId: 520, UserId: 1 } });
+            if (channel) {
+              continue;
+            }
+            await Channels.create(
+                {
+                    name: title,
+                    logo: logo,
+                    url: url,
+                    GroupId: 520,
+                    tvgid: null,
+                    tvgtype: 'movies',
+                    imbdid: null,
+                    UserId: 1,
+                }
+            );
+          }
+        }
+        return resolve();
+      });
+    }
+
+    const recentlyReleasedGroup = await addGroup();
+    await Channels.destroy({ where: { GroupId: recentlyReleasedGroup.id, UserId: 1 } });
+    let moviesJson = await downloadMovieList();
+    await addMovies(moviesJson);
+    return moviesJson;
+  },
 
   // Play Movie Or TV SHOW.
   playm3u8: async (request, h) => {
@@ -707,7 +931,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"cameronsim.uk",
+            "url":"192.168.1.191",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
