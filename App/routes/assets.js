@@ -13,6 +13,16 @@ module.exports = [
     },
     {
         method: "GET",
+        path: "/assets/js/{file*}",
+        handler: {
+            directory: {
+                path: path.join(__dirname, '../assets/js'),
+                listing: true
+            }
+        }
+    },
+    {
+        method: "GET",
         path: "/assets/img/{file*}",
         handler: {
             directory: {
