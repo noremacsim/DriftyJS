@@ -140,12 +140,14 @@ module.exports = {
 
           if (!imbdid) {
             let movieDetails = await getFinalImbdID(movieItem.ATTR.key)
-            for (let guidlist of movieDetails.MediaContainer.Video[0].Guid) {
-              let guidname = guidlist.ATTR.id;
-              if (guidname.toLowerCase().includes('imdb')) {
-                let firstSplit = guidname.split("://");
-                imbdid = firstSplit[1];
-                break;
+            if (movieDetails.MediaContainer.Video[0].Guid) {
+              for (let guidlist of movieDetails.MediaContainer.Video[0].Guid) {
+                let guidname = guidlist.ATTR.id;
+                if (guidname.toLowerCase().includes('imdb')) {
+                  let firstSplit = guidname.split("://");
+                  imbdid = firstSplit[1];
+                  break;
+                }
               }
             }
           }
