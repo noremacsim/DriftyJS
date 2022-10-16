@@ -748,8 +748,6 @@ module.exports = {
         return Boom.unauthorized('invalid login');
       }
 
-      console.log(request.query);
-
 
       let clientCreated = Math.round(new Date(client.createdAt).getTime()/1000);
       let clientExpDate = Math.round(new Date(client.exp_date).getTime()/1000);
@@ -977,8 +975,6 @@ module.exports = {
         }
 
       if (request.query.action === 'get_series') {
-
-        console.log('get series')
 
 
         if (request.query.category_id) {
