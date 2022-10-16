@@ -196,6 +196,7 @@ module.exports = {
   },
 
   updateRecentMovies: async (request, h) => {
+    
     async function downloadMovieList() {
       return new Promise((resolve, reject) => {
 
@@ -245,63 +246,29 @@ module.exports = {
         return groups;
     }
 
-    async function addMovies(moviesJson) {
+    async function addMovies(moviesJson, recentlyReleasedGroup) {
       return new Promise(async (resolve, reject) => {
         for (const movieItem of moviesJson.MediaContainer.Video) {
 
           let title = movieItem.ATTR.title;
-          let url = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/video/:/transcode/universal/start.mpd?hasMDE=1&path=${movieItem.ATTR.key}&mediaIndex=0&partIndex=0&protocol=dash&fastSeek=1&directPlay=0&directStream=1&subtitleSize=100&audioBoost=100&location=wan&addDebugOverlay=0&autoAdjustQuality=0&directStreamAudio=1&mediaBufferSize=102400&session=pdno4gtixhue98yjmt35jwwa&subtitles=burn&Accept-Language=en-GB&X-Plex-Session-Identifier=lhzj8ii7rhoy2gpok36yp5oh&X-Plex-Client-Profile-Extra=append-transcode-target-codec%28type%3DvideoProfile%26context%3Dstreaming%26audioCodec%3Daac%26protocol%3Ddash%29&X-Plex-Incomplete-Segments=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1920x929%2C1920x1080&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Language=en-GB`
-          let logo = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${movieItem.ATTR.thumb}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`;
-
-          if (movieItem.Genre) {
-
-            for (const movieCategorie of movieItem.Genre) {
-
-              let group = await addGroup();
-              let channel = await Channels.findOne({ where: { name: title, GroupId: group.id ?? 520, UserId: 1 } });
-              if (channel) {
-                continue;
-              }
-              await Channels.create(
-                  {
-                      name: title,
-                      logo: logo,
-                      url: url,
-                      GroupId: group.id ?? 520,
-                      tvgid: null,
-                      tvgtype: 'movies',
-                      imbdid: null,
-                      UserId: 1,
-                  }
-              );
-            }
-          } else {
-            let channel = await Channels.findOne({ where: { name: title, GroupId: 520, UserId: 1 } });
-            if (channel) {
-              continue;
-            }
-            await Channels.create(
-                {
-                    name: title,
-                    logo: logo,
-                    url: url,
-                    GroupId: 520,
-                    tvgid: null,
-                    tvgtype: 'movies',
-                    imbdid: null,
-                    UserId: 1,
-                }
-            );
+          let channel = await Channels.findOne({ where: { name: title, UserId: 1 } });
+          if (!channel) {
+            continue;
           }
+
+          await ChannelGroups.destroy({ where: { ChannelId: parseInt(channel.id) } });
+          await ChannelGroups.create({
+              ChannelId: parseInt(channel.id),
+              GroupId: recentlyReleasedGroup.id,
+          });
         }
         return resolve();
       });
     }
 
     const recentlyReleasedGroup = await addGroup();
-    await Channels.destroy({ where: { GroupId: recentlyReleasedGroup.id, UserId: 1 } });
     let moviesJson = await downloadMovieList();
-    await addMovies(moviesJson);
+    await addMovies(moviesJson, recentlyReleasedGroup);
     return moviesJson;
   },
 
