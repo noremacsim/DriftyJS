@@ -18,8 +18,259 @@ const {ClientGroups} = require(path.join(__dirname, '../../Core/models/'));
 const {ChannelGroups} = require(path.join(__dirname, '../../Core/models/'));
 const {Series} = require(path.join(__dirname, '../../Core/models/'));
 const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
+const {RecentlyPlayed} = require(path.join(__dirname, '../../Core/models/'));
+const {SeriesGroups} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
+
+  importTvShows: async (request, h) => {
+
+    function timeConverter(UNIX_timestamp){
+      var a = new Date(UNIX_timestamp * 1000);
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var year = a.getFullYear();
+      var month = ("00" + (parseInt(a.getMonth()) + 1)).slice(-2);
+      var date = ("00" + a.getDate()).slice(-2);
+      var hour = ("00" + a.getHours()).slice(-2);
+      var min = ("00" + a.getMinutes()).slice(-2);
+      var sec = ("00" + a.getSeconds()).slice(-2);
+      var time = year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec ;
+      return time;
+    }
+
+    async function downloadTVShowList() {
+      return new Promise((resolve, reject) => {
+        const movieListUrl = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/library/sections/2/all?type=2&includeCollections=1&includeExternalMedia=1&includeAdvanced=1&includeMeta=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1920x929%2C1920x1080&X-Plex-Container-Start=0&X-Plex-Container-Size=3000&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Provider-Version=5.1&X-Plex-Text-Format=plain&X-Plex-Drm=widevine&X-Plex-Language=en-GB`;
+
+        let req = https.get(movieListUrl, function(res) {
+          let data = '';
+          res.on('data', function(stream) {
+              data += stream;
+          });
+          res.on('end', function(){
+              xmlParser.parseString(data, function(error, result) {
+                  if(error === null) {
+                      return resolve(result);
+                  }
+                  else {
+                      return reject;
+                  }
+              });
+          });
+        });
+      });
+    }
+
+    async function downloadTvSeasons(key) {
+      return new Promise((resolve, reject) => {
+        const movieListUrl = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${key}?excludeAllLeaves=1&includeUserState=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1920x929%2C1920x1080&X-Plex-Container-Start=0&X-Plex-Container-Size=20&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Provider-Version=5.1&X-Plex-Text-Format=plain&X-Plex-Drm=widevine&X-Plex-Language=en-GB`;
+
+        let req = https.get(movieListUrl, function(res) {
+          let data = '';
+          res.on('data', function(stream) {
+              data += stream;
+          });
+          res.on('end', function(){
+              xmlParser.parseString(data, function(error, result) {
+                  if(error === null) {
+                      return resolve(result);
+                  }
+                  else {
+                      return reject;
+                  }
+              });
+          });
+        });
+      });
+    }
+
+    async function downloadTvEpsiode(key) {
+      return new Promise((resolve, reject) => {
+        const movieListUrl = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${key}?excludeAllLeaves=1&includeUserState=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1920x929%2C1920x1080&X-Plex-Container-Start=0&X-Plex-Container-Size=20&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Provider-Version=5.1&X-Plex-Text-Format=plain&X-Plex-Drm=widevine&X-Plex-Language=en-GB`;
+
+        let req = https.get(movieListUrl, function(res) {
+          let data = '';
+          res.on('data', function(stream) {
+              data += stream;
+          });
+          res.on('end', function(){
+              xmlParser.parseString(data, function(error, result) {
+                  if(error === null) {
+                      return resolve(result);
+                  }
+                  else {
+                      return reject;
+                  }
+              });
+          });
+        });
+      });
+    }
+
+    async function addGroup(group) {
+        let groups = await Groups.findOne({
+            where: {
+              type: 'series',
+              [Op.or]: [
+                  { name: group },
+                  { mapped: group },
+                ]
+            }
+        });
+
+        if (groups) {
+          return groups;
+        }
+
+        groups = await Groups.create(
+            {
+                name: group,
+                mapped: null,
+                VOD: 1,
+                UserId: 1,
+                type: 'series',
+            }
+        );
+
+        return groups;
+    }
+
+    async function addSeries(tvShowsJson) {
+      return new Promise(async (resolve, reject) => {
+
+        for (const seriesItem of tvShowsJson.MediaContainer.Directory) {
+
+          let seriesKey = seriesItem.ATTR.key;
+          let seriesName = seriesItem.ATTR.title;
+          let seriesLogo = seriesItem.ATTR.thumb;
+          let seriesGroupId = null;
+          let seriesimbdid = null;
+          let seriesUserId = 1;
+          let seriesReleaseDate = seriesItem.ATTR.originallyAvailableAt;
+          let seriesCoverImg = seriesItem.ATTR.thumb;
+          let seriesBackdropimg = seriesItem.ATTR.thumb;
+          let seriesPlot = seriesItem.ATTR.summary;
+          let seriesRuntime = seriesItem.ATTR.duration;
+
+          let series = await Series.findOne({ where: { name: seriesName, UserId: 1 } });
+
+          // Add Series
+          if (!series) {
+            series = await Series.create(
+              {
+                name: seriesName,
+                logo: `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${seriesLogo}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`,
+                GroupId: seriesGroupId,
+                imbdid: seriesimbdid,
+                UserId: seriesUserId,
+                releaseDate: seriesReleaseDate,
+                coverImg: `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${seriesCoverImg}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`,
+                backdropImg: `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${seriesBackdropimg}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`,
+                plot: seriesPlot,
+                runtime: ((seriesRuntime % 60000) / 1000).toFixed(0),
+              }
+            );
+
+            await SeriesGroups.destroy({ where: { SeriesId: parseInt(series.id) } });
+            if (seriesItem.Genre) {
+              for (const seriesCategorie of seriesItem.Genre) {
+                let group = await addGroup(seriesCategorie.ATTR.tag);
+                await SeriesGroups.create({
+                    SeriesId: parseInt(series.id),
+                    GroupId: parseInt(group.id),
+                });
+              }
+            } else {
+              await SeriesGroups.create({
+                  SeriesId: parseInt(series.id),
+                  GroupId: 19,
+              });
+            }
+          }
+
+          // Add Seasons
+          let seasons = await downloadTvSeasons(seriesKey);
+          for (let seasonItem of seasons.MediaContainer.Directory) {
+            let seasonKey = seasonItem.ATTR.key;
+            let seasonName = seasonItem.ATTR.title;
+            let seasonLogo = seasonItem.ATTR.thumb;
+            let seasonSeriesID = series.id;
+            let seasonImbdid = null;
+            let seasonNumber = seasonItem.ATTR.index;
+            let seasonEpisodes = seasonItem.ATTR.leafCount;
+            let seasonOverview = seriesPlot;
+            let seasonCoverimg = seasonItem.ATTR.art;
+            let seasonUserid = 1;
+
+            let season = await Sessons.findOne({ where: {
+              name: seasonName,
+              SeriesId: seasonSeriesID,
+              season: seasonNumber,
+              UserId: 1
+            }});
+
+            // Create the new season
+            if (!season) {
+              season = await Sessons.create(
+                  {
+                    name: seasonName,
+                    logo: `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${seasonLogo}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`,
+                    SeriesId: seasonSeriesID,
+                    imbdid: seasonImbdid,
+                    season: seasonNumber,
+                    episodes: seasonEpisodes,
+                    overview: seasonOverview,
+                    coverImg: `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${seasonCoverimg}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`,
+                    UserId: seasonUserid
+                  }
+              );
+            }
+
+            //Add Episodes
+            let episodes = await downloadTvEpsiode(seasonKey);
+            for (let episodeItem of episodes.MediaContainer.Video) {
+              let channelEpisode = await Channels.findOne({ where: {
+                name: episodeItem.ATTR.title,
+                SeriesId: series.id,
+                SessonId: season.id,
+                UserId: 1
+              }});
+
+              if (!channelEpisode) {
+                channelEpisode = await Channels.create(
+                    {
+                        name: episodeItem.ATTR.title,
+                        logo: `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${episodeItem.ATTR.thumb}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`,
+                        GroupId: null,
+                        url: `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/video/:/transcode/universal/start.mpd?hasMDE=1&path=${episodeItem.ATTR.key}&mediaIndex=0&partIndex=0&protocol=dash&fastSeek=1&directPlay=0&directStream=1&subtitleSize=100&audioBoost=100&location=wan&addDebugOverlay=0&autoAdjustQuality=0&directStreamAudio=1&mediaBufferSize=102400&session=pdno4gtixhue98yjmt35jwwa&subtitles=burn&Accept-Language=en-GB&X-Plex-Session-Identifier=lhzj8ii7rhoy2gpok36yp5oh&X-Plex-Client-Profile-Extra=append-transcode-target-codec%28type%3DvideoProfile%26context%3Dstreaming%26audioCodec%3Daac%26protocol%3Ddash%29&X-Plex-Incomplete-Segments=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1920x929%2C1920x1080&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Language=en-GB`,
+                        tvgtype: 'series',
+                        imbdid: null,
+                        episode: episodeItem.ATTR.index,
+                        releaseDate: episodeItem.ATTR.originallyAvailableAt,
+                        plot: episodeItem.ATTR.summary,
+                        runtime: ((episodeItem.ATTR.duration % 60000) / 1000).toFixed(0),
+                        coverImg: `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${episodeItem.ATTR.thumb}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`,
+                        SeriesId: series.id,
+                        SessonId: season.id,
+                        UserId: 1,
+                        createdAt: timeConverter(episodeItem.ATTR.addedAt),
+                        updatedAt: timeConverter(episodeItem.ATTR.updatedAt)
+                    }
+                );
+              }
+            }
+          }
+
+        }
+        return resolve();
+      });
+    }
+
+    let tvShowsJson = await downloadTVShowList();
+    await addSeries(tvShowsJson);
+    return tvShowsJson;
+
+  },
 
   importMovies: async (request, h) => {
 
@@ -196,7 +447,7 @@ module.exports = {
   },
 
   updateRecentMovies: async (request, h) => {
-    
+
     async function downloadMovieList() {
       return new Promise((resolve, reject) => {
 
@@ -364,23 +615,30 @@ module.exports = {
         },
     });
 
-    async function getUpdated(tempFileName) {
-      return new Promise((resolve, reject) => {
-        const m3uFile = fs.readFileSync(path.join(__dirname, `../Temp/${tempFileName}`), 'utf-8');
-        const lines = m3uFile.split("\n");
-        const result = parser.parse(m3uFile);
-        updatedFile = fs.createWriteStream(path.join(__dirname, `../Temp/1${tempFileName}`));
-        updatedFile.write('#EXTM3U \n');
-        updatedFile.write('#EXT-X-VERSION:3 \n');
-        updatedFile.write(`${lines[2]} \n`);
-        updatedFile.write('#EXT-X-ALLOW-CACHE:NO \n');
-        updatedFile.write('#EXT-X-TARGETDURATION:5 \n');
-        updatedFile.write('#EXTINF:10.000000, \n');
-        updatedFile.write(result.items[0].url);
-        updatedFile.end();
-        updatedFile.on('finish', function () {
-          resolve();
-        });
+    let recentlyBeenPlayed = await RecentlyPlayed.findOne({
+        where: {
+            ChannelId: parseInt(channelID),
+            ClientId: parseInt(client.id),
+        },
+    });
+
+    if (recentlyBeenPlayed) {
+      await RecentlyPlayed.update(
+          {
+            Channel: channels.name ?? null,
+          },
+          {
+            where: {
+                ChannelId: parseInt(channelID),
+                ClientId: parseInt(client.id),
+            },
+          }
+      );
+    } else {
+      await RecentlyPlayed.create({
+          ChannelId: parseInt(channelID),
+          ClientId: parseInt(client.id),
+          Channel: channels.name ?? null,
       });
     }
 
@@ -420,7 +678,6 @@ module.exports = {
     // multiple devices
     tempFileName = `${username}${Date.now()}.m3u8`
     await processm3u8(tempFileName);
-    //await getUpdated(tempFileName);
 
     let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/${tempFileName}`));
     let streamDataT = await new Readable().wrap(streamT);
@@ -718,9 +975,21 @@ module.exports = {
 
       if (request.query.action === 'get_series') {
 
-        clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
-            .then(function(clientGroups) {
-                return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+        if (request.query.category_id) {
+          clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id, GroupId: request.query.category_id}, attributes: ["GroupId"], raw: true, nest: true })
+              .then(function(clientGroups) {
+                  return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+              });
+        } else {
+          clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
+              .then(function(clientGroups) {
+                  return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+              });
+        }
+
+        seriesGroups = await SeriesGroups.findAll({ where: { GroupId: {[Op.or]: clientGroups}}, attributes: ["SeriesId"], raw: true, nest: true })
+            .then(function(seriesGroups) {
+                return seriesGroups.map(function(seriesGroups) { return seriesGroups.SeriesId; })
             });
 
         if (clientGroups.length < 1) {
@@ -730,9 +999,9 @@ module.exports = {
         let series = await Series.findAll(
           {
               where: {
-                  GroupId: {
-                    [Op.or]: clientGroups
-                  }
+                id: {
+                  [Op.or]: seriesGroups
+                }
               },
           }
         );
@@ -740,6 +1009,10 @@ module.exports = {
         // TODO: Pull IMBD Data
 
         for (const serie of series) {
+          serieGroups = await SeriesGroups.findAll({ where: { SeriesId: serie.id }, attributes: ["GroupId"], raw: true, nest: true })
+              .then(function(serieGroups) {
+                  return serieGroups.map(function(serieGroups) { return serieGroups.GroupId; })
+              });
           tvSeries.push({
               "num":serie.id,
               "name":serie.name,
@@ -760,8 +1033,8 @@ module.exports = {
               "backdrop_path":[serie.backdropImg],
               "youtube_trailer":"",
               "episode_run_time":serie.runtime,
-              "category_id":serie.GroupId,
-              "category_ids":[serie.GroupId]
+              "category_id":serieGroups[0] ?? serieGroups,
+              "category_ids":serieGroups
           })
         }
 

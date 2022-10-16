@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         Groups.hasMany(models.Channels);
         Groups.hasMany(models.ClientGroups);
         Groups.hasMany(models.ChannelGroups);
+        Groups.hasMany(models.SeriesGroups);
         Groups.hasMany(models.Series);
         Groups.belongsTo(models.User);
     };

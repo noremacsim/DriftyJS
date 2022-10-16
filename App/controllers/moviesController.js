@@ -16,8 +16,6 @@ module.exports = {
                 return channelGroups.map(function(channelGroups) { return channelGroups.ChannelId; })
             });
 
-        console.log(channelGroups);
-
         const movies = await Channels.findAll(
               {
                 where: {

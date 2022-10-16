@@ -55,6 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         Channels.belongsTo(models.User);
         Channels.belongsTo(models.Sessons);
         Channels.hasMany(models.ChannelGroups);
+        Channels.hasMany(models.RecentlyPlayed);
     };
 
 

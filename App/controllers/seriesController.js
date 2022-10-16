@@ -1,17 +1,29 @@
 const path = require("path");
+const { Op } = require("sequelize");
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 const {Series} = require(path.join(__dirname, '../../Core/models/'));
 const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
+const {SeriesGroups} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
     viewByGroup: async(request, h) => {
         const GroupId = request.params.groupID;
 
+        seriesGroups = await SeriesGroups.findAll({ where: { GroupId: GroupId }, attributes: ["SeriesId"], raw: true, nest: true })
+            .then(function(seriesGroups) {
+                return seriesGroups.map(function(seriesGroups) { return seriesGroups.SeriesId; })
+            });
+
         const series = await Series.findAll(
               {
-                where: { UserId: global.userID, GroupId: GroupId }
+                where: {
+                  UserId: global.userID,
+                  id: {
+                    [Op.or]: seriesGroups
+                  }
+                }
               }
           );
 

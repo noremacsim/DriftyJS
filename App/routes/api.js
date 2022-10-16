@@ -81,6 +81,14 @@ module.exports = [
     },
     {
         method: "GET",
+        path: "/import/tvshows",
+        handler: xtream.importTvShows,
+        config: {
+            pre: [{ method: middleware.auth }],
+        }
+    },
+    {
+        method: "GET",
         path: "/import/recentmovies",
         handler: xtream.updateRecentMovies,
         config: {

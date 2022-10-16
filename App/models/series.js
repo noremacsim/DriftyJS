@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
         Series.belongsTo(models.Groups);
         Series.hasMany(models.Sessons);
         Series.hasMany(models.Channels);
+        Series.hasMany(models.SeriesGroups);
         Series.belongsTo(models.User);
     };
 
