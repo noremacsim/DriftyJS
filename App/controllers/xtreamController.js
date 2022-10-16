@@ -748,6 +748,9 @@ module.exports = {
         return Boom.unauthorized('invalid login');
       }
 
+      console.log(request.query);
+
+
       let clientCreated = Math.round(new Date(client.createdAt).getTime()/1000);
       let clientExpDate = Math.round(new Date(client.exp_date).getTime()/1000);
 
@@ -975,6 +978,9 @@ module.exports = {
 
       if (request.query.action === 'get_series') {
 
+        console.log('get series')
+
+
         if (request.query.category_id) {
           clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id, GroupId: request.query.category_id}, attributes: ["GroupId"], raw: true, nest: true })
               .then(function(clientGroups) {
@@ -1143,12 +1149,16 @@ module.exports = {
             "direct_source":""
           })
         }
-
+        let seasonsCount = sessonsData.length + 1;
+        let seasonsArrayEpisodes = {};
+        for (let seasonCounter = 1; seasonCounter < seasonsCount; seasonCounter++) {
+            seasonsArrayEpisodes[seasonCounter] = episodesData;
+        }
 
         let all = {
           'seasons': sessonsData,
           'info': info,
-          "episodes": {"1" : episodesData}
+          "episodes": seasonsArrayEpisodes
         }
 
         return h.response(all).code(200);
