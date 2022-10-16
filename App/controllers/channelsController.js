@@ -48,7 +48,7 @@ module.exports = {
           parseInt(SessonId)
         }
 
-        if (request.payload.channelGroups) {
+        if (request.payload.channelGroups || tvgtype == 'movies' || tvgtype == 'series') {
           group = null;
         }
 

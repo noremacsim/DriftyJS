@@ -44,11 +44,14 @@ module.exports = {
         const movieID = request.params.movieID;
         const groupID = request.params.groupID;
         const groups = await Groups.findAll({ where: { type: 'movies' }});
+        let channelGroups = [];
 
-        channelGroups = await ChannelGroups.findAll({ where: { ChannelId: movieID }, attributes: ["GroupId"], raw: true, nest: true })
-            .then(function(channelGroups) {
-                return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
-            });
+        if (movieID) {
+          channelGroups = await ChannelGroups.findAll({ where: { ChannelId: movieID }, attributes: ["GroupId"], raw: true, nest: true })
+              .then(function(channelGroups) {
+                  return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
+              });
+        }
 
         let channel = [];
         let group = [];

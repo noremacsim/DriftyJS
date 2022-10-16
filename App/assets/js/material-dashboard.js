@@ -47,6 +47,16 @@ function defocused(el) {
   }
 }
 
+function removeResults(el) {
+  if (el.parentElement.classList.contains('input-group')) {
+    el.parentElement.classList.remove('focused');
+  }
+
+  if ( $('#resultsofsearch').length ) {
+    $('#resultsofsearch').remove();
+  }
+}
+
 // helper for adding on all elements multiple attributes
 function setAttributes(el, options) {
   Object.keys(options).forEach(function(attr) {
@@ -804,3 +814,30 @@ function darkMode(el) {
     el.removeAttribute("checked");
   }
 };
+
+function searchQuery() {
+  const value = $('#globalSearch').val();
+  $.get(`/ajax/search?query=${value}`, function(data, status){
+    if ( $('#resultsofsearch').length ) {
+      $('#resultsofsearch').remove();
+    }
+
+    $('#searchResults').append(data);
+  });
+}
+
+$('#globalSearch').on('change, keydown, keyup', function() {
+  searchQuery();
+})
+
+$("#searchResults").focusout(function() {
+  if ($(this).attr('id') != 'searchResults') {
+    if ( $('#resultsofsearch').length ) {
+      $('#resultsofsearch').remove();
+    }
+  }
+});
+
+$("#globalSearch").focus(function() {
+  searchQuery();
+})
