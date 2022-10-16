@@ -642,6 +642,26 @@ module.exports = {
       });
     }
 
+    async function getUpdated(tempFileName) {
+        return new Promise((resolve, reject) => {
+          const m3uFile = fs.readFileSync(path.join(__dirname, `../Temp/${tempFileName}`), 'utf-8');
+          const lines = m3uFile.split("\n");
+          const result = parser.parse(m3uFile);
+          updatedFile = fs.createWriteStream(path.join(__dirname, `../Temp/1${tempFileName}`));
+          updatedFile.write('#EXTM3U \n');
+          updatedFile.write('#EXT-X-VERSION:3 \n');
+          updatedFile.write(`${lines[2]} \n`);
+          updatedFile.write('#EXT-X-ALLOW-CACHE:NO \n');
+          updatedFile.write('#EXT-X-TARGETDURATION:5 \n');
+          updatedFile.write('#EXTINF:10.000000, \n');
+          updatedFile.write(result.items[0].url);
+          updatedFile.end();
+          updatedFile.on('finish', function () {
+            resolve();
+          });
+        });
+      }
+
     function processm3u8(tempFileName) {
       return new Promise((resolve, reject) => {
         return exec(`wget -O ${path.join(__dirname, `../Temp/${tempFileName}`)} ${channels.url}`, (error, stdout, stderr) => {
@@ -678,8 +698,9 @@ module.exports = {
     // multiple devices
     tempFileName = `${username}${Date.now()}.m3u8`
     await processm3u8(tempFileName);
+    await getUpdated(tempFileName);
 
-    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/${tempFileName}`));
+    let streamT = await fs.createReadStream(path.join(__dirname, `../Temp/1${tempFileName}`));
     let streamDataT = await new Readable().wrap(streamT);
     return h.response(streamDataT)
       .header('Content-Type', 'application/x-mpegurl')
