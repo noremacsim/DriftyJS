@@ -963,7 +963,7 @@ module.exports = {
              "name":channel.name,
              "title":channel.name,
              "year":"2022",
-             "added":Math.round(new Date(channel.createdAt).getTime()/1000),
+             "added":Math.round(new Date(channel.releaseDate).getTime()/1000),
              "category_id":channel.GroupId,
              "category_ids":[channel.GroupId],
              "container_extension":"mp4",
