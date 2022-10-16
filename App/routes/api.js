@@ -74,11 +74,17 @@ module.exports = [
     {
         method: "GET",
         path: "/import/movies",
-        handler: xtream.importMovies
+        handler: xtream.importMovies,
+        config: {
+            pre: [{ method: middleware.auth }],
+        }
     },
     {
         method: "GET",
         path: "/import/recentmovies",
-        handler: xtream.updateRecentMovies
+        handler: xtream.updateRecentMovies,
+        config: {
+            pre: [{ method: middleware.auth }],
+        }
     },
 ];
