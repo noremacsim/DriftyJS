@@ -183,7 +183,7 @@ module.exports = {
             } else {
               await SeriesGroups.create({
                   SeriesId: parseInt(series.id),
-                  GroupId: 19,
+                  GroupId: 547,
               });
             }
           }
@@ -432,7 +432,7 @@ module.exports = {
           } else {
             await ChannelGroups.create({
                 ChannelId: parseInt(channel.id),
-                GroupId: 527,
+                GroupId: 520,
             });
           }
         }
@@ -1241,7 +1241,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"192.168.1.191",
+            "url":"cameronsim.uk",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
