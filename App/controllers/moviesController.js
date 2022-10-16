@@ -1,17 +1,32 @@
 const path = require("path");
+const { Op } = require("sequelize");
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 const {Series} = require(path.join(__dirname, '../../Core/models/'));
 const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
+const {ChannelGroups} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
     viewByGroup: async(request, h) => {
         const GroupId = request.params.groupID;
 
+        channelGroups = await ChannelGroups.findAll({ where: { GroupId: GroupId }, attributes: ["ChannelId"], raw: true, nest: true })
+            .then(function(channelGroups) {
+                return channelGroups.map(function(channelGroups) { return channelGroups.ChannelId; })
+            });
+
+        console.log(channelGroups);
+
         const movies = await Channels.findAll(
               {
-                where: { tvgtype: 'movies', UserId: global.userID, GroupId: GroupId }
+                where: {
+                  tvgtype: 'movies',
+                  UserId: global.userID,
+                  id: {
+                    [Op.or]: channelGroups
+                  }
+                }
               }
           );
 
@@ -30,7 +45,12 @@ module.exports = {
     editView: async(request, h) => {
         const movieID = request.params.movieID;
         const groupID = request.params.groupID;
-        const groups = await Groups.findAll();
+        const groups = await Groups.findAll({ where: { type: 'movies' }});
+
+        channelGroups = await ChannelGroups.findAll({ where: { ChannelId: movieID }, attributes: ["GroupId"], raw: true, nest: true })
+            .then(function(channelGroups) {
+                return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
+            });
 
         let channel = [];
         let group = [];
@@ -39,6 +59,6 @@ module.exports = {
             channel = await Channels.findOne({ where: { id: movieID, UserId: global.userID } });
         }
 
-        return h.simsView('editMovie', {channel: channel, type: 'movies', groupID: groupID, activePage: 'movies'});
+        return h.simsView('editMovie', {channel: channel, type: 'movies', groupID: groupID, channelGroups: channelGroups, groups: groups, activePage: 'movies'});
     },
 };

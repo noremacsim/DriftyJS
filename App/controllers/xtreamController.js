@@ -15,6 +15,7 @@ const {Groups} = require(path.join(__dirname, '../../Core/models/'));
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 const {Client} = require(path.join(__dirname, '../../Core/models/'));
 const {ClientGroups} = require(path.join(__dirname, '../../Core/models/'));
+const {ChannelGroups} = require(path.join(__dirname, '../../Core/models/'));
 const {Series} = require(path.join(__dirname, '../../Core/models/'));
 const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
@@ -22,12 +23,49 @@ module.exports = {
 
   importMovies: async (request, h) => {
 
+    function timeConverter(UNIX_timestamp){
+      var a = new Date(UNIX_timestamp * 1000);
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var year = a.getFullYear();
+      var month = ("00" + (parseInt(a.getMonth()) + 1)).slice(-2);
+      var date = ("00" + a.getDate()).slice(-2);
+      var hour = ("00" + a.getHours()).slice(-2);
+      var min = ("00" + a.getMinutes()).slice(-2);
+      var sec = ("00" + a.getSeconds()).slice(-2);
+      var time = year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec ;
+      return time;
+    }
+
     async function downloadMovieList() {
       return new Promise((resolve, reject) => {
         const movieListUrl = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/library/sections/1/all?type=1&includeCollections=1&includeExternalMedia=1&includeAdvanced=1&includeMeta=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1530x929%2C1920x1080&X-Plex-Container-Start=0&X-Plex-Container-Size=3000&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Provider-Version=5.1&X-Plex-Text-Format=plain&X-Plex-Drm=widevine&X-Plex-Language=en-GB`;
 
 
         let req = https.get(movieListUrl, function(res) {
+          let data = '';
+          res.on('data', function(stream) {
+              data += stream;
+          });
+          res.on('end', function(){
+              xmlParser.parseString(data, function(error, result) {
+                  if(error === null) {
+                      return resolve(result);
+                  }
+                  else {
+                      return reject;
+                  }
+              });
+          });
+        });
+      });
+    }
+
+    async function getFinalImbdID(key) {
+      return new Promise((resolve, reject) => {
+        const movieDetails = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${key}?includeConcerts=1&includeExtras=1&includeOnDeck=1&includePopularLeaves=1&includePreferences=1&includeReviews=1&includeChapters=1&includeStations=1&includeExternalMedia=1&asyncAugmentMetadata=1&asyncCheckFiles=1&asyncRefreshAnalysis=1&asyncRefreshLocalMediaAgent=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1530x929%2C1920x1080&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Provider-Version=5.1&X-Plex-Text-Format=plain&X-Plex-Drm=widevine&X-Plex-Language=en-GB`;
+
+
+        let req = https.get(movieDetails, function(res) {
           let data = '';
           res.on('data', function(stream) {
               data += stream;
@@ -81,45 +119,68 @@ module.exports = {
           let title = movieItem.ATTR.title;
           let url = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/video/:/transcode/universal/start.mpd?hasMDE=1&path=${movieItem.ATTR.key}&mediaIndex=0&partIndex=0&protocol=dash&fastSeek=1&directPlay=0&directStream=1&subtitleSize=100&audioBoost=100&location=wan&addDebugOverlay=0&autoAdjustQuality=0&directStreamAudio=1&mediaBufferSize=102400&session=pdno4gtixhue98yjmt35jwwa&subtitles=burn&Accept-Language=en-GB&X-Plex-Session-Identifier=lhzj8ii7rhoy2gpok36yp5oh&X-Plex-Client-Profile-Extra=append-transcode-target-codec%28type%3DvideoProfile%26context%3Dstreaming%26audioCodec%3Daac%26protocol%3Ddash%29&X-Plex-Incomplete-Segments=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1920x929%2C1920x1080&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Language=en-GB`
           let logo = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${movieItem.ATTR.thumb}?X-Plex-Token=mAXoi8LLE3-bBzv_EehL`;
+          let releaseDate = movieItem.ATTR.originallyAvailableAt;
+          let created = timeConverter(movieItem.ATTR.addedAt);
+          let updated = timeConverter(movieItem.ATTR.updatedAt);
+          let imbdid = null;
+          let summary = movieItem.ATTR.summary
 
+          let channel = await Channels.findOne({ where: { name: title, UserId: 1 } });
+          if (channel) {
+            continue;
+          }
+
+          if(movieItem.ATTR.guid) {
+            if (movieItem.ATTR.guid.toLowerCase().includes('imdb')) {
+              let firstSplit = movieItem.ATTR.guid.split("imdb://");
+              let final = firstSplit[1].split('?lang');
+              imbdid = final[0];
+            }
+          }
+
+          if (!imbdid) {
+            let movieDetails = await getFinalImbdID(movieItem.ATTR.key)
+            for (let guidlist of movieDetails.MediaContainer.Video[0].Guid) {
+              let guidname = guidlist.ATTR.id;
+              if (guidname.toLowerCase().includes('imdb')) {
+                let firstSplit = guidname.split("://");
+                imbdid = firstSplit[1];
+                break;
+              }
+            }
+          }
+
+          channel = await Channels.create(
+              {
+                  name: title,
+                  logo: logo,
+                  url: url,
+                  GroupId: null,
+                  tvgid: null,
+                  tvgtype: 'movies',
+                  imbdid: imbdid,
+                  UserId: 1,
+                  releaseDate: releaseDate,
+                  createdAt: created,
+                  updatedAt: updated,
+                  plot: summary,
+              }
+          );
+
+          await ChannelGroups.destroy({ where: { ChannelId: parseInt(channel.id) } });
           if (movieItem.Genre) {
-
             for (const movieCategorie of movieItem.Genre) {
               let group = await addGroup(movieCategorie.ATTR.tag);
-              let channel = await Channels.findOne({ where: { name: title, GroupId: group.id ?? 520, UserId: 1 } });
-              if (channel) {
-                continue;
-              }
-              await Channels.create(
-                  {
-                      name: title,
-                      logo: logo,
-                      url: url,
-                      GroupId: group.id ?? 520,
-                      tvgid: null,
-                      tvgtype: 'movies',
-                      imbdid: null,
-                      UserId: 1,
-                  }
-              );
+              await ChannelGroups.create({
+                  ChannelId: parseInt(channel.id),
+                  GroupId: parseInt(group.id),
+              });
             }
           } else {
-            let channel = await Channels.findOne({ where: { name: title, GroupId: 520, UserId: 1 } });
-            if (channel) {
-              continue;
-            }
-            await Channels.create(
-                {
-                    name: title,
-                    logo: logo,
-                    url: url,
-                    GroupId: 520,
-                    tvgid: null,
-                    tvgtype: 'movies',
-                    imbdid: null,
-                    UserId: 1,
-                }
-            );
+            await ChannelGroups.create({
+                ChannelId: parseInt(channel.id),
+                GroupId: 527,
+            });
           }
         }
         return resolve();
@@ -626,10 +687,14 @@ module.exports = {
         }
 
       if (request.query.action === 'get_vod_streams') {
-
         clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
             .then(function(clientGroups) {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+            });
+
+        channelGroups = await ChannelGroups.findAll({ where: { GroupId: {[Op.or]: clientGroups}}, attributes: ["ChannelId"], raw: true, nest: true })
+            .then(function(channelGroups) {
+                return channelGroups.map(function(channelGroups) { return channelGroups.ChannelId; })
             });
 
           if (clientGroups.length < 1) {
@@ -640,8 +705,8 @@ module.exports = {
             {
                 where: {
                     tvgtype: 'movies',
-                    GroupId: {
-                      [Op.or]: clientGroups
+                    id: {
+                      [Op.or]: channelGroups
                     }
                 },
             }
@@ -657,6 +722,10 @@ module.exports = {
           }
 
           for (const channel of channels) {
+            channelGroups = await ChannelGroups.findAll({ where: { ChannelId: channel.id }, attributes: ["GroupId"], raw: true, nest: true })
+                .then(function(channelGroups) {
+                    return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
+                });
             vodChannels.push(
                   {
                     "num":channel.id,
@@ -670,12 +739,11 @@ module.exports = {
                     "added": Math.round(new Date(channel.createdAt).getTime()/1000),
                     "custom_sid":"",
                     "direct_source":"",
-                    "category_id":channel.GroupId,
-                    "category_ids":[channel.GroupId],
+                    "category_id":channelGroups[0] ?? channelGroups,
+                    "category_ids":channelGroups,
                   }
                 );
             }
-
             return h.response(vodChannels).code(200);
         }
 
@@ -854,7 +922,7 @@ module.exports = {
           }
         );
 
-        const imbd = await getJSON(`https://api.themoviedb.org/3/movie/${channel.imbdid}?api_key=16c1dc83a80675faa65ac467f40d4868`, function(error, response){
+        const imbd = await getJSON(`https://api.themoviedb.org/3/movie/${channel.imbdid}?api_key=16c1dc83a80675faa65ac467f40d4868&`, function(error, response){
             return response;
         });
 

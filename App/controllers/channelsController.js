@@ -1,6 +1,7 @@
 const path = require("path");
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
+const {ChannelGroups} = require(path.join(__dirname, '../../Core/models/'));
 
 
 module.exports = {
@@ -37,7 +38,7 @@ module.exports = {
     editSave: async(request, h) => {
         const channelID = request.params.channelID
 
-        const {name, logo, url, group, tvgid, tvgtype, imbdid, episode, SessonId, SeriesId, releaseDate, plot, runtime, coverImg} = request.payload;
+        let {name, logo, url, group, tvgid, tvgtype, imbdid, episode, SessonId, SeriesId, releaseDate, plot, runtime, coverImg} = request.payload;
 
         if (SeriesId) {
           parseInt(SeriesId)
@@ -47,22 +48,9 @@ module.exports = {
           parseInt(SessonId)
         }
 
-        console.log({
-            name: name ?? null,
-            logo: logo ?? null,
-            url: url ?? null,
-            GroupId: group ?? null,
-            tvgid: tvgid ?? null,
-            tvgtype: tvgtype ?? null,
-            imbdid: imbdid ?? null,
-            episode: episode ?? null,
-            releaseDate: releaseDate ?? null,
-            plot: plot ?? null,
-            runtime: runtime ?? null,
-            coverImg: coverImg ?? null,
-            SeriesId: SeriesId ?? null,
-            SessonId: SessonId ?? null,
-        });
+        if (request.payload.channelGroups) {
+          group = null;
+        }
 
         if (channelID) {
             await Channels.update(
@@ -87,7 +75,7 @@ module.exports = {
                 }
             );
         } else {
-            await Channels.create(
+            channel = await Channels.create(
                 {
                     name: name ?? null,
                     logo: logo ?? null,
@@ -106,6 +94,23 @@ module.exports = {
                     UserId: global.userID,
                 }
             );
+        }
+
+        if (request.payload.channelGroups) {
+          await ChannelGroups.destroy({ where: { ChannelId: parseInt(channelID ?? channel.id) } });
+          if (typeof(request.payload.channelGroups) === 'string') {
+            await ChannelGroups.create({
+                ChannelId: parseInt(channelID ?? channel.id),
+                GroupId: parseInt(request.payload.channelGroups),
+            });
+          } else {
+            for (const groupId of request.payload.channelGroups) {
+                await ChannelGroups.create({
+                    ChannelId: parseInt(channelID ?? channel.id),
+                    GroupId: parseInt(groupId),
+                });
+            }
+          }
         }
 
         return 'test';

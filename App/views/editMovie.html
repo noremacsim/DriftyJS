@@ -27,6 +27,16 @@
                 <div class="input-group input-group-outline mb-3">
                     <input type="text" class="form-control" onfocus="focused(this)" onfocusout="defocused(this)" name="imbdid" value="<% if(channel.imbdid){ %><%= channel.imbdid %><% } %>">
                 </div>
+                <div class="card-body p-3">
+                    <label class="form-label">Groups</label>
+                    <% groups.forEach((group)=> { %>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="channelGroups" value="<%= group.id %>" id="flexSwitchCheckDefault"
+                                <% if(channelGroups.includes(group.id)){ %> checked <% } %> >
+                            <label class="form-check-label" for="flexSwitchCheckDefault"><%= group.name %></label>
+                        </div>
+                    <% }) %>
+                </div>
                 <input type='hidden' name='tvgtype' value='<%= type %>'>
                 <input type='hidden' name='group' value='<%= groupID %>'>
                 <div class="text-center">
