@@ -60,24 +60,9 @@ module.exports = [
         }
     },
     {
-        method: [ 'GET', 'POST' ],
-        path: '/{any*}',
-        handler: (request, h) => {
-          console.log(request);
-        }
-    },
-    {
         method: "GET",
         path: "/{username}/{password}/m3u8/{type}/{file}",
         handler: xtream.playm3u8
-    },
-    {
-        method: "GET",
-        path: "/import/movies",
-        handler: xtream.importMovies,
-        config: {
-            pre: [{ method: middleware.auth }],
-        }
     },
     {
         method: "GET",
@@ -93,6 +78,15 @@ module.exports = [
         handler: xtream.updateRecentMovies,
         config: {
             pre: [{ method: middleware.auth }],
+        }
+    },
+    {
+        method: "GET",
+        path: "/import/movies/{type}",
+        handler: xtream.importMovies,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Import Movie Data",
         }
     },
 ];

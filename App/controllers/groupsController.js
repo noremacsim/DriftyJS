@@ -1,4 +1,5 @@
 const path = require("path");
+const { Op } = require("sequelize");
 const {Groups} = require(path.join(__dirname, '../../Core/models/'));
 const {Channels} = require(path.join(__dirname, '../../Core/models/'));
 
@@ -100,5 +101,41 @@ module.exports = {
         await Channels.destroy({ where: { GroupId: groupID, UserId: global.userID } });
         await Groups.destroy({ where: { id: groupID, UserId: global.userID } });
         return 'test';
+    },
+
+    //Types: movies, series, live
+    findOrCreate: async(group, type) => {
+      return new Promise(async (resolve, reject) => {
+        let vod = 1;
+        if (type == 'live') {
+          vod = 0;
+        }
+
+        let groups = await Groups.findOne({
+            where: {
+              type: type,
+              [Op.or]: [
+                  { name: group },
+                  { mapped: group },
+                ]
+            }
+        });
+
+        if (groups) {
+          return resolve(groups);
+        }
+
+        groups = await Groups.create(
+            {
+                name: group,
+                mapped: null,
+                VOD: vod,
+                UserId: 1,
+                type: type,
+            }
+        );
+
+        return resolve(groups);
+      });
     },
 };

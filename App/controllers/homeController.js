@@ -14,7 +14,7 @@ module.exports = async (request, h) => {
       var month = ("00" + (parseInt(a.getMonth()) + 1)).slice(-2);
       var date = ("00" + a.getDate()).slice(-2);
       var hour = ("00" + a.getHours()).slice(-2);
-      var min = ("00" + (parseInt(a.getMinutes()) - 1)).slice(-2);
+      var min = ("00" + (parseInt(a.getMinutes()) - 5)).slice(-2);
       var sec = ("00" + a.getSeconds()).slice(-2);
       var time = year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec ;
       return time;
@@ -23,7 +23,10 @@ module.exports = async (request, h) => {
     const groups = await Groups.findAll({where: { UserId: global.userID }});
     const clients = await Client.findAll({where: { UserId: global.userID }});
     const channels = await Channels.findAll({where: { UserId: global.userID }});
-    const recentlyPlayed = await RecentlyPlayed.findAll({ include: Client });
+    const recentlyPlayed = await RecentlyPlayed.findAll({
+        include: Client,
+        order: [['updatedAt', 'DESC']]
+    });
     const activeClient = await RecentlyPlayed.findAll({
       include: Client,
       where: {

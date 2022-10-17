@@ -5,7 +5,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Playlist</h5>
                     <p class="card-text">Manage your m3u Playlist.</p>
-                    <a href="/groups" class="btn btn-primary">Manage</a>
+                    <a href="/#" class="btn btn-primary">Manage</a>
                 </div>
             </div>
         </div>
@@ -135,6 +135,9 @@
                 <div class="d-flex flex-column">
                   <h6 class="mb-1 text-dark font-weight-bold text-sm"><%= active.Client.username %></h6>
                   <span class="text-xs"><%= moment(active.updatedAt).format('Do MMMM, YYYY h:mm a'); %></span>
+                </div>
+                <div class="d-flex align-items-center text-sm">
+                    <%= active.Channel %>
                 </div>
               </li>
             <% }) %>

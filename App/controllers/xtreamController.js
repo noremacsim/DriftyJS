@@ -20,8 +20,76 @@ const {Series} = require(path.join(__dirname, '../../Core/models/'));
 const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 const {RecentlyPlayed} = require(path.join(__dirname, '../../Core/models/'));
 const {SeriesGroups} = require(path.join(__dirname, '../../Core/models/'));
+const Plex = require(path.join(__dirname, '../controllers/plexController'));
+const groupsControler = require(path.join(__dirname, '../controllers/groupsController'));
+
+
 
 module.exports = {
+
+  importMovies: async (request, h) => {
+    const type = request.params.type;
+    async function addMovies(type) {
+      return new Promise(async (resolve, reject) => {
+        const plex = new Plex(type);
+        const genres = await plex.getGenres('movies');
+
+        // Create the Genre if not exists
+        for (const genre of genres) {
+          let category = await groupsControler.findOrCreate(genre.ATTR.title, 'movies');
+          let offset = 0;
+          let movieImportCount = 0;
+          plex.offsetExhausted = false;
+          do {
+            plex.offset = offset;
+            let movies = await plex.getMoviesFromGenre(genre.ATTR.key);
+            for (let movie of movies) {
+              movieImportCount++;
+              console.log('Trying Import : ' + movieImportCount);
+              movieJson = await plex.formatMovieForImport(movie);
+
+              // Create the Movie into db
+              let channel = await Channels.findOne(
+                { where: {
+                  name: movieJson.title,
+                  tvgtype: 'movies',
+                  UserId: 1
+                }
+              });
+              if (channel) {
+                continue;
+              }
+              channel = await Channels.create(
+                  {
+                      name: movieJson.title,
+                      logo: movieJson.logo,
+                      url: movieJson.url,
+                      tvgtype: 'movies',
+                      imbdid: movieJson.imbdid,
+                      UserId: 1,
+                      releaseDate: movieJson.releaseDate,
+                      createdAt: movieJson.created,
+                      plot: movieJson.summary,
+                  }
+              );
+              await ChannelGroups.destroy({ where: { ChannelId: parseInt(channel.id) } });
+              await ChannelGroups.create({
+                  ChannelId: parseInt(channel.id),
+                  GroupId: parseInt(category.id),
+              });
+              console.log('Imported: ' + movieImportCount);
+            }
+            offset = offset + 200;
+            console.log(offset);
+          }
+          while (!plex.offsetExhausted);
+        }
+        resolve();
+      });
+    }
+    await addMovies(type);
+    return 'done';
+  },
 
   importTvShows: async (request, h) => {
 
@@ -272,7 +340,7 @@ module.exports = {
 
   },
 
-  importMovies: async (request, h) => {
+  importMoviesOld: async (request, h) => {
 
     function timeConverter(UNIX_timestamp){
       var a = new Date(UNIX_timestamp * 1000);
