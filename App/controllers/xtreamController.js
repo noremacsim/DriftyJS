@@ -28,6 +28,11 @@ const groupsControler = require(path.join(__dirname, '../controllers/groupsContr
 module.exports = {
 
   importMovies: async (request, h) => {
+
+    //Create our easily filtered Groups here
+    await groupsControler.findOrCreate('Recently Released', 'movies');
+    await groupsControler.findOrCreate('Most Popular', 'movies');
+
     const type = request.params.type;
     async function addMovies(type) {
       return new Promise(async (resolve, reject) => {
@@ -817,9 +822,6 @@ module.exports = {
             .then(function(channelGroups) {
                 return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
             });
-
-
-        console.log(channelGroups);
 
 
         if (clientGroups.length < 1) {
