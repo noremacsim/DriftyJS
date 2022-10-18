@@ -28,7 +28,7 @@ const groupsControler = require(path.join(__dirname, '../controllers/groupsContr
 module.exports = {
 
   importMovies: async (request, h) => {
-
+ 
     //Create our easily filtered Groups here
     await groupsControler.findOrCreate('Recently Released', 'movies');
     await groupsControler.findOrCreate('Most Popular', 'movies');
