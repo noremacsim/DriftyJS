@@ -813,6 +813,11 @@ module.exports = {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
 
+        channelGroups = await ChannelGroups.findAll({ where: { GroupId: {[Op.or]: clientGroups},   group: "GroupId"}, attributes: ["GroupId"], raw: true, nest: true })
+            .then(function(channelGroups) {
+                return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
+            });
+
 
         if (clientGroups.length < 1) {
           return h.response([]).code(200);
@@ -823,7 +828,7 @@ module.exports = {
             where: {
               type: 'movies',
               id: {
-                [Op.or]: clientGroups
+                [Op.or]: channelGroups
               }
             }
           }
