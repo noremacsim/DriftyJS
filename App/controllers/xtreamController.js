@@ -859,6 +859,11 @@ module.exports = {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
 
+        seriesGroups = await SeriesGroups.findAll({group: "GroupId", where: { GroupId: {[Op.or]: clientGroups}}, attributes: ["GroupId"], raw: true, nest: true })
+            .then(function(seriesGroups) {
+                return seriesGroups.map(function(seriesGroups) { return seriesGroups.GroupId; })
+            });
+
         if (clientGroups.length < 1) {
           return h.response([]).code(200);
         }
@@ -868,7 +873,7 @@ module.exports = {
             where: {
               type: 'series',
               id: {
-                [Op.or]: clientGroups
+                [Op.or]: seriesGroups
               }
             }
           }
@@ -1257,18 +1262,19 @@ module.exports = {
           imbd = await getJSON(`https://api.themoviedb.org/3/movie/${channel.imbdid}?api_key=16c1dc83a80675faa65ac467f40d4868&`, function(error, response){
               return response;
           });
+          console.log(imbd);
         }
 
         let vodInfo = { "info":
          {
            "kinopoisk_url":`https://www.themoviedb.org/movie/${imbd.id  ?? null}`,
            "tmdb_id":imbd.id ?? null,
-           "name":imbd.original_title ?? null,
-           "o_name":imbd.original_title ?? null,
-           "cover_big":`https://image.tmdb.org/t/p/w600_and_h900_bestv2${imbd.backdrop_path ?? null}`,
-           "movie_image":`https://image.tmdb.org/t/p/w600_and_h900_bestv2${imbd.poster_path ?? null}`,
-           "release_date":imbd.release_date ?? null,
-           "episode_run_time":imbd.runtime ?? null,
+           "name":channel.name,
+           "o_name":channel.name,
+           "cover_big":channel.logo,
+           "movie_image":channel.logo,
+           "release_date":channel.releaseDate,
+           "episode_run_time":imbd.runtime ?? 0,
            "youtube_trailer":"",
            "director":"",
            "actors":"",
@@ -1280,12 +1286,12 @@ module.exports = {
            "rating_count_kinopoisk":0,
            "country":imbd.original_language ?? null,
            "genre":"",
-           "backdrop_path":[`https://image.tmdb.org/t/p/w1280/${imbd.backdrop_path ?? null}`],
-           "duration_secs":imbd.runtime  ? imbd.runtime * 60 : null,
-           "duration":imbd.runtime ?? null,
+           "backdrop_path":channel.logo,
+           "duration_secs":imbd.runtime  ? imbd.runtime * 60 : 0,
+           "duration":imbd.runtime ?? 0,
            "bitrate":7115,
-           "rating":imbd.vote_average ?? null,
-           "releasedate":imbd.release_date ?? null,
+           "rating":imbd.vote_average ?? 0,
+           "releasedate":channel.releaseDate ?? null,
            "subtitles":[]
          },
          "movie_data":
@@ -1302,6 +1308,8 @@ module.exports = {
              "direct_source":""
            }
          }
+
+         console.log(vodInfo);
 
         return h.response(vodInfo).code(200);
       }
