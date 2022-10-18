@@ -28,7 +28,7 @@ const groupsControler = require(path.join(__dirname, '../controllers/groupsContr
 module.exports = {
 
   importMovies: async (request, h) => {
- 
+
     //Create our easily filtered Groups here
     await groupsControler.findOrCreate('Recently Released', 'movies');
     await groupsControler.findOrCreate('Most Popular', 'movies');
@@ -1257,6 +1257,7 @@ module.exports = {
               },
           }
         );
+ 
 
         if (channel.imbdid) {
           imbd = await getJSON(`https://api.themoviedb.org/3/movie/${channel.imbdid}?api_key=16c1dc83a80675faa65ac467f40d4868&`, function(error, response){
