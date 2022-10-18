@@ -1005,7 +1005,6 @@ module.exports = {
         let recentCategory = await groupsControler.findOrCreate('Recently Released', 'movies');
         let recentMovies = await Channels.findAll(
           {
-              attributes: ['id'],
               limit: 50,
               where: {
                   tvgtype: 'movies',
