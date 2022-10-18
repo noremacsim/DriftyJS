@@ -142,6 +142,8 @@ let Plex = class {
         let url = await this.createPlayUrl(movie.ATTR.key);
         let logo = movie.ATTR.thumb;
 
+        //https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/library/parts/201323/1664352635/file.mkv?X-Plex-Session-Identifier=xyduws1peumrye9agovz1e8c&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-////Resolution=1920x929%2C1920x1080&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Language=en-GB&Accept-Language=en-GB
+
         if (this.server == 'ross') {
           logo = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${movie.ATTR.thumb}?X-Plex-Token=${this.token}`
         }
@@ -176,7 +178,7 @@ let Plex = class {
         let mediaUrl = new URL(`${this.baseUrl}${path}`);
         let json = await this.makePlexRequestToJson(mediaUrl);
         for (let movieMedia of json.MediaContainer.Video[0].Media) {
-          if (movieMedia.ATTR.protocol == 'dash') {
+          if (movieMedia.ATTR.protocol == 'hls') {
             path = movieMedia.Part[0].ATTR.key
           }
         }
@@ -195,36 +197,17 @@ let Plex = class {
 
       // Stream URL For Ross Server
       if (this.server == 'ross') {
-        url = new URL(`${this.baseUrl}/video/:/transcode/universal/start.mpd`);
-        url.searchParams.append("hasMDE", "1");
+        url = new URL(`${this.baseUrl}/video/:/transcode/universal/start.m3u8`);
         url.searchParams.append("path", path);
-        url.searchParams.append("mediaIndex", "0");
-        url.searchParams.append("partIndex", "0");
-        url.searchParams.append("protocol", "dash");
-        url.searchParams.append("fastSeek", "1");
-        url.searchParams.append("directPlay", "0");
-        url.searchParams.append("directStream", "1");
-        url.searchParams.append("subtitleSize", "1");
-        url.searchParams.append("audioBoost", "100");
-        url.searchParams.append("location", "wan");
-        url.searchParams.append("addDebugOverlay", "0");
-        url.searchParams.append("directStreamAudio", "1");
-        url.searchParams.append("mediaBufferSize", "102400");
-        url.searchParams.append("subtitles", "burn");
-        url.searchParams.append("Accept-Language", "en-GB");
-        url.searchParams.append("X-Plex-Client-Profile-Extra", "append-transcode-target-codec(type=videoProfile&context=streaming&audioCodec=aac&protocol=dash)");
-        url.searchParams.append("X-Plex-Incomplete-Segments", "1");
         url.searchParams.append("X-Plex-Product", "Plex Web");
         url.searchParams.append("X-Plex-Version", "4.92.0");
-        url.searchParams.append("X-Plex-Client-Identifier", this.identifier);
         url.searchParams.append("X-Plex-Platform", "Chrome");
-        url.searchParams.append("X-Plex-Platform-Version", "1");
+        url.searchParams.append("X-Plex-Platform-Version", "106.0");
         url.searchParams.append("X-Plex-Features", "external-media,indirect-media,hub-style-list");
         url.searchParams.append("X-Plex-Model", "hosted");
         url.searchParams.append("X-Plex-Device", "Windows");
         url.searchParams.append("X-Plex-Device-Screen-Resolution", "1920x1080");
         url.searchParams.append("X-Plex-Token", this.token);
-        url.searchParams.append("X-Plex-Provider-Version", "5.1");
         url.searchParams.append("X-Plex-Language", "en-GB");
       }
 

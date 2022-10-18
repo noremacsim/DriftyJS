@@ -176,34 +176,6 @@ module.exports = {
       });
     }
 
-    async function addGroup(group) {
-        let groups = await Groups.findOne({
-            where: {
-              type: 'series',
-              [Op.or]: [
-                  { name: group },
-                  { mapped: group },
-                ]
-            }
-        });
-
-        if (groups) {
-          return groups;
-        }
-
-        groups = await Groups.create(
-            {
-                name: group,
-                mapped: null,
-                VOD: 1,
-                UserId: 1,
-                type: 'series',
-            }
-        );
-
-        return groups;
-    }
-
     async function addSeries(tvShowsJson) {
       return new Promise(async (resolve, reject) => {
 
@@ -243,7 +215,7 @@ module.exports = {
             await SeriesGroups.destroy({ where: { SeriesId: parseInt(series.id) } });
             if (seriesItem.Genre) {
               for (const seriesCategorie of seriesItem.Genre) {
-                let group = await addGroup(seriesCategorie.ATTR.tag);
+                let group = await groupsControler.findOrCreate(genre.ATTR.title, 'movies');
                 await SeriesGroups.create({
                     SeriesId: parseInt(series.id),
                     GroupId: parseInt(group.id),
@@ -517,79 +489,31 @@ module.exports = {
 
   updateRecentMovies: async (request, h) => {
 
-    async function downloadMovieList() {
-      return new Promise((resolve, reject) => {
+    let category = await groupsControler.findOrCreate('Recently Released', 'movies');
 
-        const movieListUrl = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/library/sections/1/all?sort=originallyAvailableAt:desc&originallyAvailableAt%3E=-1y&includeCollections=1&includeExternalMedia=1&includeAdvanced=1&includeMeta=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-Resolution=1530x929%2C1920x1080&X-Plex-Container-Start=0&X-Plex-Container-Size=100&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Provider-Version=5.1&X-Plex-Text-Format=plain&X-Plex-Drm=widevine&X-Plex-Language=en-GB`;
+    let movies = await Channels.findAll(
+      {
+          attributes: ['id'],
+          limit: 50,
+          where: {
+              tvgtype: 'movies',
+          },
+          order: [
+              ['releaseDate', 'DESC'],
+          ],
+      }
+    );
 
-        let req = https.get(movieListUrl, function(res) {
-          let data = '';
-          res.on('data', function(stream) {
-              data += stream;
-          });
-          res.on('end', function(){
-              xmlParser.parseString(data, function(error, result) {
-                  if(error === null) {
-                      return resolve(result);
-                  }
-                  else {
-                      return reject;
-                  }
-              });
-          });
-        });
+    await ChannelGroups.destroy({ where: { GroupId: parseInt(category.id) } });
+    for (const movie of movies) {
+      await ChannelGroups.create({
+          ChannelId: parseInt(movie.id),
+          GroupId: parseInt(category.id),
       });
     }
 
-    async function addGroup() {
-        let groups = await Groups.findOne({
-            where: {
-              type: 'movies',
-              name: 'Recently Released',
-            }
-        });
+    return movies;
 
-        if (groups) {
-          return groups;
-        }
-
-        groups = await Groups.create(
-            {
-                name: 'Recently Released',
-                mapped: null,
-                VOD: 1,
-                UserId: 1,
-                type: 'movies',
-            }
-        );
-
-        return groups;
-    }
-
-    async function addMovies(moviesJson, recentlyReleasedGroup) {
-      return new Promise(async (resolve, reject) => {
-        for (const movieItem of moviesJson.MediaContainer.Video) {
-
-          let title = movieItem.ATTR.title;
-          let channel = await Channels.findOne({ where: { name: title, UserId: 1 } });
-          if (!channel) {
-            continue;
-          }
-
-          await ChannelGroups.destroy({ where: { ChannelId: parseInt(channel.id) } });
-          await ChannelGroups.create({
-              ChannelId: parseInt(channel.id),
-              GroupId: recentlyReleasedGroup.id,
-          });
-        }
-        return resolve();
-      });
-    }
-
-    const recentlyReleasedGroup = await addGroup();
-    let moviesJson = await downloadMovieList();
-    await addMovies(moviesJson, recentlyReleasedGroup);
-    return moviesJson;
   },
 
   // Play Movie Or TV SHOW.
@@ -623,6 +547,7 @@ module.exports = {
 
   // FOR LIVE STREAMS THROUGH PANDAFY
   playHls: async (request, h) => {
+
     const id = request.params.ID;
 
     const domains = [
@@ -658,6 +583,7 @@ module.exports = {
 
   //Handles the rest of the channel play requests
   playChannel: async (request, h) => {
+
     const channelID = request.params.channelID;
     const username = request.params.username;
     const password = request.params.password;
@@ -826,6 +752,7 @@ module.exports = {
         request.query = request.payload;
       }
     }
+
 
     if (request.query.username && request.query.password) {
 
@@ -1010,53 +937,45 @@ module.exports = {
         let channels = [];
         let channelGroups = [];
 
-        clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
-            .then(function(clientGroups) {
-                return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
-            });
+
+        if (request.query.category_id) {
+          clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id, GroupId: request.query.category_id}, attributes: ["GroupId"], raw: true, nest: true })
+              .then(function(clientGroups) {
+                  return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+              });
+        } else {
+          clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
+              .then(function(clientGroups) {
+                  return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
+              });
+        }
+
+        if (clientGroups.length < 1) {
+          return h.response([]).code(200);
+        }
 
         channelGroups = await ChannelGroups.findAll({ where: { GroupId: {[Op.or]: clientGroups}}, attributes: ["ChannelId"], raw: true, nest: true })
             .then(function(channelGroups) {
                 return channelGroups.map(function(channelGroups) { return channelGroups.ChannelId; })
             });
 
-          if (clientGroups.length < 1) {
-            return h.response([]).code(200);
+        if (channelGroups.length < 1) {
+          return h.response([]).code(200);
+        }
+
+        channels = await Channels.findAll(
+          {
+              where: {
+                  tvgtype: 'movies',
+                  id: {
+                    [Op.or]: channelGroups
+                  }
+              },
           }
+        );
 
-          if (channelGroups.length > 0) {
-            channels = await Channels.findAll(
-              {
-                  where: {
-                      tvgtype: 'movies',
-                      id: {
-                        [Op.or]: channelGroups
-                      }
-                  },
-              }
-            );
-          }
 
-          if (request.query.category_id) {
-
-            channelGroups = await ChannelGroups.findAll({ where: { GroupId: request.query.category_id}, attributes: ["ChannelId"], raw: true, nest: true })
-                .then(function(channelGroups) {
-                    return channelGroups.map(function(channelGroups) { return channelGroups.ChannelId; })
-                });
-
-            if (channelGroups.length > 0) {
-              channels = await Channels.findAll({
-                  where: {
-                      id: {
-                        [Op.or]: channelGroups
-                      },
-                      tvgtype: 'movies',
-                  },
-              });
-            }
-          }
-
-          for (const channel of channels) {
+        for (const channel of channels) {
 
             channelGroups = await ChannelGroups.findAll({ where: { ChannelId: channel.id }, attributes: ["GroupId"], raw: true, nest: true })
                 .then(function(channelGroups) {
@@ -1081,8 +1000,8 @@ module.exports = {
                   }
                 );
             }
-            return h.response(vodChannels).code(200);
-        }
+        return h.response(vodChannels).code(200);
+      }
 
       if (request.query.action === 'get_series') {
         let clientGroups = [];
@@ -1277,7 +1196,10 @@ module.exports = {
       }
 
       if (request.query.action === 'get_vod_info') {
+
         const vodID = request.query.vod_id
+        let imbd = [];
+
         let channel = await Channels.findOne(
           {
               where: {
@@ -1286,37 +1208,39 @@ module.exports = {
           }
         );
 
-        const imbd = await getJSON(`https://api.themoviedb.org/3/movie/${channel.imbdid}?api_key=16c1dc83a80675faa65ac467f40d4868&`, function(error, response){
-            return response;
-        });
+        if (channel.imbdid) {
+          imbd = await getJSON(`https://api.themoviedb.org/3/movie/${channel.imbdid}?api_key=16c1dc83a80675faa65ac467f40d4868&`, function(error, response){
+              return response;
+          });
+        }
 
         let vodInfo = { "info":
          {
-           "kinopoisk_url":`https://www.themoviedb.org/movie/${imbd.id}`,
-           "tmdb_id":imbd.id,
-           "name":imbd.original_title,
-           "o_name":imbd.original_title,
-           "cover_big":`https://image.tmdb.org/t/p/w600_and_h900_bestv2${imbd.backdrop_path}`,
-           "movie_image":`https://image.tmdb.org/t/p/w600_and_h900_bestv2${imbd.poster_path}`,
-           "release_date":imbd.release_date,
-           "episode_run_time":imbd.runtime,
+           "kinopoisk_url":`https://www.themoviedb.org/movie/${imbd.id  ?? null}`,
+           "tmdb_id":imbd.id ?? null,
+           "name":imbd.original_title ?? null,
+           "o_name":imbd.original_title ?? null,
+           "cover_big":`https://image.tmdb.org/t/p/w600_and_h900_bestv2${imbd.backdrop_path ?? null}`,
+           "movie_image":`https://image.tmdb.org/t/p/w600_and_h900_bestv2${imbd.poster_path ?? null}`,
+           "release_date":imbd.release_date ?? null,
+           "episode_run_time":imbd.runtime ?? null,
            "youtube_trailer":"",
            "director":"",
            "actors":"",
            "cast":"",
-           "description":imbd.overview,
-           "plot":imbd.overview,
+           "description":imbd.overview ?? null,
+           "plot":imbd.overview ?? null,
            "age":"",
            "mpaa_rating":"",
            "rating_count_kinopoisk":0,
-           "country":imbd.original_language,
+           "country":imbd.original_language ?? null,
            "genre":"",
-           "backdrop_path":[`https://image.tmdb.org/t/p/w1280/${imbd.backdrop_path}`],
-           "duration_secs":imbd.runtime * 60,
-           "duration":imbd.runtime,
+           "backdrop_path":[`https://image.tmdb.org/t/p/w1280/${imbd.backdrop_path ?? null}`],
+           "duration_secs":imbd.runtime  ? imbd.runtime * 60 : null,
+           "duration":imbd.runtime ?? null,
            "bitrate":7115,
-           "rating":imbd.vote_average,
-           "releasedate":imbd.release_date,
+           "rating":imbd.vote_average ?? null,
+           "releasedate":imbd.release_date ?? null,
            "subtitles":[]
          },
          "movie_data":
@@ -1363,7 +1287,7 @@ module.exports = {
             "xui":true,
             "version":"1.5.12",
             "revision":2,
-            "url":"cameronsim.uk",
+            "url":"192.168.1.191",
             "port":"4101",
             "https_port":"4101",
             "server_protocol":"http",
