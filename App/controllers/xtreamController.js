@@ -45,7 +45,7 @@ module.exports = {
             let movies = await plex.getMoviesFromGenre(genre.ATTR.key);
             for (let movie of movies) {
               movieImportCount++;
-              console.log('Trying Import : ' + movieImportCount);
+              //console.log('Trying Import : ' + movieImportCount);
               movieJson = await plex.formatMovieForImport(movie);
 
               // Create the Movie into db
@@ -77,10 +77,11 @@ module.exports = {
                   ChannelId: parseInt(channel.id),
                   GroupId: parseInt(category.id),
               });
-              console.log('Imported: ' + movieImportCount);
+              //console.log('Creating Group: Channel: ' + channel.id + ' Group: ' + category.id)
+              //console.log('Imported: ' + movieImportCount);
             }
             offset = offset + 200;
-            console.log(offset);
+            //console.log(offset);
           }
           while (!plex.offsetExhausted);
         }
@@ -1005,6 +1006,10 @@ module.exports = {
         }
 
       if (request.query.action === 'get_vod_streams') {
+
+        let channels = [];
+        let channelGroups = [];
+
         clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id }, attributes: ["GroupId"], raw: true, nest: true })
             .then(function(clientGroups) {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
@@ -1019,31 +1024,45 @@ module.exports = {
             return h.response([]).code(200);
           }
 
-          let channels = await Channels.findAll(
-            {
-                where: {
-                    tvgtype: 'movies',
-                    id: {
-                      [Op.or]: channelGroups
-                    }
-                },
-            }
-          );
+          if (channelGroups.length > 0) {
+            channels = await Channels.findAll(
+              {
+                  where: {
+                      tvgtype: 'movies',
+                      id: {
+                        [Op.or]: channelGroups
+                      }
+                  },
+              }
+            );
+          }
 
           if (request.query.category_id) {
-            channels = await Channels.findAll({
-                where: {
-                    GroupId: request.query.category_id,
-                    tvgtype: 'movies',
-                },
-            });
+
+            channelGroups = await ChannelGroups.findAll({ where: { GroupId: request.query.category_id}, attributes: ["ChannelId"], raw: true, nest: true })
+                .then(function(channelGroups) {
+                    return channelGroups.map(function(channelGroups) { return channelGroups.ChannelId; })
+                });
+
+            if (channelGroups.length > 0) {
+              channels = await Channels.findAll({
+                  where: {
+                      id: {
+                        [Op.or]: channelGroups
+                      },
+                      tvgtype: 'movies',
+                  },
+              });
+            }
           }
 
           for (const channel of channels) {
+
             channelGroups = await ChannelGroups.findAll({ where: { ChannelId: channel.id }, attributes: ["GroupId"], raw: true, nest: true })
                 .then(function(channelGroups) {
                     return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
                 });
+
             vodChannels.push(
                   {
                     "num":channel.id,
@@ -1066,7 +1085,9 @@ module.exports = {
         }
 
       if (request.query.action === 'get_series') {
-
+        let clientGroups = [];
+        let seriesGroups = [];
+        let series = [];
 
         if (request.query.category_id) {
           clientGroups = await ClientGroups.findAll({ where: { ClientId: client.id, GroupId: request.query.category_id}, attributes: ["GroupId"], raw: true, nest: true })
@@ -1080,16 +1101,20 @@ module.exports = {
               });
         }
 
+        if (clientGroups.length < 1) {
+          return h.response([]).code(200);
+        }
+
         seriesGroups = await SeriesGroups.findAll({ where: { GroupId: {[Op.or]: clientGroups}}, attributes: ["SeriesId"], raw: true, nest: true })
             .then(function(seriesGroups) {
                 return seriesGroups.map(function(seriesGroups) { return seriesGroups.SeriesId; })
             });
 
-        if (clientGroups.length < 1) {
+        if (seriesGroups.length < 1) {
           return h.response([]).code(200);
         }
 
-        let series = await Series.findAll(
+        series = await Series.findAll(
           {
               where: {
                 id: {

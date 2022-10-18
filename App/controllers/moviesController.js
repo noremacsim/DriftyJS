@@ -10,24 +10,27 @@ module.exports = {
 
     viewByGroup: async(request, h) => {
         const GroupId = request.params.groupID;
+        movies = [];
 
         channelGroups = await ChannelGroups.findAll({ where: { GroupId: GroupId }, attributes: ["ChannelId"], raw: true, nest: true })
             .then(function(channelGroups) {
                 return channelGroups.map(function(channelGroups) { return channelGroups.ChannelId; })
             });
 
-        const movies = await Channels.findAll(
-              {
-                where: {
-                  tvgtype: 'movies',
-                  UserId: global.userID,
-                  id: {
-                    [Op.or]: channelGroups
+        if (channelGroups.length > 0) {
+          movies = await Channels.findAll(
+                {
+                  where: {
+                    tvgtype: 'movies',
+                    UserId: global.userID,
+                    id: {
+                      [Op.or]: channelGroups
+                    }
                   }
                 }
-              }
-          );
-
+            );
+        }
+        
         return h.simsView('movies', {channels: movies, GroupId: GroupId, activePage: 'movies'});
     },
 
