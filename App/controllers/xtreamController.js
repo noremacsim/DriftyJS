@@ -977,29 +977,65 @@ module.exports = {
 
         for (const channel of channels) {
 
-            channelGroups = await ChannelGroups.findAll({ where: { ChannelId: channel.id }, attributes: ["GroupId"], raw: true, nest: true })
-                .then(function(channelGroups) {
-                    return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
-                });
+          channelGroups = await ChannelGroups.findAll({ where: { ChannelId: channel.id }, attributes: ["GroupId"], raw: true, nest: true })
+              .then(function(channelGroups) {
+                  return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
+              });
 
-            vodChannels.push(
-                  {
-                    "num":channel.id,
-                    "name":channel.name,
-                    "stream_type":'movie',
-                    "stream_id":channel.id,
-                    "stream_icon":channel.logo,
-                    "rating":"",
-                    "rating_5based":0,
-                    "container_extension":"mp4",
-                    "added": Math.round(new Date(channel.releaseDate).getTime()/1000),
-                    "custom_sid":"",
-                    "direct_source":"",
-                    "category_id":channelGroups[0] ?? channelGroups,
-                    "category_ids":channelGroups,
-                  }
-                );
+          vodChannels.push(
+                {
+                  "num":channel.id,
+                  "name":channel.name,
+                  "stream_type":'movie',
+                  "stream_id":channel.id,
+                  "stream_icon":channel.logo,
+                  "rating":"",
+                  "rating_5based":0,
+                  "container_extension":"mp4",
+                  "added": Math.round(new Date(channel.releaseDate).getTime()/1000),
+                  "custom_sid":"",
+                  "direct_source":"",
+                  "category_id":channelGroups[0] ?? channelGroups,
+                  "category_ids":channelGroups,
+                }
+              );
             }
+
+        // Lets Add Recently Released Movies
+        let recentCategory = await groupsControler.findOrCreate('Recently Released', 'movies');
+        let recentMovies = await Channels.findAll(
+          {
+              attributes: ['id'],
+              limit: 50,
+              where: {
+                  tvgtype: 'movies',
+              },
+              order: [
+                  ['releaseDate', 'DESC'],
+              ],
+          }
+        );
+
+        for (recent of recentMovies) {
+          vodChannels.push(
+                {
+                  "num":recent.id,
+                  "name":recent.name,
+                  "stream_type":'movie',
+                  "stream_id":recent.id,
+                  "stream_icon":recent.logo,
+                  "rating":"",
+                  "rating_5based":0,
+                  "container_extension":"mp4",
+                  "added": Math.round(new Date(recent.releaseDate).getTime()/1000),
+                  "custom_sid":"",
+                  "direct_source":"",
+                  "category_id":recentCategory.id,
+                  "category_ids":[recentCategory.id],
+                }
+              );
+        }
+
         return h.response(vodChannels).code(200);
       }
 
