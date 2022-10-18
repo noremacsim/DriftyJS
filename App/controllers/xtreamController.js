@@ -813,10 +813,13 @@ module.exports = {
                 return clientGroups.map(function(clientGroups) { return clientGroups.GroupId; })
             });
 
-        channelGroups = await ChannelGroups.findAll({ where: { GroupId: {[Op.or]: clientGroups},   group: "GroupId"}, attributes: ["GroupId"], raw: true, nest: true })
+        channelGroups = await ChannelGroups.findAll({group: "GroupId", where: { GroupId: {[Op.or]: clientGroups}}, attributes: ["GroupId"], raw: true, nest: true })
             .then(function(channelGroups) {
                 return channelGroups.map(function(channelGroups) { return channelGroups.GroupId; })
             });
+
+
+        console.log(channelGroups);
 
 
         if (clientGroups.length < 1) {
