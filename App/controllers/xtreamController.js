@@ -1016,7 +1016,7 @@ module.exports = {
           }
         );
 
-        for (recent of recentMovies) {
+        for (const recent of recentMovies) {
           vodChannels.push(
                 {
                   "num":recent.id,
