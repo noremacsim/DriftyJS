@@ -108,4 +108,13 @@ module.exports = [
             description: "Genarate tv show Data strm",
         }
     },
+    {
+        method: "GET",
+        path: "/emby/generate/livetv",
+        handler: emby.generateLiveTv,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Genarate Live Tv Data m3u",
+        }
+    },
 ];

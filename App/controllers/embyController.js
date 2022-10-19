@@ -9,6 +9,36 @@ const {Sessons} = require(path.join(__dirname, '../../Core/models/'));
 
 module.exports = {
 
+    generateLiveTv: async (request, h) => {
+
+      async function createM3uGroups(group) {
+          let string = '';
+          const channels = await Channels.findAll({where: {groupID: group.id, deleted: false}});
+          for (const channel of channels) {
+              string += `#EXTINF:-1 tvg-id="${channel.tvgid}" tvg-name="${channel.name}" tvg-type="${channel.tvgtype}" tvg-logo="${channel.logo}" group-title="${group.name}",${channel.name} \n`;
+              string += channel.url + '\n';
+          }
+          return string;
+      }
+
+      if (!fs.existsSync(path.join(__dirname, `../Storage/emby`))){
+          fs.mkdirSync(path.join(__dirname, `../Storage/emby`));
+      }
+
+      if (!fs.existsSync(path.join(__dirname, `../Storage/emby/Live`))){
+          fs.mkdirSync(path.join(__dirname, `../Storage/emby/Live`));
+      }
+
+      let stream = fs.createWriteStream(path.join(__dirname, `../Storage/emby/Live/livetv.m3u`));
+      let groups = await Groups.findAll({where: {type: 'live'}});
+      for (const group of groups) {
+        let string = await createM3uGroups(group);
+        stream.write(string);
+      }
+      stream.end();
+
+    },
+
     generateStrmMovies: async (request, h) => {
 
       const channels = await Channels.findAll({
