@@ -1,5 +1,6 @@
 const path = require("path");
 const xtream = require(path.join(__dirname, '../controllers/xtreamController'));
+const emby = require(path.join(__dirname, '../controllers/embyController'));
 const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
@@ -87,6 +88,24 @@ module.exports = [
         config: {
             pre: [{ method: middleware.auth }],
             description: "Import Movie Data",
+        }
+    },
+    {
+        method: "GET",
+        path: "/emby/generate/movies",
+        handler: emby.generateStrmMovies,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Genarate Movie Data strm",
+        }
+    },
+    {
+        method: "GET",
+        path: "/emby/generate/tvshows",
+        handler: emby.generateStrmTvShows,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Genarate tv show Data strm",
         }
     },
 ];
