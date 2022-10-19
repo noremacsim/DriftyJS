@@ -226,16 +226,17 @@ module.exports = {
             await SeriesGroups.destroy({ where: { SeriesId: parseInt(series.id) } });
             if (seriesItem.Genre) {
               for (const seriesCategorie of seriesItem.Genre) {
-                let group = await groupsControler.findOrCreate(genre.ATTR.title, 'movies');
+                let group = await groupsControler.findOrCreate(genre.ATTR.title, 'series');
                 await SeriesGroups.create({
                     SeriesId: parseInt(series.id),
                     GroupId: parseInt(group.id),
                 });
               }
             } else {
+              let group = await groupsControler.findOrCreate('Uncategorised', 'series');
               await SeriesGroups.create({
                   SeriesId: parseInt(series.id),
-                  GroupId: 547,
+                  GroupId: parseInt(group.id),
               });
             }
           }
