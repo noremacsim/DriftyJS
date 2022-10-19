@@ -51,19 +51,21 @@ module.exports = {
             for (let movie of movies) {
               movieImportCount++;
               //console.log('Trying Import : ' + movieImportCount);
-              movieJson = await plex.formatMovieForImport(movie);
 
-              // Create the Movie into db
               let channel = await Channels.findOne(
                 { where: {
-                  name: movieJson.title,
+                  name: movie.ATTR.title,
                   tvgtype: 'movies',
                   UserId: 1
                 }
               });
+
               if (channel) {
                 continue;
               }
+
+              movieJson = await plex.formatMovieForImport(movie);
+
               channel = await Channels.create(
                   {
                       name: movieJson.title,
@@ -75,6 +77,10 @@ module.exports = {
                       releaseDate: movieJson.releaseDate,
                       createdAt: movieJson.created,
                       plot: movieJson.summary,
+                      source: movieJson.source,
+                      sourceID: movieJson.sourceID,
+                      runtime: movieJson.runtime,
+                      rating: movieJson.rating
                   }
               );
               await ChannelGroups.destroy({ where: { ChannelId: parseInt(channel.id) } });
@@ -1004,8 +1010,8 @@ module.exports = {
                   "stream_type":'movie',
                   "stream_id":channel.id,
                   "stream_icon":channel.logo,
-                  "rating":"",
-                  "rating_5based":0,
+                  "rating":channel.rating,
+                  "rating_5based":channel.rating,
                   "container_extension":"mp4",
                   "added": Math.round(new Date(channel.releaseDate).getTime()/1000),
                   "custom_sid":"",
@@ -1038,8 +1044,8 @@ module.exports = {
                   "stream_type":'movie',
                   "stream_id":recent.id,
                   "stream_icon":recent.logo,
-                  "rating":"",
-                  "rating_5based":0,
+                  "rating":recent.rating,
+                  "rating_5based":recent.rating,
                   "container_extension":"mp4",
                   "added": Math.round(new Date(recent.releaseDate).getTime()/1000),
                   "custom_sid":"",
@@ -1257,51 +1263,50 @@ module.exports = {
               },
           }
         );
- 
+
 
         if (channel.imbdid) {
           imbd = await getJSON(`https://api.themoviedb.org/3/movie/${channel.imbdid}?api_key=16c1dc83a80675faa65ac467f40d4868&`, function(error, response){
               return response;
           });
-          console.log(imbd);
         }
 
         let vodInfo = { "info":
-         {
-           "kinopoisk_url":`https://www.themoviedb.org/movie/${imbd.id  ?? null}`,
-           "tmdb_id":imbd.id ?? null,
-           "name":channel.name,
-           "o_name":channel.name,
-           "cover_big":channel.logo,
-           "movie_image":channel.logo,
-           "release_date":channel.releaseDate,
-           "episode_run_time":imbd.runtime ?? 0,
-           "youtube_trailer":"",
-           "director":"",
-           "actors":"",
-           "cast":"",
-           "description":imbd.overview ?? null,
-           "plot":imbd.overview ?? null,
-           "age":"",
-           "mpaa_rating":"",
-           "rating_count_kinopoisk":0,
-           "country":imbd.original_language ?? null,
-           "genre":"",
-           "backdrop_path":channel.logo,
-           "duration_secs":imbd.runtime  ? imbd.runtime * 60 : 0,
-           "duration":imbd.runtime ?? 0,
-           "bitrate":7115,
-           "rating":imbd.vote_average ?? 0,
-           "releasedate":channel.releaseDate ?? null,
-           "subtitles":[]
-         },
+          {
+            "kinopoisk_url":`https://www.themoviedb.org/movie/${channel.imbdid  ?? null}`,
+            "tmdb_id":channel.imbdid ?? null,
+            "name":channel.name,
+            "o_name":channel.name,
+            "cover_big":channel.logo,
+            "movie_image":channel.logo,
+            "release_date":channel.releaseDate,
+            "episode_run_time":imbd.runtime ?? 0,
+            "youtube_trailer":"",
+            "director":"",
+            "actors":"",
+            "cast":"",
+            "description":imbd.overview ?? null,
+            "plot":imbd.overview ?? null,
+            "age":"",
+            "mpaa_rating":"",
+            "rating_count_kinopoisk":0,
+            "country":imbd.original_language ?? null,
+            "genre":"",
+            "backdrop_path":channel.logo,
+            "duration_secs":imbd.runtime  ? imbd.runtime * 60 : 0,
+            "duration":imbd.runtime ?? 0,
+            "bitrate":7115,
+            "rating":imbd.vote_average ?? 0,
+            "releasedate":channel.releaseDate ?? null,
+            "subtitles":[]
+          },
          "movie_data":
            {
              "stream_id":channel.id,
              "name":channel.name,
              "title":channel.name,
-             "year":"2022",
-             "added":Math.round(new Date(imbd.release_date).getTime()/1000),
+             "year":new Date(channel.releaseDate).getFullYear(),
+             "added":Math.round(new Date(channel.releaseDate).getTime()/1000),
              "category_id":channel.GroupId,
              "category_ids":[channel.GroupId],
              "container_extension":"mp4",
@@ -1309,8 +1314,6 @@ module.exports = {
              "direct_source":""
            }
          }
-
-         console.log(vodInfo);
 
         return h.response(vodInfo).code(200);
       }

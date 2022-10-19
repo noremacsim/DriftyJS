@@ -84,6 +84,24 @@ let Plex = class {
       });
     }
 
+    async getMovieImbd(key) {
+      return new Promise(async (resolve, reject) => {
+        const baseUrl = new URL(`${this.baseUrl}${key}`);
+        let json = await this.makePlexRequestToJson(baseUrl);
+        if (json.MediaContainer.Video[0].Guid) {
+          for (let guidlist of json.MediaContainer.Video[0].Guid) {
+            let guidname = guidlist.ATTR.id;
+            if (guidname.toLowerCase().includes('imdb')) {
+              let firstSplit = guidname.split("://");
+              resolve(firstSplit[1]);
+              break;
+            }
+          }
+        }
+        resolve()
+      });
+    }
+
     async getMoviesFromGenre(key) {
       return new Promise(async (resolve, reject) => {
         const baseUrl = new URL(`${this.baseUrl}${key}`);
@@ -142,8 +160,6 @@ let Plex = class {
         let url = await this.createPlayUrl(movie.ATTR.key);
         let logo = movie.ATTR.thumb;
 
-        //https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400/library/parts/201323/1664352635/file.mkv?X-Plex-Session-Identifier=xyduws1peumrye9agovz1e8c&X-Plex-Product=Plex%20Web&X-Plex-Version=4.92.0&X-Plex-Client-Identifier=e5uugpktpy8iardwmdspmbyq&X-Plex-Platform=Chrome&X-Plex-Platform-Version=106.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Chrome&X-Plex-Device-Screen-////Resolution=1920x929%2C1920x1080&X-Plex-Token=mAXoi8LLE3-bBzv_EehL&X-Plex-Language=en-GB&Accept-Language=en-GB
-
         if (this.server == 'ross') {
           logo = `https://81-187-8-160.7e1f3569bd19422b9fb3b17d82ab1f8e.plex.direct:32400${movie.ATTR.thumb}?X-Plex-Token=${this.token}`
         }
@@ -156,15 +172,21 @@ let Plex = class {
           }
         }
 
+        let imbdid = await this.getMovieImbd(movie.ATTR.key);
+        let addedAt = this.convertTime(movie.ATTR.addedAt);
 
         const json = {
           title: movie.ATTR.title,
           url: url,
           logo: logo,
           releaseDate: movie.ATTR.originallyAvailableAt,
-          created: this.convertTime(movie.ATTR.addedAt),
-          imbdid: null,
-          summary: null,
+          created: addedAt,
+          imbdid: imbdid ?? 0,
+          rating: movie.ATTR.rating ?? 0,
+          summary: movie.ATTR.summary ?? '',
+          source: this.server,
+          sourceID: movie.ATTR.key,
+          runtime: ( parseInt(movie.ATTR.duration) / 1000)
         }
         return resolve(json)
       });

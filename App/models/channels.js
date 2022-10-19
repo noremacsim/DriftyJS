@@ -44,6 +44,22 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
+        rating: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        youtube_trailer: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        source: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        sourceID: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         deleted: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

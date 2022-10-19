@@ -20,6 +20,7 @@ try {
 
 const db = {};
 
+// reate Models
 fs.readdirSync(__dirname + '/../../App/models/')
     .filter(file => file.indexOf(".") !== 0 && file !== "index.js")
     .forEach(file => {
