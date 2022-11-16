@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
-const {BOOLEAN} = require("sequelize");
 dotenv.config();
 
 module.exports = (sequelize, DataTypes) => {

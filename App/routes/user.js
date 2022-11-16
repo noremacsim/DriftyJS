@@ -37,6 +37,15 @@ module.exports = [
         }
     },
     {
+        method: "POST",
+        path: "/user/update",
+        handler: User.update,
+        config: {
+            pre: [{ method: middleware.auth }],
+            description: "Update User",
+        }
+    },
+    {
         method: "GET",
         path: "/user/2fa/new",
         handler: User.new2Fa,
