@@ -28,10 +28,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        firstname: DataTypes.STRING,
-        middlename: DataTypes.STRING,
-        lastname: DataTypes.STRING,
-        date: {
+        firstName: DataTypes.STRING,
+        middleName: DataTypes.STRING,
+        lastName: DataTypes.STRING,
+        TwoFAEnabled: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 0
+        },
+        activeDate: {
             type: DataTypes.DATE,
             get: function() {
                 return Moment(this.getDataValue("date")).format("MMMM Do, YYYY");
@@ -41,12 +45,27 @@ module.exports = (sequelize, DataTypes) => {
 
     User.associate = function(models) {
         User.hasMany(models.AuthToken);
-        User.hasMany(models.Client);
-        User.hasMany(models.Groups);
-        User.hasMany(models.Channels);
-        User.hasMany(models.Sessons);
-        User.hasMany(models.Series);
+        User.hasOne(models.TwoFactorAuthentication);
     };
+
+    User.logout = async function(request) {
+        const { AuthToken } = sequelize.models;
+
+        let userAgent = request.headers['user-agent']
+
+        if (!request.user) {
+            return true;
+        }
+
+        if (!request.user.id) {
+            return true;
+        }
+
+        await AuthToken.destroy(
+            {where: {userAgent, UserId: request.user.id}}
+        );
+        return true;
+    }
 
     User.authenticate = async function(username, password, request) {
         const { AuthToken } = sequelize.models;

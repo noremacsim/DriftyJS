@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
+const {BOOLEAN} = require("sequelize");
 dotenv.config();
 
 module.exports = (sequelize, DataTypes) => {
@@ -7,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
     const AuthToken = sequelize.define('AuthToken', {
         token: DataTypes.STRING,
         userAgent: DataTypes.STRING,
+        TwoFactorPassed: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: 0
+        },
     }, {});
 
     AuthToken.associate = function({ User }) {

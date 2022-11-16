@@ -1,6 +1,6 @@
 const path = require("path");
 const bcrypt = require('bcrypt');
-const {User} = require(path.join(__dirname, '../../Core/models/'));
+const {User, TwoFactorAuthentication} = require(path.join(__dirname, '../../Core/models/'));
 const {ValidationError} = require('sequelize');
 const Boom = require('boom');
 const auth = require(path.join(__dirname, '../middleware/auth'));
@@ -8,7 +8,7 @@ const auth = require(path.join(__dirname, '../middleware/auth'));
 module.exports = {
 
     signinView: async (request, h) => {
-        if (auth.function(request)) {
+        if (await auth.function(request)) {
             return h.redirect('/');
         }
         return h.simsView('signin');
@@ -21,8 +21,6 @@ module.exports = {
             throw Boom.badRequest('Request missing username or password param')
         }
 
-
-
         const {username, password} = request.payload;
 
         try {
@@ -30,7 +28,11 @@ module.exports = {
 
             h.state('jwt', user.authToken['token']);
 
-            return h.redirect('/');
+            return h.response({
+                jwt: user.authToken['token'],
+                twofa: user.user['TwoFAEnabled']
+            }).code(200);
+
         } catch (err) {
             global.isLoggedIn = false;
             throw Boom.badRequest('invalid username or password')
@@ -72,5 +74,31 @@ module.exports = {
             }
             return h.response('Invalid Request').code(400)
         }
-    }
+    },
+
+    logout: async (request, h) => {
+        h.state('jwt', '');
+        User.logout(request)
+        return h.response({success: 'Logged Out'}).code(200);
+    },
+
+    details: async (request, h) => {
+        return h.response(request.user).code(200);
+    },
+
+    new2Fa: async (request, h) => {
+        const twoFa = TwoFactorAuthentication.generate(request.user, request.headers);
+        return h.response(twoFa).code(200);
+    },
+
+    enable2Fa: async (request, h) => {
+        let user = request.user
+        const token = request.payload.token;
+        if (await TwoFactorAuthentication.validate(user, token, request.headers))
+        {
+            return h.response({success: '2Fa Passed'}).code(200);
+        } else {
+            return h.response({failed: 'Code Not Accepted'}).code(400);
+        }
+    },
 }

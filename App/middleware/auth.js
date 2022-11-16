@@ -17,17 +17,24 @@ async function middle(request) {
             { where: { token, userAgent}, include: User}
         );
 
+        if (authToken.User.TwoFAEnabled && !authToken.TwoFactorPassed) {
+            throw Boom.unauthorized('Not Passed 2fa');
+        }
+
         if (!authToken) {
             global.isLoggedIn = false;
-            return false;
+            throw Boom.unauthorized('Access Denied');
+            //return false;
         }
 
         global.isLoggedIn = true;
         global.userID = true;
+        request.user = authToken.User;
         return true;
     } else {
         global.isLoggedIn = false;
-        return false;
+        throw Boom.unauthorized('Access Denied');
+        //return false;
     }
 }
 
