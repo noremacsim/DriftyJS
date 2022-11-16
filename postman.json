@@ -1,0 +1,207 @@
+{
+  "info": {
+    "_postman_id": "eba64ebd-6687-41e8-a589-084ff0f6c991",
+    "name": "DriftyJs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "password",
+                  "value": "admin",
+                  "type": "default"
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "default"
+                },
+                {
+                  "key": "email",
+                  "value": "admin@admin.com",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://jk193j3-lt-s:4101/user/register",
+              "protocol": "http",
+              "host": [
+                "jk193j3-lt-s"
+              ],
+              "port": "4101",
+              "path": [
+                "user",
+                "register"
+              ],
+              "query": [
+                {
+                  "key": "password",
+                  "value": "admin",
+                  "disabled": true
+                },
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "admin",
+                  "type": "default"
+                },
+                {
+                  "key": "password",
+                  "value": "admin",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://jk193j3-lt-s:4101/user/login",
+              "protocol": "http",
+              "host": [
+                "jk193j3-lt-s"
+              ],
+              "port": "4101",
+              "path": [
+                "user",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Current User Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://jk193j3-lt-s:4101/user",
+              "protocol": "http",
+              "host": [
+                "jk193j3-lt-s"
+              ],
+              "port": "4101",
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create New 2FA",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://jk193j3-lt-s:4101/user/2fa/new",
+              "protocol": "http",
+              "host": [
+                "jk193j3-lt-s"
+              ],
+              "port": "4101",
+              "path": [
+                "user",
+                "2fa",
+                "new"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validate 2fa",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "token",
+                  "value": "651222",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://jk193j3-lt-s:4101/user/2fa/validate",
+              "protocol": "http",
+              "host": [
+                "jk193j3-lt-s"
+              ],
+              "port": "4101",
+              "path": [
+                "user",
+                "2fa",
+                "validate"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "736081",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://jk193j3-lt-s:4101/user/logout",
+              "protocol": "http",
+              "host": [
+                "jk193j3-lt-s"
+              ],
+              "port": "4101",
+              "path": [
+                "user",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "POST",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

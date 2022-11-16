@@ -86,6 +86,42 @@ module.exports = {
         return h.response(request.user).code(200);
     },
 
+    update: async (request, h) => {
+        let {email, username, password, firstname, middlename, lastname} = request.payload;
+
+        let updateValues = {};
+
+        if (firstname) {
+            updateValues['firstName'] = firstname;
+        }
+
+        if (middlename) {
+            updateValues['middleName'] = middlename;
+        }
+
+        if (lastname) {
+            updateValues['lastName'] = lastname;
+        }
+
+        if (username) {
+            updateValues['username'] = username;
+        }
+
+        if (email) {
+            updateValues['email'] = email;
+        }
+
+        if (password) {
+            updateValues['password'] = bcrypt.hashSync(password, 10);
+        }
+
+        return await User.update(updateValues,
+            {
+                where: {id: request.user.id}
+            }
+        );
+    },
+
     new2Fa: async (request, h) => {
         const twoFa = TwoFactorAuthentication.generate(request.user, request.headers);
         return h.response(twoFa).code(200);
