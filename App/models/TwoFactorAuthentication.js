@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     TwoFactorAuthentication.generate = async function(User, headers) {
-
         let userAgent = headers['user-agent'];
 
         if (!User.id) {
@@ -28,11 +27,11 @@ module.exports = (sequelize, DataTypes) => {
         );
 
         const newSecret = twoFactor.generateSecret({ name: "DriftyJS", account: User.id });
-
         const createValues = {
             secret: newSecret['secret'],
             uri: newSecret['uri'],
             qr: newSecret['qr'],
+            UserId: User.id,
             userAgent
         };
 

@@ -8,7 +8,14 @@ const init = async (type) => {
 
     // Server Options
     let options = {
-        port: PORT
+        port: PORT,
+        routes: {
+            cors: {
+                origin: ['*'],
+                headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'Accept-language'],
+                additionalHeaders: ['cache-control', 'x-requested-with', 'Access-Control-Allow-Origin']
+            }
+        },
     };
 
     // Debugging Options

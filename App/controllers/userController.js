@@ -159,7 +159,7 @@ module.exports = {
     },
 
     new2Fa: async (request, h) => {
-        const twoFa = TwoFactorAuthentication.generate(request.user, request.headers);
+        const twoFa = await TwoFactorAuthentication.generate(request.user, request.headers);
         return h.response(twoFa).code(200);
     },
 
