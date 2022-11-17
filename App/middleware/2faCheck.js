@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 const path = require("path");
-const { User, AuthToken } = require(path.join(__dirname, '../../Core/models/'));
+const { User, AuthToken, Company, Group, TwoFactorAuthentication } = require(path.join(__dirname, '../../Core/models/'));
 const Boom = require('boom')
 
 dotenv.config();
@@ -23,9 +23,19 @@ async function middle(request) {
             //return false;
         }
 
+        const user = await User.findOne({
+            where: { id:  authToken.User.id},
+            include: [
+                { model: Company },
+                { model: Group },
+                { model: TwoFactorAuthentication },
+                { model: AuthToken },
+            ]
+        });
+
         global.isLoggedIn = false;
         global.userID = false;
-        request.user = authToken.User;
+        request.user = user;
         return true;
     } else {
         global.isLoggedIn = false;

@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 const path = require("path");
-const { User, AuthToken } = require(path.join(__dirname, '../../Core/models/'));
+const { User, AuthToken, Company, Group, TwoFactorAuthentication } = require(path.join(__dirname, '../../Core/models/'));
 const Boom = require('boom')
 
 dotenv.config();
@@ -8,8 +8,20 @@ dotenv.config();
 //TODO: Possibly check token expiry and create new one.
 async function middle(request) {
 
-    let userAgent = request.headers['user-agent']
-    let token = request.state.jwt;
+    let userAgent = request.headers['user-agent'];
+    let token = null;
+
+    if (request.headers.authorization) {
+        if (request.headers.authorization.startsWith("Bearer ")) {
+            token = request.headers.authorization.substring(7, request.headers.authorization.length);
+        }
+    } else if (request.state.jwt) {
+        token = request.state.jwt;
+    } else if (request.auth.credentials) {
+        token = request.state.jwt;
+    }
+
+    console.log(token);
 
     if (token && userAgent) {
 
@@ -17,19 +29,31 @@ async function middle(request) {
             { where: { token, userAgent}, include: User}
         );
 
-        if (authToken.User.TwoFAEnabled && !authToken.TwoFactorPassed) {
-            throw Boom.unauthorized('Not Passed 2fa');
-        }
-
         if (!authToken) {
             global.isLoggedIn = false;
             throw Boom.unauthorized('Access Denied');
             //return false;
         }
 
+        if (authToken.User.TwoFAEnabled && !authToken.TwoFactorPassed) {
+            throw Boom.unauthorized('Not Passed 2fa');
+        }
+
+        const user = await User.findOne({
+            where: { id:  authToken.User.id},
+            include: [
+                { model: Company },
+                { model: Group },
+                { model: TwoFactorAuthentication },
+                { model: AuthToken },
+            ]
+        });
+
         global.isLoggedIn = true;
         global.userID = true;
-        request.user = authToken.User;
+        request.user = user;
+        request.auth.isAuthenticated = true;
+        request.auth.credentials = token;
         return true;
     } else {
         global.isLoggedIn = false;

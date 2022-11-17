@@ -1,6 +1,6 @@
 const path = require("path");
 const bcrypt = require('bcrypt');
-const {User, TwoFactorAuthentication} = require(path.join(__dirname, '../../Core/models/'));
+const {User, TwoFactorAuthentication, Company, Group, sequelize} = require(path.join(__dirname, '../../Core/models/'));
 const {ValidationError} = require('sequelize');
 const Boom = require('boom');
 const auth = require(path.join(__dirname, '../middleware/auth'));
@@ -87,7 +87,16 @@ module.exports = {
     },
 
     update: async (request, h) => {
-        let {email, username, password, firstname, middlename, lastname} = request.payload;
+        let {
+            email,
+            username,
+            password,
+            firstname,
+            middlename,
+            lastname,
+            CompanyID,
+            GroupIDs
+        } = request.payload;
 
         let updateValues = {};
 
@@ -115,11 +124,38 @@ module.exports = {
             updateValues['password'] = bcrypt.hashSync(password, 10);
         }
 
-        return await User.update(updateValues,
+        const user = await User.update(updateValues,
             {
                 where: {id: request.user.id}
             }
         );
+
+        if (CompanyID) {
+
+            await sequelize.query(`DELETE FROM company_users WHERE UserID = ${request.user.id}`);
+
+            let company = await Company.findOne(
+                {where: {id: CompanyID}}
+            );
+
+            request.user.addCompany(company);
+        }
+
+        if (GroupIDs)
+        {
+
+            await sequelize.query(`DELETE FROM group_users WHERE UserID = ${request.user.id}`);
+
+            for (const GroupID of GroupIDs) {
+                let group = await Group.findOne(
+                    {where: {id: GroupID}}
+                );
+
+                request.user.addGroup(group);
+            }
+        }
+
+        return user;
     },
 
     new2Fa: async (request, h) => {

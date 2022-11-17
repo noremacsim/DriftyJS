@@ -46,6 +46,8 @@ module.exports = (sequelize, DataTypes) => {
     User.associate = function(models) {
         User.hasMany(models.AuthToken);
         User.hasOne(models.TwoFactorAuthentication);
+        User.belongsToMany(models.Company, {through: 'company_users'});
+        User.belongsToMany(models.Group, {through: 'group_users'});
     };
 
     User.logout = async function(request) {
