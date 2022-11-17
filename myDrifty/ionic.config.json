@@ -1,0 +1,7 @@
+{
+  "name": "myDrifty",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
