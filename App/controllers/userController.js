@@ -8,16 +8,17 @@ const auth = require(path.join(__dirname, '../middleware/auth'));
 module.exports = {
 
     signinView: async (request, h) => {
-        if (await auth.function(request)) {
-            return h.redirect('/');
+        if (request.state.twoFAPassed === false && request.state.isLoggedIn === true) {
+            return h.simsView('user/2fa', {}, request);
+        } else {
+            return h.simsView('user/login', {}, request);
         }
-        return h.simsView('signin');
     },
 
     login: async (request, h) => {
 
         if (!request.payload.username || !request.payload.password) {
-            global.isLoggedIn = false;
+            h.state('isLoggedIn', false);
             throw Boom.badRequest('Request missing username or password param')
         }
 
@@ -27,14 +28,23 @@ module.exports = {
             let user = await User.authenticate(username, password, request)
 
             h.state('jwt', user.authToken['token']);
+            h.state('isLoggedIn', true);
+
+            if (user.user['TwoFAEnabled']) {
+                h.state('twoFAPassed', false);
+            } else {
+                h.state('twoFAPassed', true);
+            }
 
             return h.response({
                 jwt: user.authToken['token'],
-                twofa: user.user['TwoFAEnabled']
+                twofa: user.user['TwoFAEnabled'],
+                message: 'Successfully Logged in'
             }).code(200);
 
         } catch (err) {
-            global.isLoggedIn = false;
+            h.state('twoFAPassed', false);
+            h.state('isLoggedIn', false);
             throw Boom.badRequest('invalid username or password')
         }
     },
@@ -77,7 +87,9 @@ module.exports = {
     },
 
     logout: async (request, h) => {
-        h.state('jwt', '');
+        h.unstate('jwt');
+        h.unstate('twoFAPassed');
+        h.unstate('isLoggedIn');
         User.logout(request)
         return h.response({success: 'Logged Out'}).code(200);
     },
@@ -95,7 +107,8 @@ module.exports = {
             middlename,
             lastname,
             CompanyID,
-            GroupIDs
+            GroupIDs,
+            oldPassword
         } = request.payload;
 
         let updateValues = {};
@@ -120,15 +133,20 @@ module.exports = {
             updateValues['email'] = email;
         }
 
-        if (password) {
-            updateValues['password'] = bcrypt.hashSync(password, 10);
-        }
-
         const user = await User.update(updateValues,
             {
                 where: {id: request.user.id}
             }
         );
+
+        if (password) {
+            if (oldPassword) {
+                if(bcrypt.compareSync(oldPassword, user.password))
+                {
+                    user.password = bcrypt.hashSync(password, 10);
+                }
+            }
+        }
 
         if (CompanyID) {
 
@@ -168,9 +186,11 @@ module.exports = {
         const token = request.payload.token;
         if (await TwoFactorAuthentication.validate(user, token, request.headers))
         {
-            return h.response({success: '2Fa Passed'}).code(200);
+            h.state('twoFAPassed', true);
+            return h.response({message: '2fa passed'}).code(200);
         } else {
-            return h.response({failed: 'Code Not Accepted'}).code(400);
+            h.state('twoFAPassed', false);
+            return h.response({message: 'Authentication Code Incorrect'}).code(400);
         }
     },
 }

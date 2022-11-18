@@ -7,6 +7,7 @@ dotenv.config();
 
 //TODO: Possibly check token expiry and create new one.
 async function middle(request, h) {
+    console.log(request);
 
     let userAgent = request.headers['user-agent'];
     let token = null;
@@ -20,7 +21,7 @@ async function middle(request, h) {
     if (!token && request.state.jwt) {
         token = request.state.jwt;
     } else if (request.auth.credentials) {
-        token = request.auth.credentials;
+        token = request.state.jwt;
     }
 
     if (token && userAgent) {
@@ -33,7 +34,8 @@ async function middle(request, h) {
             h.unstate('jwt');
             h.unstate('isLoggedIn');
             h.unstate('twoFAPassed');
-            return false;
+            throw Boom.unauthorized('Access Denied');
+            //return false;
         }
 
         if (authToken.User.TwoFAEnabled && !authToken.TwoFactorPassed) {
@@ -41,7 +43,7 @@ async function middle(request, h) {
             h.state('isLoggedIn', true);
             request.user = {};
             request.user.id = authToken.User.id;
-            return false;
+            throw Boom.unauthorized('Not Passed 2fa');
         }
 
         const user = await User.findOne({
@@ -65,9 +67,10 @@ async function middle(request, h) {
         h.unstate('jwt');
         h.unstate('isLoggedIn');
         h.unstate('twoFAPassed');
-        return false;
+        throw Boom.unauthorized('Access Denied');
+        //return false;
     }
 }
 
-module.exports.name = 'auth';
+module.exports.name = 'apiAuth';
 module.exports.function = middle;

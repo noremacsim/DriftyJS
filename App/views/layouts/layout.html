@@ -6,71 +6,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
-    <title>
-       SimsTV
-    </title>
+    <title>SimsTV</title>
+
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+
     <!-- Nucleo Icons -->
     <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
+
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
+
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.2.0/css/glide.core.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.2.0/css/glide.theme.css">
     <link id="pagestyle" href="/assets/css/material-dashboard.css?v=3.0.4" rel="stylesheet" />
-    <style>
-        .filepond--credits {
-            display: none;
-        }
-    </style>
+
+    <!-- Custom -->
+    <link href="/assets/css/loader.css" rel="stylesheet" />
+    <link href="/assets/css/core.css" rel="stylesheet" />
+
 </head>
 <body class="g-sidenav-show  bg-gray-200">
-      <% if(helpers.isLoggedIn() || helpers.fullView){ %>
-        <%- include('../partials/nav.html', {active:activePage}) %>
-      <% } %>
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
-      <% if(helpers.isLoggedIn() || helpers.fullView){ %>
-        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
-          <div class="container-fluid py-1 px-3">
-            <nav aria-label="breadcrumb">
-              <h6 class="font-weight-bolder mb-0"><%= activePage %></h6>
-            </nav>
-            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-              <div class="ms-md-auto pe-md-3 d-flex align-items-center dropdown" id="searchResults">
-                <div class="input-group input-group-outline">
-                  <label class="form-label">Type here...</label>
-                  <input type="text" class="form-control" id="globalSearch" onfocus="focused(this)" onfocusout="defocused(this)">
-                </div>
-              </div>
-              <ul class="navbar-nav  justify-content-end">
-                <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-                  <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-                    <div class="sidenav-toggler-inner">
-                      <i class="sidenav-toggler-line"></i>
-                      <i class="sidenav-toggler-line"></i>
-                      <i class="sidenav-toggler-line"></i>
-                    </div>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-        <%- content %>
-      <% } else { %>
-        <%- include('../signin.html') %>
-      <% } %>
+
+        <% if(helpers.fullView) { %>
+            <%- content %>
+        <% } else if(helpers.isLoggedIn(request) && !helpers.twoFAPassed(request)) { %>
+            <%- include('../user/2fa.html') %>
+        <% } else if(helpers.isLoggedIn(request) && helpers.twoFAPassed(request)) { %>
+            <%- content %>
+        <% } else { %>
+            <%- include('../user/login.html') %>
+        <% } %>
+
     </main>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
-      <script src="/assets/js/material-dashboard.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="/assets/js/handleRequests.js"></script>
 </body>
 </html>

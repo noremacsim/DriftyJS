@@ -5,13 +5,19 @@ const simsView = {
     version: '1.0.0',
     register: async function (server, options) {
 
-        const simsView = function(view, viewOptions) {
+        const simsView = function(view, viewOptions, request) {
 
             if (!viewOptions) {
                 viewOptions = {};
             }
 
+            if (!request)
+            {
+                request = {}
+            }
+
             viewOptions['helpers'] = require(path.join(__dirname, `../helpers/ejsHelper`));
+            viewOptions['request'] = request;
 
             return this.view(view, viewOptions);
         };

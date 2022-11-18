@@ -32,7 +32,7 @@ module.exports = [
         path: "/user",
         handler: User.details,
         config: {
-            pre: [{ method: middleware.auth }],
+            pre: [{ method: middleware.apiAuth }],
             description: "User Details",
         }
     },
@@ -41,7 +41,7 @@ module.exports = [
         path: "/user/update",
         handler: User.update,
         config: {
-            pre: [{ method: middleware.auth }],
+            pre: [{ method: middleware.apiAuth }],
             description: "Update User",
         }
     },
@@ -50,7 +50,7 @@ module.exports = [
         path: "/user/2fa/new",
         handler: User.new2Fa,
         config: {
-            pre: [{ method: middleware.auth }],
+            pre: [{ method: middleware.apiAuth }],
             description: "User Details",
         }
     },
@@ -68,7 +68,6 @@ module.exports = [
         path: "/user/login",
         handler: User.signinView,
         config: {
-            pre: [{ method: middleware.auth }],
             description: "Login User",
         }
     },

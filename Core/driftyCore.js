@@ -40,7 +40,28 @@ const init = async (type) => {
         isHttpOnly: true,
         encoding: 'base64json',
         clearInvalid: true,
-        strictHeader: true
+        strictHeader: true,
+        path: '/'
+    });
+
+    server.state('isLoggedIn', {
+        ttl: null,
+        isSecure: false,
+        isHttpOnly: true,
+        encoding: 'base64json',
+        clearInvalid: true,
+        strictHeader: true,
+        path: '/'
+    });
+
+    server.state('twoFAPassed', {
+        ttl: null,
+        isSecure: false,
+        isHttpOnly: true,
+        encoding: 'base64json',
+        clearInvalid: true,
+        strictHeader: true,
+        path: '/'
     });
 
     // Register database models

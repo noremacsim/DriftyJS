@@ -1,33 +1,33 @@
 const path = require("path");
-const Group = require(path.join(__dirname, '../controllers/groupController'));
+const Friends = require(path.join(__dirname, '../controllers/friendsController'));
 const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {
         method: "POST",
-        path: "/group/new",
-        handler: Group.newGroup,
+        path: "/friends/request",
+        handler: Friends.newRequest,
         config: {
             pre: [{ method: middleware.apiAuth }],
-            description: "Create New Group",
+            description: "Send New Friend Request",
         }
     },
     {
         method: "POST",
-        path: "/group/user/add",
-        handler: Group.addUser,
+        path: "/friends/accept",
+        handler: Friends.acceptRequest,
         config: {
             pre: [{ method: middleware.apiAuth }],
-            description: "Assign User to a Group",
+            description: "Send New Friend Request",
         }
     },
     {
         method: "POST",
-        path: "/group/user/remove",
-        handler: Group.removeUser,
+        path: "/friends/remove",
+        handler: Friends.removeFriend,
         config: {
             pre: [{ method: middleware.apiAuth }],
-            description: "Remove a user from Group",
+            description: "Send New Friend Request",
         }
     },
 ];

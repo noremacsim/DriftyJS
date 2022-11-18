@@ -1,6 +1,9 @@
 
 module.exports = {
-    isLoggedIn: function() {
-        return global.isLoggedIn;
+    isLoggedIn: function(request) {
+        return request.state.isLoggedIn;
+    },
+    twoFAPassed: function(request) {
+        return request.state.twoFAPassed;
     },
 };

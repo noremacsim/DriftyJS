@@ -8,7 +8,7 @@ module.exports = [
         path: "/company/new",
         handler: Company.newCompany,
         config: {
-            pre: [{ method: middleware.auth }],
+            pre: [{ method: middleware.apiAuth }],
             description: "Create New Company",
         }
     },
@@ -17,7 +17,7 @@ module.exports = [
         path: "/company/user/add",
         handler: Company.addUser,
         config: {
-            pre: [{ method: middleware.auth }],
+            pre: [{ method: middleware.apiAuth }],
             description: "Assign User to a Company",
         }
     },
@@ -26,7 +26,7 @@ module.exports = [
         path: "/company/user/remove",
         handler: Company.removeUser,
         config: {
-            pre: [{ method: middleware.auth }],
+            pre: [{ method: middleware.apiAuth }],
             description: "Remove a user from Company",
         }
     },
@@ -35,7 +35,7 @@ module.exports = [
         path: "/company/group/add",
         handler: Company.addGroup,
         config: {
-            pre: [{ method: middleware.auth }],
+            pre: [{ method: middleware.apiAuth }],
             description: "Assign Group to a Company",
         }
     },
@@ -44,7 +44,7 @@ module.exports = [
         path: "/company/group/remove",
         handler: Company.removeGroup,
         config: {
-            pre: [{ method: middleware.auth }],
+            pre: [{ method: middleware.apiAuth }],
             description: "Remove a group from Company",
         }
     },

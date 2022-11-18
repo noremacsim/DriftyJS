@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         const twoFA = await TwoFactorAuthentication.findOne(
-            { where: {UserId: user.id, userAgent}}
+            { where: {UserId: user.id}}
         );
 
         const verify = twoFactor.verifyToken(twoFA['secret'], token);

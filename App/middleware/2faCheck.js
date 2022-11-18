@@ -6,7 +6,7 @@ const Boom = require('boom')
 dotenv.config();
 
 //TODO: Possibly check token expiry and create new one.
-async function middle(request) {
+async function middle(request, h) {
 
     let userAgent = request.headers['user-agent']
     let token = request.state.jwt;
@@ -18,7 +18,9 @@ async function middle(request) {
         );
 
         if (!authToken) {
-            global.isLoggedIn = false;
+            h.unstate('jwt');
+            h.unstate('isLoggedIn');
+            h.unstate('twoFAPassed');
             throw Boom.unauthorized('Access Denied');
             //return false;
         }
@@ -33,12 +35,15 @@ async function middle(request) {
             ]
         });
 
-        global.isLoggedIn = false;
+        h.state('twoFAPassed', true);
+        h.state('isLoggedIn', true);
         global.userID = false;
         request.user = user;
         return true;
     } else {
-        global.isLoggedIn = false;
+        h.unstate('jwt');
+        h.unstate('isLoggedIn');
+        h.unstate('twoFAPassed');
         throw Boom.unauthorized('Access Denied');
         //return false;
     }
