@@ -39,9 +39,9 @@
 
         <% if(helpers.fullView) { %>
             <%- content %>
-        <% } else if(helpers.isLoggedIn(request) && !helpers.twoFAPassed(request)) { %>
+        <% } else if(helpers.isLoggedIn(request) === true && helpers.twoFAPassed(request) === false) { %>
             <%- include('../user/2fa.html') %>
-        <% } else if(helpers.isLoggedIn(request) && helpers.twoFAPassed(request)) { %>
+        <% } else if(helpers.isLoggedIn(request) === true && helpers.twoFAPassed(request) === true) { %>
             <%- content %>
         <% } else { %>
             <%- include('../user/login.html') %>

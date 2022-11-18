@@ -33,7 +33,7 @@ async function middle(request, h) {
             h.unstate('jwt');
             h.unstate('isLoggedIn');
             h.unstate('twoFAPassed');
-            return false;
+            return h.redirect(`/user/login?path=${request?.route?.path}`);
         }
 
         if (authToken.User.TwoFAEnabled && !authToken.TwoFactorPassed) {
@@ -41,7 +41,7 @@ async function middle(request, h) {
             h.state('isLoggedIn', true);
             request.user = {};
             request.user.id = authToken.User.id;
-            return false;
+            return h.redirect(`/user/login?path=${request?.route?.path}`);
         }
 
         const user = await User.findOne({
@@ -60,12 +60,12 @@ async function middle(request, h) {
         request.user = user;
         request.auth.isAuthenticated = true;
         request.auth.credentials = token;
-        return true;
+        return 'passed';
     } else {
         h.unstate('jwt');
         h.unstate('isLoggedIn');
         h.unstate('twoFAPassed');
-        return false;
+        return h.redirect(`/user/login?path=${request?.route?.path}`);
     }
 }
 

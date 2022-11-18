@@ -35,16 +35,25 @@ $("form").submit(function(e) {
         timeout: 5000
     })
     .done(function (data, textStatus, jqXHR) {
-
-        toast('success', data.message);
-        if (window.location.pathname === '/user/login') {
-            let url = new URL(window.location.href)
-            let params = new URLSearchParams(url.search);
-            let path = params.get('path') // 'chrome-instant'
-            if (path) {
-                window.location.replace(path);
+        if (form.attr('onSuccess')) {
+            if (typeof window[form.attr('onSuccess')] === 'function'){
+                window[form.attr('onSuccess')]();
+            }
+        } else {
+            toast('success', data.message);
+            if (window.location.pathname === '/user/login') {
+                let url = new URL(window.location.href)
+                let params = new URLSearchParams(url.search);
+                let path = params.get('path') // 'chrome-instant'
+                if (path) {
+                    window.location.replace(path);
+                } else {
+                    window.location.replace('/');
+                }
             } else {
-                window.location.replace('/');
+                if (form.hasClass("reload")) {
+                    window.location.reload();
+                }
             }
         }
     })

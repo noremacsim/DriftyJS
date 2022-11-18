@@ -1,5 +1,6 @@
 const Moment = require("moment");
 const bcrypt = require('bcrypt');
+const DeviceDetector = require("device-detector-js");
 
 
 module.exports = (sequelize, DataTypes) => {
@@ -91,6 +92,17 @@ module.exports = (sequelize, DataTypes) => {
         const user = this
 
         const authToken = await AuthToken.generate(this.id, request.headers);
+
+        const deviceDetector = new DeviceDetector();
+        const device = deviceDetector.parse(request.headers['user-agent']);
+
+        authToken.deviceType = device?.device?.type;
+        authToken.deviceBrand = device?.device?.brand;
+        authToken.clientType = device?.client?.type;
+        authToken.clientName = device?.client?.name;
+        authToken.os = device?.os?.name;
+        authToken.ip = request?.info?.remoteAddress;
+        authToken.save();
 
         await user.addAuthToken(authToken);
 

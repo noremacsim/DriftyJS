@@ -6,9 +6,14 @@ module.exports = [
     {
         method: "GET",
         path: "/",
-        handler: Home.main,
         config: {
-            pre: [{assign: 'redirect', method: middleware.auth }],
+            handler: async function(request, h) {
+                const connect = await middleware.auth(request, h);
+                if (connect === 'passed') {
+                    return Home.main(request, h)
+                }
+                return connect;
+            },
             description: "Goto Main HomePage",
         }
     },

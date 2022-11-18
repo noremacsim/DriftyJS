@@ -141,10 +141,14 @@ module.exports = {
 
         if (password) {
             if (oldPassword) {
-                if(bcrypt.compareSync(oldPassword, user.password))
+                if(bcrypt.compareSync(oldPassword, request.user.password))
                 {
                     user.password = bcrypt.hashSync(password, 10);
+                } else {
+                    throw Boom.badRequest('You entered Incorrect Password')
                 }
+            } else {
+                throw Boom.badRequest('You must pass your old password with the new')
             }
         }
 
@@ -173,7 +177,7 @@ module.exports = {
             }
         }
 
-        return user;
+        return h.response({message: 'Successfully Updated'}).code(200);
     },
 
     new2Fa: async (request, h) => {

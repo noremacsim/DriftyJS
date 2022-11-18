@@ -7,6 +7,13 @@ module.exports = (sequelize, DataTypes) => {
     const AuthToken = sequelize.define('AuthToken', {
         token: DataTypes.STRING,
         userAgent: DataTypes.STRING,
+        deviceType:  DataTypes.STRING,
+        deviceBrand:  DataTypes.STRING,
+        clientType:  DataTypes.STRING,
+        clientName:  DataTypes.STRING,
+        os:  DataTypes.STRING,
+        ip: DataTypes.STRING,
+        location: DataTypes.STRING,
         TwoFactorPassed: {
             type: DataTypes.BOOLEAN,
             defaultValue: 0
