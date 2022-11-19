@@ -8,8 +8,20 @@ dotenv.config();
 //TODO: Possibly check token expiry and create new one.
 async function middle(request, h) {
 
-    let userAgent = request.headers['user-agent']
-    let token = request.state.jwt;
+    let userAgent = request.headers['user-agent'];
+    let token = null;
+
+    if (request.headers.authorization) {
+        if (request.headers.authorization.startsWith("Bearer ")) {
+            token = request.headers.authorization.substring(7, request.headers.authorization.length);
+        }
+    }
+
+    if (!token && request.state.jwt) {
+        token = request.state.jwt;
+    } else if (request.auth.credentials) {
+        token = request.state.jwt;
+    }
 
     if (token && userAgent) {
 

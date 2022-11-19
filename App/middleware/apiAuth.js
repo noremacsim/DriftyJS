@@ -42,7 +42,7 @@ async function middle(request, h) {
             h.state('isLoggedIn', true);
             request.user = {};
             request.user.id = authToken.User.id;
-            throw Boom.unauthorized('Not Passed 2fa');
+            throw Boom.forbidden('Not Passed 2fa');
         }
 
         const user = await User.findOne({
