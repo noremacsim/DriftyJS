@@ -42,6 +42,7 @@
         <% } else if(helpers.isLoggedIn(request) === true && helpers.twoFAPassed(request) === false) { %>
             <%- include('../user/2fa.html') %>
         <% } else if(helpers.isLoggedIn(request) === true && helpers.twoFAPassed(request) === true) { %>
+            <%- include('../partials/nav.html') %>
             <%- content %>
         <% } else { %>
             <%- include('../user/login.html') %>
@@ -50,6 +51,7 @@
     </main>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="/assets/js/material-dashboard.js"></script>
     <script src="/assets/js/handleRequests.js"></script>
 </body>
 </html>

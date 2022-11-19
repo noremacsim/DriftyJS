@@ -7,7 +7,6 @@ dotenv.config();
 
 //TODO: Possibly check token expiry and create new one.
 async function middle(request, h) {
-    console.log(request);
 
     let userAgent = request.headers['user-agent'];
     let token = null;

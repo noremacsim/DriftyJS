@@ -18,9 +18,10 @@ module.exports = {
             // create a new user with the password hash from bcrypt
             let friend = await Friends.create(
                 {
-                    User_ID: request.payload.user.id,
+                    User_ID: request.user.id,
                     friend_ID: friendID,
                     confirmed: false,
+                    type: 'friend',
                 }
             );
 
@@ -48,7 +49,7 @@ module.exports = {
                 {
                     where: {
                         User_ID: friendID,
-                        friend_ID: request.payload.user.id,
+                        friend_ID: request.user.id,
                     }
                 }
             );
@@ -58,9 +59,10 @@ module.exports = {
 
             let friend = await Friends.create(
                 {
-                    User_ID: request.payload.user.id,
+                    User_ID: request.user.id,
                     friend_ID: friendID,
                     confirmed: false,
+                    type: 'friend',
                 }
             );
 
@@ -87,7 +89,7 @@ module.exports = {
             await Friends.destroy(
                 {
                     where: {
-                        User_ID: request.payload.user.id,
+                        User_ID: request.user.id,
                         friend_ID: friendID,
                     }
                 }
@@ -97,7 +99,7 @@ module.exports = {
                 {
                     where: {
                         User_ID: friendID,
-                        friend_ID: request.payload.user.id,
+                        friend_ID: request.user.id,
                     }
                 }
             );

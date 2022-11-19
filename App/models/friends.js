@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             unique: false,
         },
+        type: {
+            type: DataTypes.ENUM('friend', 'follow'),
+        },
     });
 
     return Friends;

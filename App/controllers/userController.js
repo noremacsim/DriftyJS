@@ -15,6 +15,10 @@ module.exports = {
         }
     },
 
+    settingsView: async (request, h) => {
+        return h.simsView('user/settings', {}, request);
+    },
+
     login: async (request, h) => {
 
         if (!request.payload.username || !request.payload.password) {

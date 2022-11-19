@@ -71,4 +71,18 @@ module.exports = [
             description: "Login User",
         }
     },
+    {
+        method: "GET",
+        path: "/user/settings",
+        config: {
+            handler: async function(request, h) {
+                const connect = await middleware.auth(request, h);
+                if (connect === 'passed') {
+                    return User.settingsView(request, h)
+                }
+                return connect;
+            },
+            description: "Goto User Settings Page",
+        }
+    },
 ];
