@@ -1,24 +1,64 @@
-<ion-header translucent>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Feedsty</ion-title>
+    <ion-title>Drifty</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="primary">
+        <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+      </ion-button>
+      <ion-button color="primary">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list class="ion-no-padding">
-    <ion-card *ngFor="let friend of friends">
-      <ion-item>
+<ion-content [fullscreen]="true">
+  <ion-card class="post-list-card" *ngFor="let post of feed;">
+    <ng-container>
+      <ion-item lines="none">
         <ion-avatar slot="start">
-          <img src="{{friend.avatar}}">
+          <img src="https://www.w3schools.com/howto/img_avatar.png" />
         </ion-avatar>
         <ion-label>
-          <h3>{{friend.name}}</h3>
+          {{ post.username }}
+          <p>{{ post.createdAt }}</p>
         </ion-label>
-        <ion-note slot="end">
-          <ion-label>{{friend.last_message.time}}</ion-label>
-        </ion-note>
+        <ion-buttons slot="end">
+          <ion-button color="medium">
+            <ion-icon slot="icon-only" md="ellipsis-vertical-outline" ios="ellipsis-horizontal-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </ion-item>
-      <img src="{{friend.feed_image}}" [alt]="friend?.name">
-    </ion-card>
-  </ion-list>
+
+<!--      <ion-img [src]="post.image"></ion-img>-->
+
+      <ion-card-content class="post-list-content">
+        {{ post.content }}
+      </ion-card-content>
+
+      <ion-item lines="none" class="ion-no-padding" style="margin-left: 10px">
+        <ion-buttons slot="start">
+          <ion-button color="medium">
+            <ion-icon slot="start" name="heart-outline"></ion-icon>
+            <small>1</small>
+          </ion-button>
+          <ion-button color="medium">
+            <ion-icon slot="start" name="chatbox-outline"></ion-icon>
+            <small>2</small>
+          </ion-button>
+          <ion-button color="medium">
+            <ion-icon slot="start" name="return-up-forward-outline"></ion-icon>
+            <small>3</small>
+          </ion-button>
+        </ion-buttons>
+
+        <ion-buttons slot="end">
+          <ion-button color="medium">
+            <ion-icon size="small" slot="start" name="eye-outline"></ion-icon>
+            <small>4</small>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ng-container>
+  </ion-card>
 </ion-content>

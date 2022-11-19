@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-//import { ApiService } from '../../services/api.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-feed',
@@ -9,10 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FeedPage implements OnInit {
 
-  friends: any;
+  feed: any;
 
   constructor(
-    //private apiService: ApiService
+    private apiService: ApiService
   ) { }
 
   ngOnInit() {
@@ -20,13 +19,13 @@ export class FeedPage implements OnInit {
   }
 
   loadFeed() {
-    this.friends = {}
-    // this.apiService.getFriends().then(result => {
-    //     // console.log('getFriends result', result);
-    //     this.friends = result;
-    // }).catch(error => {
-    //     console.log('getFriends error', error);
-    // });
+    this.feed = {}
+    this.apiService.loadFeed().then(result => {
+      console.log(result);
+         this.feed = result;
+    }).catch(error => {
+         console.log('loadFeed error', error);
+    });
   }
 
 }

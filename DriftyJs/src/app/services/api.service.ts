@@ -14,7 +14,7 @@ export class ApiService {
   ) {}
 
   async checkLogin() {
-    return await this.getRequest('/user');
+    return this.getRequest('/user');
   }
 
   async login(username: '', password: '')
@@ -25,6 +25,11 @@ export class ApiService {
   async validate2Fa(token: '')
   {
     return this.postRequest('/user/2fa/validate', {token: token});
+  }
+
+  async loadFeed()
+  {
+    return await this.getRequest('/posts/feed');
   }
 
   async getRequest(path: any) {

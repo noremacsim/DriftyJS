@@ -9,6 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfilePage implements OnInit {
 
+  segment: string = 'home';
   friends: any;
 
   constructor(
