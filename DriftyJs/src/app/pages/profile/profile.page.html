@@ -1,56 +1,127 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-segment mode="md" [(ngModel)]="segment">
-      <ion-segment-button value="information">
-        Information
-      </ion-segment-button>
-    </ion-segment>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <div [ngSwitch]="segment">
-    <div *ngSwitchCase="'information'">
-      <information-view></information-view>
+  <header class="flex flex-wrap items-center p-4 md:py-8">
+    <div class="md:w-3/12 md:ml-16">
+      <img
+        class="w-20 h-20 md:w-40 md:h-40 object-cover rounded-full border-2 border-pink-600 p-1"
+        src=-userData.profileImage-
+        alt="profile"
+      />
+    </div>
+    <div class="w-8/12 md:w-7/12 ml-4">
+      <div class="md:flex md:flex-wrap md:items-center mb-4">
+        <h2 class="text-3xl inline-block font-semibold md:mr-2 mb-2 sm:mb-0">
+          -userData.username-
+        </h2>
+
+        <span
+          class="inline-block fas fa-certificate fa-lg text-blue-500 relative mr-6  text-xl transform -translate-y-2"
+          aria-hidden="true"
+        >
+            <i class="fas fa-check text-white text-xs absolute inset-x-0 ml-1 mt-px"></i>
+          </span>
+
+        <div class="bg-blue-500 text-white hover:bg-blue-600 px-2 hover:text-white py-1 font-semibold text-sm rounded text-center sm:inline-block block cursor-pointer">
+          Follow
+        </div>
+        -isShow && (
+            <span class="text-base font-semibold text-gray-700">
+              <button
+                class="p-1 border-transparent text-gray-700 rounded-full hover:text-blue-600 focus:outline-none focus:text-gray-600 cursor-pointer"
+                aria-label="Notifications"
+              >
+                <svg
+                  class="h-8 w-8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+            </span>
+          )-
+      </div>
+
+      <ul class="hidden md:flex space-x-8 mb-4">
+        <li>
+          <span class="font-semibold">-faker.random.numeric()-</span>
+          posts
+        </li>
+
+        <li>
+          <span class="font-semibold">-faker.random.numeric()-K</span>
+          followers
+        </li>
+        <li>
+          <span class="font-semibold">-faker.random.numeric()-</span>
+          following
+        </li>
+      </ul>
+
+      <div class="hidden md:block">
+        <h1 class="font-semibold">-userData.company-</h1>
+        <span class="bioclass">-faker.company.name()-</span>
+        <p>somethign 2</p>
+        <span>
+            <strong>something 1</strong>
+          </span>
+      </div>
+    </div>
+
+    <div class="md:hidden text-sm my-2">
+      <h1 class="font-semibold">ByteWebster</h1>
+      <span class="bioclass">Internet company</span>
+      <p>
+        ByteWebster is a web development and coding blog website. Where we
+        provide professional web projects🌍
+      </p>
+      <span>
+          <strong>www.bytewebster.com</strong>
+        </span>
+    </div>
+  </header>
+
+
+  <div class="font-sans leading-tight bg-grey-lighter">
+    <div class="bg-white overflow-hidden shadow-lg">
+      <div class="bg-cover h-40" style="background-image: url('https://images.unsplash.com/photo-1522093537031-3ee69e6b1746?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a634781c01d2dd529412c2d1e2224ec0&auto=format&fit=crop&w=2098&q=80');"></div>
+      <div class="border-b px-4 pb-6">
+        <div class="text-center sm:text-left sm:flex mb-4">
+          <img class="h-32 w-32 rounded-full border-4 border-white -mt-16 mr-4" src="https://randomuser.me/api/portraits/women/21.jpg" alt="">
+          <div class="py-2">
+            <h3 class="font-bold text-2xl mb-1">Cait Genevieve</h3>
+            <div class="inline-flex text-grey-dark sm:flex items-center">
+              <svg class="h-5 w-5 text-grey mr-1" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M5.64 16.36a9 9 0 1 1 12.72 0l-5.65 5.66a1 1 0 0 1-1.42 0l-5.65-5.66zm11.31-1.41a7 7 0 1 0-9.9 0L12 19.9l4.95-4.95zM12 14a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+              New York, NY
+            </div>
+          </div>
+        </div>
+        <div class="flex">
+          <button class="flex-1 rounded-full bg-blue text-white antialiased font-bold hover:bg-blue-dark px-4 py-2 mr-2">Follow</button>
+          <button class="flex-1 rounded-full border-2 border-grey font-semibold text-black px-4 py-2">Message</button>
+        </div>
+      </div>
+      <div class="px-4 py-4">
+        <div class="flex items-center text-grey-darker mb-4">
+          <svg class="h-6 w-6 text-grey mr-1" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path class="heroicon-ui" d="M12 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm9 11a1 1 0 0 1-2 0v-2a3 3 0 0 0-3-3H8a3 3 0 0 0-3 3v2a1 1 0 0 1-2 0v-2a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v2z"/></svg>
+          <span><strong class="text-black">12</strong> Followers you know</span>
+        </div>
+        <div class="flex">
+          <div class="flex flex-row-reverse justify-end mr-2">
+            <img class="border-2 border-white rounded-full h-10 w-10" src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+            <img class="border-2 border-white rounded-full h-10 w-10 -mr-2" src="https://randomuser.me/api/portraits/women/31.jpg" alt="">
+            <img class="border-2 border-white rounded-full h-10 w-10 -mr-2" src="https://randomuser.me/api/portraits/men/33.jpg" alt="">
+            <img class="border-2 border-white rounded-full h-10 w-10 -mr-2" src="https://randomuser.me/api/portraits/women/32.jpg" alt="">
+            <img class="border-2 border-white rounded-full h-10 w-10 -mr-2" src="https://randomuser.me/api/portraits/men/44.jpg" alt="">
+            <img class="border-2 border-white rounded-full h-10 w-10 -mr-2" src="https://randomuser.me/api/portraits/women/42.jpg" alt="">
+          </div>
+          <span class="flex items-center justify-center text-sm text-grey-darker font-semibold border-2 border-grey-light rounded-full h-10 w-10">+3</span>
+        </div>
+      </div>
     </div>
   </div>
-
-<!--  <ion-grid>-->
-<!--    &lt;!&ndash; Profile &ndash;&gt;-->
-<!--    <ion-row>-->
-<!--      <ion-col>-->
-<!--        <div class="profile__image">-->
-<!--          <img src="https://avatars3.githubusercontent.com/u/9292544?s=460&u=f9bdace05bcf793e7c701b2c5a7259c70b70e0f5">-->
-<!--        </div>-->
-<!--        <div class="ion-text-center">-->
-<!--          <h4>Sakhamen</h4>-->
-<!--          <p>I am A Full-Stack JS Developer</p>-->
-<!--        </div>-->
-<!--      </ion-col>-->
-<!--    </ion-row>-->
-
-<!--    &lt;!&ndash; Stats &ndash;&gt;-->
-<!--    <ion-row class="stats">-->
-<!--      <ion-col>-->
-<!--        <h6>356</h6>-->
-<!--        <p>Photos</p>-->
-<!--      </ion-col>-->
-<!--      <ion-col>-->
-<!--        <h6>860</h6>-->
-<!--        <p>Friends</p>-->
-<!--      </ion-col>-->
-<!--      <ion-col>-->
-<!--        <h6>20</h6>-->
-<!--        <p>Groups</p>-->
-<!--      </ion-col>-->
-<!--    </ion-row>-->
-
-<!--    &lt;!&ndash; Grid &ndash;&gt;-->
-<!--    <ion-row>-->
-<!--      <ion-col size="4" *ngFor="let item of friends">-->
-<!--        <ion-img [src]="item.feed_image"></ion-img>-->
-<!--      </ion-col>-->
-<!--    </ion-row>-->
-<!--  </ion-grid>-->
-
 </ion-content>

@@ -53,46 +53,4 @@ export class ApiService {
 
     return this.httpClient.post(`${this.baseUrl}${path}`, data, { headers: headers }).toPromise();
   }
-
-  // getSampleData() {
-  //   let promise = new Promise((resolve, reject) => {
-  //     this.http.get(`${this.baseUrl}`)
-  //         .toPromise()
-  //         .then(res => {
-  //             resolve(res);
-  //         }, error => {
-  //             reject(error);
-  //         });
-  //   });
-  //   return promise;
-  // }
-
-  // getFriends() {
-  //   let promise = new Promise((resolve, reject) => {
-  //       this.http.get(`${this.baseUrl}`)
-  //           .toPromise()
-  //           .then(res => {
-  //               let data:any = res['friends'];
-  //               resolve(data);
-  //           }, error => {
-  //               reject(error);
-  //           });
-  //   });
-  //   return promise;
-  // }
-
-  // getGroups() {
-  //   let promise = new Promise((resolve, reject) => {
-  //       this.http.get(`${this.baseUrl}`)
-  //           .toPromise()
-  //           .then(res => {
-  //               let data:any = res['groups'];
-  //               resolve(data);
-  //           }, error => {
-  //               reject(error);
-  //           });
-  //   });
-  //   return promise;
-  // }
-
 }

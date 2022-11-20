@@ -1,6 +1,6 @@
 <ion-tabs>
 
-  <ion-tab-bar slot="bottom">
+  <ion-tab-bar slot="top">
     <ion-tab-button tab="inbox">
       <ion-icon name="chatbubble"></ion-icon>
     </ion-tab-button>
@@ -22,5 +22,19 @@
       <ion-icon name="person"></ion-icon>
     </ion-tab-button>
   </ion-tab-bar>
+
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-title>Drifty</ion-title>
+      <ion-buttons slot="end">
+        <ion-button color="primary">
+          <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="primary">
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
 
 </ion-tabs>

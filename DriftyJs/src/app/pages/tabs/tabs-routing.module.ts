@@ -14,24 +14,24 @@ const routes: Routes = [
              path: '',
              loadChildren: () => import('../inbox/inbox.module').then( m => m.InboxPageModule)
            },
-      //     {
-      //       path: ':id',
-      //       loadChildren: () => import('../chat/chat.module').then( m => m.ChatPageModule)
-      //     }
+          // {
+          //   path: ':id',
+          //   loadChildren: () => import('../chat/chat.module').then( m => m.ChatPageModule)
+          // }
          ]
        },
-      // {
-      //   path: 'friends',
-      //   loadChildren: () => import('../friends/friends.module').then( m => m.FriendsPageModule)
-      // },
+      {
+        path: 'friends',
+        loadChildren: () => import('../friends/friends.module').then( m => m.FriendsPageModule)
+      },
        {
          path: 'feed',
          loadChildren: () => import('../feed/feed.module').then( m => m.FeedPageModule)
        },
-      // {
-      //   path: 'notification',
-      //   loadChildren: () => import('../notification/notification.module').then( m => m.NotificationPageModule)
-      // },
+      {
+        path: 'notification',
+        loadChildren: () => import('../notification/notification.module').then( m => m.NotificationPageModule)
+      },
       {
         path: 'profile',
         loadChildren: () => import('../profile/profile.module').then( m => m.ProfilePageModule)

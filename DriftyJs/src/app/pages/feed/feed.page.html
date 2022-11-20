@@ -1,64 +1,84 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Drifty</ion-title>
-    <ion-buttons slot="end">
-      <ion-button color="primary">
-        <ion-icon slot="icon-only" name="search-outline"></ion-icon>
-      </ion-button>
-      <ion-button color="primary">
-        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-card class="post-list-card" *ngFor="let post of feed;">
     <ng-container>
-      <ion-item lines="none">
-        <ion-avatar slot="start">
-          <img src="https://www.w3schools.com/howto/img_avatar.png" />
-        </ion-avatar>
-        <ion-label>
-          {{ post.username }}
-          <p>{{ post.createdAt }}</p>
-        </ion-label>
-        <ion-buttons slot="end">
-          <ion-button color="medium">
-            <ion-icon slot="icon-only" md="ellipsis-vertical-outline" ios="ellipsis-horizontal-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-item>
+      <div class="w-full lg:w-2/3 xl:w-2/5 lg:pt-16 px-2 ">
+        <!-- POST FORM -->
+        <div class="px-4 mt-4 shadow rounded-lg bg-white dark:bg-dark-second">
+          <div class="p-2 border-b border-gray-300 dark:border-dark-third flex space-x-4">
+            <img src="./images/tuat.jpg" alt="Profile picture" class="w-10 h-10 rounded-full">
+            <div class="flex-1 bg-gray-100 rounded-full flex items-center justify-start pl-4 cursor-pointer dark:bg-dark-third text-gray-500 text-lg dark:text-dark-txt">
+                        <span>
+                            What's on your mind, Tuat?
+                        </span>
+            </div>
+          </div>
+          <div class="p-2 flex">
+            <div class="w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl sm:text-3xl py-2 rounded-lg cursor-pointer text-red-500">
+              <i class='bx bxs-video-plus'></i>
+              <span class="text-xs sm:text-sm font-semibold text-gray-500 dark:text-dark-txt">Live video</span>
+            </div>
+            <div class="w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl sm:text-3xl py-2 rounded-lg cursor-pointer text-green-500">
+              <i class='bx bx-images'></i>
+              <span class="text-xs sm:text-sm font-semibold text-gray-500 dark:text-dark-txt">Live video</span>
+            </div>
+            <div class="w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl sm:text-3xl py-2 rounded-lg cursor-pointer text-yellow-500">
+              <i class='bx bx-smile'></i>
+              <span class="text-xs sm:text-sm font-semibold text-gray-500 dark:text-dark-txt">Live video</span>
+            </div>
+          </div>
+        </div>
+        <!-- END POST FORM -->
 
-<!--      <ion-img [src]="post.image"></ion-img>-->
+        <!-- POSTS -->
+        <div *ngFor="let post of feed;">
+          <div class="shadow bg-white dark:text-white mt-4 rounded-lg dark:shadow-2xl dark:bg-[#28282B]">
+            <div class="flex items-center justify-between px-4 py-2">
+              <div class="flex space-x-2 items-center">
+                <div class="relative">
+                  <img src="https://lh3.googleusercontent.com/a-/ACNPEu9DcBQXHxYNvU6JXMQ2EnSgXoD9Htdq3wwr_4y2iA=s96-c" alt="Profile picture" class="w-10 h-10 rounded-full cursor-pointer">
+                  <span class="bg-green-500 w-3 h-3 rounded-full absolute right-0 top-3/4 border-white border-2">
 
-      <ion-card-content class="post-list-content">
-        {{ post.content }}
-      </ion-card-content>
+                  </span>
+                </div>
+                <div>
+                  <div class="font-semibold cursor-pointer">
+                    {{ post.username }}
+                  </div>
+                  <span class="text-sm text-gray-500 dark:text-gray-400">{{ post.createdAt }}</span>
+                </div>
+              </div>
+              <div class="w-8 h-8 grid place-items-center text-xl text-gray-500 hover:bg-gray-200 dark:text-dark-txt dark:hover:bg-dark-third rounded-full cursor-pointer">
+                <i class="bx bx-dots-horizontal-rounded"></i>
+              </div>
+            </div>
+            <div class="text-justify px-4 py-2">{{ post.content }}</div>
+            <div class="flex justify-center py-2 m-auto">
+              <img src="https://firebasestorage.googleapis.com/v0/b/facebook-clone-49bb7.appspot.com/o/posts%2FRsrYsIZDU3KsIoRGI3HE%2Fimage?alt=media&amp;token=e2ea7819-0c4b-497f-9adc-b73af36b65a7" alt="Post image">
+            </div>
+            <!-- <div class="px-4 py-2">
+              <div class="flex items-center justify-between">
+                <div class="flex flex-row-reverse items-center">
+                  <span class="ml-2 text-gray-500 dark:text-gray-300 text-sm">4</span>
+                  <span class="rounded-full grid place-items-center text-2xl -ml-1 text-yellow-600">
+                    <img src="https://i.postimg.cc/9FSg2w4y/pngwing-com-2.png" alt="like/button" class="w-5 h-5">
+                  </span>
+                  <span class="rounded-full grid place-items-center text-2xl -ml-1 text-red-500">
+                    <img src="https://i.postimg.cc/L89gyc8L/heart.png" alt="like/button" class="w-5 h-5">
+                  </span>
+                  <span class="rounded-full grid place-items-center text-2xl -ml-1 text-blue-500">
+                    <img src="https://i.postimg.cc/bNH29ypq/like.png" alt="like/button" class="w-5 h-5">
+                  </span>
+                </div>
+                <div class="text-gray-500 dark:text-gray-300">
+                  <span class="mr-2">2 comments</span>
+                  <span>6 Share</span>
+                </div>
+              </div>
+            </div> -->
+            <div class="py-2 px-4"></div>
+          </div>
+        </div>
+        <!-- END POSTS -->
 
-      <ion-item lines="none" class="ion-no-padding" style="margin-left: 10px">
-        <ion-buttons slot="start">
-          <ion-button color="medium">
-            <ion-icon slot="start" name="heart-outline"></ion-icon>
-            <small>1</small>
-          </ion-button>
-          <ion-button color="medium">
-            <ion-icon slot="start" name="chatbox-outline"></ion-icon>
-            <small>2</small>
-          </ion-button>
-          <ion-button color="medium">
-            <ion-icon slot="start" name="return-up-forward-outline"></ion-icon>
-            <small>3</small>
-          </ion-button>
-        </ion-buttons>
-
-        <ion-buttons slot="end">
-          <ion-button color="medium">
-            <ion-icon size="small" slot="start" name="eye-outline"></ion-icon>
-            <small>4</small>
-          </ion-button>
-        </ion-buttons>
-      </ion-item>
+      </div>
     </ng-container>
-  </ion-card>
 </ion-content>
