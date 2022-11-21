@@ -30,4 +30,13 @@ module.exports = [
             description: "Send New Friend Request",
         }
     },
+    {
+        method: "GET",
+        path: "/friends",
+        handler: Friends.getFriends,
+        config: {
+            pre: [{ method: middleware.apiAuth }],
+            description: "Get Friends",
+        }
+    },
 ];

@@ -8,23 +8,6 @@ const routes: Routes = [
     component: TabsPage,
     children: [
        {
-         path: 'inbox',
-         children: [
-           {
-             path: '',
-             loadChildren: () => import('../inbox/inbox.module').then( m => m.InboxPageModule)
-           },
-          // {
-          //   path: ':id',
-          //   loadChildren: () => import('../chat/chat.module').then( m => m.ChatPageModule)
-          // }
-         ]
-       },
-      {
-        path: 'friends',
-        loadChildren: () => import('../friends/friends.module').then( m => m.FriendsPageModule)
-      },
-       {
          path: 'feed',
          loadChildren: () => import('../feed/feed.module').then( m => m.FeedPageModule)
        },

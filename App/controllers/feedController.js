@@ -5,6 +5,8 @@ const { QueryTypes } = require('sequelize');
 module.exports = {
 
     posts: async (request, h, raw = false) => {
+        // We should group the users from company then group then firends to get posts
+        // If a user is part of a company/group we should return global posts in that scope
 
         let posts = await sequelize.query(
             'SELECT Posts.id, Posts.content, Posts.createdAt, Users.username, Users.id as UserID FROM Posts' +
@@ -18,10 +20,6 @@ module.exports = {
                 type: QueryTypes.SELECT
             }
         );
-
-        if (raw) {
-            return posts
-        }
 
         return h.response(posts).code(200);
     }

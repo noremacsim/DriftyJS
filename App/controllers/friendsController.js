@@ -1,6 +1,6 @@
 const path = require("path");
-const {Group, User, Friends} = require(path.join(__dirname, '../../Core/models/'));
-const {ValidationError} = require('sequelize');
+const {Group, User, Friends, sequelize} = require(path.join(__dirname, '../../Core/models/'));
+const {ValidationError, QueryTypes} = require('sequelize');
 const Boom = require('boom');
 
 module.exports = {
@@ -114,5 +114,26 @@ module.exports = {
             throw Boom.badRequest('Invalid Request');
         }
     },
+
+    getFriends: async (request, h) => {
+
+        let friends = await sequelize.query(
+            'SELECT Users.* FROM Friends' +
+            ' LEFT JOIN Users as Users ON `Users`.`id` = `Friends`.`friend_ID`' +
+            ' WHERE `Friends`.`confirmed` = 1' +
+            ' AND `Friends`.`User_ID` = :currentUserId'
+            , {
+                replacements: { currentUserId: request.user.id },
+                logging: console.log,
+                raw: true,
+                type: QueryTypes.SELECT
+            }
+        );
+
+        console.log(friends);
+
+        return h.response(friends).code(200);
+    },
+
 
 }
