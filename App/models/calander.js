@@ -1,22 +1,3 @@
-// The Calander db will have
-// Title
-// Description
-// StartTime
-// EndTime
-// Startdate
-// EndDate (If none set we net to have a max repeat length for 1yr or 2 for example)
-//     Repeat (Weekly, Fortnightly, 4 Weeks, Monthly, yearly)
-// DayNumber (1-7) This will be for if its a repeated slot in one of the weeks
-// FixedDay () This will be if its for a fixed day of the month on a Monthly reat
-// FixedMonth () This Will Be if its for a fixed Month of the year if its repeated yearly
-// RoomID
-// CompanyID
-// GroupID
-
-// CalanderUsersMiddle
-// UserID
-// CalanderID
-
 
 module.exports = (sequelize, DataTypes) => {
     const Calendar = sequelize.define("Calendar", {
