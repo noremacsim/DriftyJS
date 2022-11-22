@@ -130,8 +130,6 @@ module.exports = {
             }
         );
 
-        console.log(friends);
-
         return h.response(friends).code(200);
     },
 
