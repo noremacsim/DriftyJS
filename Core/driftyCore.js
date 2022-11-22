@@ -70,8 +70,12 @@ const init = async (type) => {
     // Register Server Plugins
     await server.register(require('@hapi/vision'));
     await server.register(require('@hapi/inert'));
-    await server.register(plugins.simsView);
-    await server.register(plugins.fullView);
+
+    // Register Custom plugins
+    for (let [customPluginName, customPlugin] of Object.entries(plugins)) {
+        await server.register(customPlugin);
+    }
+
 
     // Build Server Routes
     server.route(CustomRoutes);

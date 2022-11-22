@@ -21,6 +21,10 @@ module.exports = {
             }
         );
 
+        if (raw) {
+            return posts;
+        }
+
         return h.response(posts).code(200);
     }
 
