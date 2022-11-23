@@ -2,18 +2,23 @@ const Hapi = require("@hapi/hapi");
 const path = require("path");
 const {CustomRoutes, Models} = require(path.join(__dirname, './'));
 const {plugins} = require(path.join(__dirname, './plugins'));
+const cookies = require(path.join(__dirname, '../App/config/cookies.js'))
 const PORT = process.env.PORT || 4101;
 
 const init = async (type) => {
+
+    const corsOrigin = process.env.CORS_ORIGIN.split(',');
+    const corsHeaders = process.env.CORS_HEADERS.split(',');
+    const corsAdditionalHeaders = process.env.CORS_ADDITIONALHEADERS.split(',');
 
     // Server Options
     let options = {
         port: PORT,
         routes: {
             cors: {
-                origin: ['*'],
-                headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'Accept-language'],
-                additionalHeaders: ['cache-control', 'x-requested-with', 'Access-Control-Allow-Origin']
+                origin: corsOrigin,
+                headers: corsHeaders,
+                additionalHeaders: corsAdditionalHeaders
             }
         },
     };
@@ -26,43 +31,12 @@ const init = async (type) => {
         Models.sequelize.options.logging = true
     }
 
-    // Move globals to somewhere better?
-    global.isLoggedIn = false;
-    global.userID = false;
 
     const server = new Hapi.Server(options);
 
-    // TODO: Move this to plugin or helper.
-    // Setup Cookies - Possibly move to new helper script?
-    server.state('jwt', {
-        ttl: null,
-        isSecure: false,
-        isHttpOnly: true,
-        encoding: 'base64json',
-        clearInvalid: true,
-        strictHeader: true,
-        path: '/'
-    });
-
-    server.state('isLoggedIn', {
-        ttl: null,
-        isSecure: false,
-        isHttpOnly: true,
-        encoding: 'base64json',
-        clearInvalid: true,
-        strictHeader: true,
-        path: '/'
-    });
-
-    server.state('twoFAPassed', {
-        ttl: null,
-        isSecure: false,
-        isHttpOnly: true,
-        encoding: 'base64json',
-        clearInvalid: true,
-        strictHeader: true,
-        path: '/'
-    });
+    for (let [key, customCookie] of Object.entries(cookies)) {
+        server.state(customCookie.name, customCookie.options);
+    }
 
     // Register database models
     await Models.sequelize.sync();

@@ -11,3 +11,4 @@ Supported and maintened Versions
 ## Reporting a Vulnerability
 
 All Security Vulnerabilitys can be reported here https://github.com/noremacsim/DriftyJS/discussions under Security Bugs
+
