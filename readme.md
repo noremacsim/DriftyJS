@@ -1,66 +1,140 @@
-# DriftyJS
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-DriftyJS is a web framework making it easy to build enterprise applications following MVC design and using ORM with nodeJS
+<div align="center">
+<h3 align="center">DriftyJS FrameWork</h3>
+  <p align="center">
+    DriftyJS is a NodeJS Framework Built with a MVC design and ORM Support
+    <br />
+    <a href="https://github.com/noremacsim/DriftyJS/discussions/6">Report Bug</a>
+    ·
+    <a href="https://github.com/noremacsim/DriftyJS/discussions/categories/ideas">Request Feature</a>
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#Project Structure">Project Structure</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#Contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+  </ol>
+</details>
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+DriftyJS is a framework to easily, securly and quickly launch a enterprise scale application with Database, Models, Controlers and View support with already API and sophisticated routers.
+It was made to easily create any application following a MVC design, The DriftyJS Framework isnt a skeleton it has the core features of:
+- User Authentication
+- Two-Factor Authentication
+- ORM Support
+- Controllers
+- Models
+- Views
+- Middleware
+- API
+- JWT Tokens
+- Many More...
+
+Here's why:
+* Your time should be focused on building a scalable and secure application not the architecture
+* You shouldn't be writing the same stuff over and over again
+* Easier transiction from PHP
+
+### Built With
+
+DriftyJS is Build with:
+* [Sequelize (Database ORM SUPPORT)](https://sequelize.org)
+* [Hapi (Router and Server)](https://hapi.dev/)
+* [Express](https://expressjs.com/)
+* [Ejs](https://ejs.co/)
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+### Prerequisites
+
+* nodejs
+* database
+
+### Installation
+
+2. Clone the repo
+   ```sh
+   git clone https://github.com/noremacsim/DriftyJS.git
+   ```
+3. Install NPM packages
+   ```sh
+   npm install
+   ```
+4. Please rename .env.example to .env in Project Root
+5. Update .env variables with your setup
+6. Start The Application
+   ```sh
+   ./bin/drifty-serve.js
+   ```
+
+## DB Support
+* mariadb
+* mysql
+* mongoose
+
+<!-- Project Structure -->
+## Project Structure
+
+Inside App is where your project will live, this is where you can create your controllers, define models, edit styles or import, add migrations, plugins define your routes. Build the whole application within here.
+```php
+├───App
+│   ├───assets
+│   │   ├───css
+│   │   ├───fonts
+│   │   ├───img
+│   │   ├───js
+│   │   └───scss
+│   ├───config
+│   ├───controllers
+│   ├───helpers
+│   ├───middleware
+│   ├───migrations
+│   ├───models
+│   ├───plugins
+│   ├───routes
+│   ├───Storage
+│   └───views
+```
+
+<!-- CONTRIBUTING -->
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ### Websites Using Drifty
 [cameronsim](https://cameronsim.uk) My Personal Website.
-
-# Development Notice
-Documentation will be updated very regularly as this is a new project.
-DriftyJS just brings together a few packages to enable building web via nodejs
-- This is in very early stages
-
-## What DriftyJS Acheives
-Good architecture build of a fully fledged hosted nodejs app, with ORM support.
-Our structure follows all good MVC design you would have seen else where and utalising the best plugins of hapi, ejs and seqalize
-we can preload all our plugins/modules on server start.  allow fast and scalable nodejs applications
-to be built
-
-- app
-  - //Everything here is where you'll put your app.
-    - assets
-    - controllers
-    - helpers
-    - middleware
-    - migrations
-    - models
-    - plugins
-    - routes
-    - views
-- bin
-  - // This are core scripts to start the nodejs
-  - // Or run the migrations
-- Core
-  - // This is where all the magic happens to make this application work
-
-## Featutes
-This framework has a number of feature's  setup and can be used out of the box
-- Two-Factor Authentication
-- User Signin/Signup
-- Usr Groups multiple users can be part of a group
-- User Company's multiple groups can be part of a company
-- Messages we can implement instant messaging and messaging groups
-- Friends, Followers users can add/remove/accept and follow other users
-- Posts a user can create a post and retrieve their following posts
-- Calendar a calendar can have a number of events that can be associated with a company/user or a group
-- Fully intigrated API and authentication
-- Fully intigratied View Authentication for Front End
-
-Most of these features are from the API and need a Frontend Built but the work is there.
-
-## Documentation
-* > Please rename .env.example to .env
-* > Update .env variables with your setup
-* > exacute in the command line ./bin/drifty-serve.js to start your app
-
-## Directory Structure
-
-- Core (Everything in here brings the packages together to generate our web app)
-
-
-- App
-  - controllers (Add your controllers here)
-  - models (Add your models here)
-  - routes (define your routes here)
-  - views (create your views here)

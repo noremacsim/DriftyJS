@@ -41,6 +41,7 @@
     "tempfile": "^4.0.0"
   },
   "bin": {
-    "drifty-run": "./bin/drifty-serve.js"
+    "drifty-run": "./bin/drifty-serve.js",
+    "drifty-migrate": "./bin/run-migrations.js"
   }
 }
