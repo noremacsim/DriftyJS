@@ -1,5 +1,4 @@
 module.exports = (sequelize, DataTypes) => {
-
     const Drifty_Routes_Method = sequelize.define('Drifty_Routes_Method', {
         type: DataTypes.ENUM('GET', 'POST', 'PUT'),
     });
