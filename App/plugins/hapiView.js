@@ -9,6 +9,8 @@ const simsView = {
 
             if (!viewOptions) {
                 viewOptions = {};
+                viewOptions['helpers'] = {}
+                viewOptions['request'] = {}
             }
 
             if (!request)

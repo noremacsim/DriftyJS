@@ -1,4 +1,3 @@
-const path = require("path");
 const { DataTypes } = require('sequelize')
 
 //Methods = {addColumn, changeColumn, removeColumn}

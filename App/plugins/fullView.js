@@ -7,6 +7,7 @@ const fullView = {
 
             if (!viewOptions) {
                 viewOptions = {};
+                viewOptions['helpers'] = {}
             }
 
             viewOptions['helpers']['fullView'] = true;
