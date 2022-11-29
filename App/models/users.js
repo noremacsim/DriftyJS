@@ -1,19 +1,18 @@
-const Moment = require("moment");
+const Moment = require('moment');
 const bcrypt = require('bcrypt');
-const DeviceDetector = require("device-detector-js");
-
+const DeviceDetector = require('device-detector-js');
 
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define("User", {
+    const User = sequelize.define('User', {
         email: {
             type: DataTypes.STRING,
             unique: true,
             allowNull: false,
             validate: {
                 notNull: {
-                    msg: 'Email Address Required'
-                }
-            }
+                    msg: 'Email Address Required',
+                },
+            },
         },
         username: {
             type: DataTypes.STRING,
@@ -21,9 +20,9 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             validate: {
                 notNull: {
-                    msg: 'Username Required'
-                }
-            }
+                    msg: 'Username Required',
+                },
+            },
         },
         password: {
             type: DataTypes.STRING,
@@ -34,17 +33,19 @@ module.exports = (sequelize, DataTypes) => {
         lastName: DataTypes.STRING,
         TwoFAEnabled: {
             type: DataTypes.BOOLEAN,
-            defaultValue: 0
+            defaultValue: 0,
         },
         activeDate: {
             type: DataTypes.DATE,
-            get: function() {
-                return Moment(this.getDataValue("date")).format("MMMM Do, YYYY");
-            }
+            get: function () {
+                return Moment(this.getDataValue('date')).format(
+                    'MMMM Do, YYYY'
+                );
+            },
         },
     });
 
-    User.associate = function(models) {
+    User.associate = function (models) {
         User.hasMany(models.AuthToken);
         User.hasMany(models.Posts);
         User.hasOne(models.TwoFactorAuthentication);
@@ -52,10 +53,10 @@ module.exports = (sequelize, DataTypes) => {
         User.belongsToMany(models.Group, {through: 'group_users'});
     };
 
-    User.logout = async function(request) {
-        const { AuthToken } = sequelize.models;
+    User.logout = async function (request) {
+        const {AuthToken} = sequelize.models;
 
-        let userAgent = request.headers['user-agent']
+        let userAgent = request.headers['user-agent'];
 
         if (!request.user) {
             return true;
@@ -65,32 +66,30 @@ module.exports = (sequelize, DataTypes) => {
             return true;
         }
 
-        await AuthToken.destroy(
-            {where: {userAgent, UserId: request.user.id}}
-        );
+        await AuthToken.destroy({
+            where: {userAgent, UserId: request.user.id},
+        });
         return true;
-    }
+    };
 
-    User.authenticate = async function(username, password, request) {
-        const { AuthToken } = sequelize.models;
+    User.authenticate = async function (username, password, request) {
+        const {AuthToken} = sequelize.models;
 
-        let userAgent = request.headers['user-agent']
-        const user = await User.findOne({ where: { username } });
+        let userAgent = request.headers['user-agent'];
+        const user = await User.findOne({where: {username}});
 
         if (bcrypt.compareSync(password, user.password)) {
             let UserId = user['id'];
-            await AuthToken.destroy(
-                {where: {userAgent, UserId}}
-            );
+            await AuthToken.destroy({where: {userAgent, UserId}});
             return user.authorize(request);
         }
 
         throw new Error('invalid password');
-    }
+    };
 
     User.prototype.authorize = async function (request) {
-        const { AuthToken } = sequelize.models;
-        const user = this
+        const {AuthToken} = sequelize.models;
+        const user = this;
 
         const authToken = await AuthToken.generate(this.id, request.headers);
 
@@ -107,7 +106,7 @@ module.exports = (sequelize, DataTypes) => {
 
         await user.addAuthToken(authToken);
 
-        return { user, authToken }
+        return {user, authToken};
     };
 
     return User;

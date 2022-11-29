@@ -1,18 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
-    const Friends = sequelize.define("Friends", {
+    const Friends = sequelize.define('Friends', {
         User_ID: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'Users',
-                key: 'id'
-            }
+                key: 'id',
+            },
         },
         friend_ID: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'Users',
-                key: 'id'
-            }
+                key: 'id',
+            },
         },
         confirmed: {
             type: DataTypes.BOOLEAN,
@@ -25,4 +25,3 @@ module.exports = (sequelize, DataTypes) => {
 
     return Friends;
 };
-

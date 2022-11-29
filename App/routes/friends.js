@@ -1,42 +1,45 @@
-const path = require("path");
-const Friends = require(path.join(__dirname, '../controllers/friendsController'));
+const path = require('path');
+const Friends = require(path.join(
+    __dirname,
+    '../controllers/friendsController'
+));
 const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {
-        method: "POST",
-        path: "/friends/request",
+        method: 'POST',
+        path: '/friends/request',
         handler: Friends.newRequest,
         config: {
-            pre: [{ method: middleware.apiAuth }],
-            description: "Send New Friend Request",
-        }
+            pre: [{method: middleware.apiAuth}],
+            description: 'Send New Friend Request',
+        },
     },
     {
-        method: "POST",
-        path: "/friends/accept",
+        method: 'POST',
+        path: '/friends/accept',
         handler: Friends.acceptRequest,
         config: {
-            pre: [{ method: middleware.apiAuth }],
-            description: "Send New Friend Request",
-        }
+            pre: [{method: middleware.apiAuth}],
+            description: 'Send New Friend Request',
+        },
     },
     {
-        method: "POST",
-        path: "/friends/remove",
+        method: 'POST',
+        path: '/friends/remove',
         handler: Friends.removeFriend,
         config: {
-            pre: [{ method: middleware.apiAuth }],
-            description: "Send New Friend Request",
-        }
+            pre: [{method: middleware.apiAuth}],
+            description: 'Send New Friend Request',
+        },
     },
     {
-        method: "GET",
-        path: "/friends",
+        method: 'GET',
+        path: '/friends',
         handler: Friends.getFriends,
         config: {
-            pre: [{ method: middleware.apiAuth }],
-            description: "Get Friends",
-        }
+            pre: [{method: middleware.apiAuth}],
+            description: 'Get Friends',
+        },
     },
 ];

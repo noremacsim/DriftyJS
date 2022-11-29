@@ -1,6 +1,6 @@
 module.exports = [
     {
-        name: "jwt",
+        name: 'jwt',
         options: {
             ttl: null,
             isSecure: false,
@@ -8,11 +8,11 @@ module.exports = [
             encoding: 'base64json',
             clearInvalid: true,
             strictHeader: true,
-            path: '/'
-        }
+            path: '/',
+        },
     },
     {
-        name: "isLoggedIn",
+        name: 'isLoggedIn',
         options: {
             ttl: null,
             isSecure: false,
@@ -20,11 +20,11 @@ module.exports = [
             encoding: 'base64json',
             clearInvalid: true,
             strictHeader: true,
-            path: '/'
-        }
+            path: '/',
+        },
     },
     {
-        name: "twoFAPassed",
+        name: 'twoFAPassed',
         options: {
             ttl: null,
             isSecure: false,
@@ -32,7 +32,7 @@ module.exports = [
             encoding: 'base64json',
             clearInvalid: true,
             strictHeader: true,
-            path: '/'
-        }
+            path: '/',
+        },
     },
 ];

@@ -1,0 +1,7 @@
+.github
+App/assets
+package-lock.json
+package.json
+postman.json
+readme.md
+SECURITY.md

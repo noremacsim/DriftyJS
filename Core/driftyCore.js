@@ -1,11 +1,14 @@
-const Hapi = require("@hapi/hapi");
-const path = require("path");
+const Hapi = require('@hapi/hapi');
+const path = require('path');
 const {CustomRoutes, Models} = require(path.join(__dirname, './'));
 const {plugins} = require(path.join(__dirname, './plugins'));
-const cookies = require(path.join(__dirname, '../App/config/cookies.js'))
+const cookies = require(path.join(__dirname, '../App/config/cookies.js'));
 const PORT = process.env.PORT || 4101;
 
 const init = async (type) => {
+    const corsOrigin = process.env.CORS_ORIGIN.split(',');
+    const corsHeaders = process.env.CORS_HEADERS.split(',');
+    const corsAdditionalHeaders = process.env.CORS_ADDITIONALHEADERS.split(',');
 
     const corsOrigin = process.env.CORS_ORIGIN.split(',');
     const corsHeaders = process.env.CORS_HEADERS.split(',');
@@ -18,8 +21,8 @@ const init = async (type) => {
             cors: {
                 origin: corsOrigin,
                 headers: corsHeaders,
-                additionalHeaders: corsAdditionalHeaders
-            }
+                additionalHeaders: corsAdditionalHeaders,
+            },
         },
     };
 
@@ -28,12 +31,12 @@ const init = async (type) => {
 
     if (type === 'dev') {
         options['debug'] = {request: ['error']};
-        Models.sequelize.options.logging = true
+        Models.sequelize.options.logging = true;
     }
-
 
     const server = new Hapi.Server(options);
 
+    // eslint-disable-next-line
     for (let [key, customCookie] of Object.entries(cookies)) {
         server.state(customCookie.name, customCookie.options);
     }
@@ -46,10 +49,10 @@ const init = async (type) => {
     await server.register(require('@hapi/inert'));
 
     // Register Custom plugins
+    // eslint-disable-next-line
     for (let [customPluginName, customPlugin] of Object.entries(plugins)) {
         await server.register(customPlugin);
     }
-
 
     // Build Server Routes
     server.route(CustomRoutes);
@@ -57,14 +60,14 @@ const init = async (type) => {
     // Build View Handler to render templates
     server.views({
         engines: {
-            html: require('ejs')
+            html: require('ejs'),
         },
         relativeTo: __dirname + '/../App/',
         path: 'views',
         layout: true,
         layoutPath: 'views/layouts',
         partialsPath: 'views/partials',
-        helpersPath: 'views/helpers'
+        helpersPath: 'views/helpers',
     });
 
     // Start Server
@@ -72,7 +75,7 @@ const init = async (type) => {
     console.log(`Server running at: ${server.info.uri}`);
 };
 
-process.on("unhandledRejection", err => {
+process.on('unhandledRejection', (err) => {
     console.log(err);
     process.exit(1);
 });
