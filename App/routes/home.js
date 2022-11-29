@@ -1,6 +1,6 @@
 const path = require('path');
 const Home = require(path.join(__dirname, '../controllers/homeController'));
-const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
+const {Middleware} = require(path.join(__dirname, '../../Core/'));
 
 module.exports = [
     {
@@ -8,7 +8,7 @@ module.exports = [
         path: '/',
         config: {
             handler: async function (request, h) {
-                const connect = await middleware.auth(request, h);
+                const connect = await Middleware.auth(request, h);
                 if (connect === 'passed') {
                     return Home.main(request, h);
                 }

@@ -1,4 +1,5 @@
 const path = require('path');
+const {Helpers} = require(path.join(__dirname, `../`));
 
 const simsView = {
     name: 'simsView',
@@ -15,10 +16,7 @@ const simsView = {
                 request = {};
             }
 
-            viewOptions['helpers'] = require(path.join(
-                __dirname,
-                `../helpers/ejsHelper`
-            ));
+            viewOptions['helpers'] = Helpers.ejsHelpers;
             viewOptions['request'] = request;
 
             return this.view(view, viewOptions);

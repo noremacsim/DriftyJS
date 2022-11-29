@@ -7,6 +7,8 @@ const {ValidationError, QueryTypes} = require('sequelize');
 const Boom = require('boom');
 
 module.exports = {
+    name: 'friends',
+
     newRequest: async (request, h) => {
         if (!request.payload.friend_ID) {
             throw Boom.badRequest('We need a friend_Id');

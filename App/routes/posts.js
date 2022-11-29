@@ -1,6 +1,6 @@
 const path = require('path');
 const Feed = require(path.join(__dirname, '../controllers/feedController'));
-const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
+const middleware = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {

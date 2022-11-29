@@ -1,7 +1,6 @@
 const Hapi = require('@hapi/hapi');
 const path = require('path');
-const {CustomRoutes, Models} = require(path.join(__dirname, './'));
-const {plugins} = require(path.join(__dirname, './plugins'));
+const {Routes, Models, Plugins} = require(path.join(__dirname, './'));
 const cookies = require(path.join(__dirname, '../App/config/cookies.js'));
 const PORT = process.env.PORT || 4101;
 
@@ -46,12 +45,12 @@ const init = async (type) => {
 
     // Register Custom plugins
     // eslint-disable-next-line
-    for (let [customPluginName, customPlugin] of Object.entries(plugins)) {
+    for (let [customPluginName, customPlugin] of Object.entries(Plugins)) {
         await server.register(customPlugin);
     }
 
     // Build Server Routes
-    server.route(CustomRoutes.CustomRoutes);
+    server.route(Routes);
 
     // Build View Handler to render templates
     server.views({

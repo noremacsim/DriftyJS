@@ -2,22 +2,22 @@ const path = require('path');
 const fs = require('fs');
 
 let type;
-const middleware = {};
+const helpers = {};
 
-//Core MiddleWare
+// Core Plugins
 fs.readdirSync(__dirname + '/')
     .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
     .forEach((file) => {
         type = require(path.join(__dirname + '/', file));
-        middleware[type.name] = type.function;
+        helpers[type.name] = type.functions;
     });
 
-// Custom MiddleWare
-fs.readdirSync(__dirname + '/../../App/middleware/')
+// Custom Plugins
+fs.readdirSync(__dirname + '/../../App/helpers/')
     .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
     .forEach((file) => {
-        type = require(path.join(__dirname + '/../../App/middleware/', file));
-        middleware[type.name] = type.function;
+        type = require(path.join(__dirname + '/../../App/helpers/', file));
+        helpers[type.name] = type.functions;
     });
 
-module.exports = middleware;
+module.exports = helpers;
