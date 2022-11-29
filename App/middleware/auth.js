@@ -7,6 +7,7 @@ const {
     Group,
     TwoFactorAuthentication,
 } = require(path.join(__dirname, '../../Core/models/'));
+const {CustomRoutes} = require("../../Core");
 
 dotenv.config();
 
@@ -36,11 +37,18 @@ async function middle(request, h) {
             include: User,
         });
 
+        let requestedPath = '/';
+        const checkRequestedPath = obj => obj.path === request?.route?.path;
+
+        if (CustomRoutes.some(checkRequestedPath)) {
+            requestedPath = request?.route?.path;
+        }
+
         if (!authToken) {
             h.unstate('jwt');
             h.unstate('isLoggedIn');
             h.unstate('twoFAPassed');
-            return h.redirect(`/user/login?path=${request?.route?.path}`);
+            return h.redirect(`/user/login?path=${requestedPath}`);
         }
 
         if (authToken.User.TwoFAEnabled && !authToken.TwoFactorPassed) {
@@ -48,7 +56,7 @@ async function middle(request, h) {
             h.state('isLoggedIn', true);
             request.user = {};
             request.user.id = authToken.User.id;
-            return h.redirect(`/user/login?path=${request?.route?.path}`);
+            return h.redirect(`/user/login?path=${requestedPath}`);
         }
 
         const user = await User.findOne({

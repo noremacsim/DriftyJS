@@ -10,10 +10,6 @@ const init = async (type) => {
     const corsHeaders = process.env.CORS_HEADERS.split(',');
     const corsAdditionalHeaders = process.env.CORS_ADDITIONALHEADERS.split(',');
 
-    const corsOrigin = process.env.CORS_ORIGIN.split(',');
-    const corsHeaders = process.env.CORS_HEADERS.split(',');
-    const corsAdditionalHeaders = process.env.CORS_ADDITIONALHEADERS.split(',');
-
     // Server Options
     let options = {
         port: PORT,
