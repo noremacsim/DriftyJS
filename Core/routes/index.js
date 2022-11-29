@@ -14,7 +14,7 @@ fs.readdirSync(path.join(__dirname, '/'))
 
 // Create Modules Routes
 fs.readdirSync(__dirname + '/../../Modules')
-    .filter((module) => module.indexOf('.') !== 0 && module !== 'index.js')
+    .filter((module) => module.indexOf('.') !== 0 && module !== 'index.js' && module !== 'readme.md')
     .forEach((module) => {
         fs.readdirSync(__dirname + `/../../Modules/${module}/routes/`)
             .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
