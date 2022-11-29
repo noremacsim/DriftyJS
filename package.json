@@ -4,7 +4,11 @@
   "description": "DriftyJS is a web framework making it easy to build enterprise applications following MVC design and using ORM",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "author": "noremacsim",
   "license": "MIT",
@@ -42,6 +46,12 @@
     "tempfile": "^4.0.0"
   },
   "bin": {
-    "drifty-run": "./bin/drifty-serve.js"
+    "drifty-run": "./bin/drifty-serve.js",
+    "drifty-migrate": "./bin/run-migrations.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.8.0"
   }
 }
