@@ -51,7 +51,7 @@ const init = async (type) => {
     }
 
     // Build Server Routes
-    server.route(CustomRoutes);
+    server.route(CustomRoutes.CustomRoutes);
 
     // Build View Handler to render templates
     server.views({

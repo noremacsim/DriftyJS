@@ -7,7 +7,7 @@ const {
     Group,
     TwoFactorAuthentication,
 } = require(path.join(__dirname, '../../Core/models/'));
-const {CustomRoutes} = require("../../Core");
+const {CustomRoutes} = require("../../Core/");
 
 dotenv.config();
 
@@ -39,8 +39,7 @@ async function middle(request, h) {
 
         let requestedPath = '/';
         const checkRequestedPath = obj => obj.path === request?.route?.path;
-
-        if (CustomRoutes.some(checkRequestedPath)) {
+        if (CustomRoutes.CustomRoutes.some(checkRequestedPath)) {
             requestedPath = request?.route?.path;
         }
 
