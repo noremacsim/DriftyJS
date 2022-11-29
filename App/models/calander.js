@@ -1,6 +1,5 @@
-
 module.exports = (sequelize, DataTypes) => {
-    const Calendar = sequelize.define("Calendar", {
+    const Calendar = sequelize.define('Calendar', {
         title: {
             type: DataTypes.STRING,
             unique: false,
@@ -47,13 +46,19 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
         },
         repeat: {
-            type: DataTypes.ENUM('weekly', 'fortnightly', '4 weeks', 'monthly', 'yearly'),
+            type: DataTypes.ENUM(
+                'weekly',
+                'fortnightly',
+                '4 weeks',
+                'monthly',
+                'yearly'
+            ),
             unique: false,
             allowNull: true,
         },
     });
 
-    Calendar.associate = function(models) {
+    Calendar.associate = function (models) {
         Calendar.hasMany(models.CalendarEvents);
         Calendar.belongsToMany(models.User, {through: 'calendar_users'});
     };

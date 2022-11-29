@@ -1,34 +1,34 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = [
     {
-        method: "GET",
-        path: "/assets/css/{file*}",
+        method: 'GET',
+        path: '/assets/css/{file*}',
         handler: {
             directory: {
                 path: path.join(__dirname, '../assets/css'),
-                listing: true
-            }
-        }
+                listing: true,
+            },
+        },
     },
     {
-        method: "GET",
-        path: "/assets/js/{file*}",
+        method: 'GET',
+        path: '/assets/js/{file*}',
         handler: {
             directory: {
                 path: path.join(__dirname, '../assets/js'),
-                listing: true
-            }
-        }
+                listing: true,
+            },
+        },
     },
     {
-        method: "GET",
-        path: "/assets/img/{file*}",
+        method: 'GET',
+        path: '/assets/img/{file*}',
         handler: {
             directory: {
                 path: path.join(__dirname, '../assets/img'),
-                listing: true
-            }
-        }
+                listing: true,
+            },
+        },
     },
 ];

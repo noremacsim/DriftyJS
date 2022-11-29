@@ -1,19 +1,17 @@
 <% posts.forEach((post) => { %>
-    <div class="card">
-        <div class="user">
-            <div class="user-img"></div>
-            <div class="user-info">
-                <div class="user-name"><%= post.username %></div>
-                <span class="post-date"><%= post.createdAt %></span>
-            </div>
-            <div class="actions">
-                <span class="heart"></span>
-                <span class="comment"></span>
-                <span class="share"></span>
-            </div>
+<div class="card">
+    <div class="user">
+        <div class="user-img"></div>
+        <div class="user-info">
+            <div class="user-name"><%= post.username %></div>
+            <span class="post-date"><%= post.createdAt %></span>
         </div>
-        <div class="content">
-            <%= post.content %>
+        <div class="actions">
+            <span class="heart"></span>
+            <span class="comment"></span>
+            <span class="share"></span>
         </div>
     </div>
+    <div class="content"><%= post.content %></div>
+</div>
 <% }) %>

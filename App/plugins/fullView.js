@@ -1,13 +1,11 @@
 const fullView = {
     name: 'fullView',
     version: '1.0.0',
-    register: async function (server, options) {
-
-        const fullView = function(view, viewOptions) {
-
+    register: async function (server) {
+        const fullView = function (view, viewOptions) {
             if (!viewOptions) {
                 viewOptions = {};
-                viewOptions['helpers'] = {}
+                viewOptions['helpers'] = {};
             }
 
             viewOptions['helpers']['fullView'] = true;
@@ -16,7 +14,7 @@ const fullView = {
         };
 
         server.decorate('toolkit', 'fullView', fullView);
-    }
+    },
 };
 
 module.exports.name = 'fullView';

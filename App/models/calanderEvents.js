@@ -1,6 +1,5 @@
-
 module.exports = (sequelize, DataTypes) => {
-    const CalendarEvents = sequelize.define("CalendarEvents", {
+    const CalendarEvents = sequelize.define('CalendarEvents', {
         startTime: {
             type: DataTypes.INTEGER,
             unique: false,
@@ -18,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         },
     });
 
-    CalendarEvents.associate = function(models) {
+    CalendarEvents.associate = function (models) {
         CalendarEvents.belongsTo(models.Calendar);
     };
 
