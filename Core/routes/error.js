@@ -1,5 +1,5 @@
 const Boom = require('boom');
-const pathHelpers = require('../helpers/paths');
+const {Helpers} = require('../');
 
 module.exports = [
     {
@@ -8,7 +8,7 @@ module.exports = [
         handler: (request, h) => {
             const accept = request.headers.accept;
 
-            const requestedPath = pathHelpers.exists(request, h);
+            const requestedPath = Helpers.path.exists(request, h);
             if (requestedPath) {
                 return h.redirect(`/user/login?path=${requestedPath}`);
             }
