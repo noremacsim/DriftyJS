@@ -32,6 +32,7 @@ const init = async (type) => {
 
     const server = new Hapi.Server(options);
 
+    // eslint-disable-next-line
     for (let [key, customCookie] of Object.entries(cookies)) {
         server.state(customCookie.name, customCookie.options);
     }
@@ -44,10 +45,10 @@ const init = async (type) => {
     await server.register(require('@hapi/inert'));
 
     // Register Custom plugins
+    // eslint-disable-next-line
     for (let [customPluginName, customPlugin] of Object.entries(plugins)) {
         await server.register(customPlugin);
     }
-
 
     // Build Server Routes
     server.route(CustomRoutes);

@@ -79,6 +79,7 @@ async function processMigrations(migrations) {
 
 async function checkIfExists(table, column) {
     console.log('checking if exists');
+    // eslint-disable-next-line
     const [results, metadata] = await sequelize.query(
         `SHOW COLUMNS FROM ${table} LIKE '${column}'`
     );

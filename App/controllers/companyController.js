@@ -1,5 +1,8 @@
 const path = require('path');
-const {Company, Group} = require(path.join(__dirname, '../../Core/models/'));
+const {Company, Group, User} = require(path.join(
+    __dirname,
+    '../../Core/models/'
+));
 const {ValidationError} = require('sequelize');
 const Boom = require('boom');
 
