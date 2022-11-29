@@ -1,53 +1,49 @@
 const path = require('path');
-const Company = require(path.join(
-    __dirname,
-    '../controllers/companyController'
-));
-const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
-
+const {Controllers, Middleware} = require(path.join(__dirname, '../'));
+console.log(Controllers);
 module.exports = [
     {
         method: 'POST',
         path: '/company/new',
-        handler: Company.newCompany,
+        handler: Controllers.company.newCompany,
         config: {
-            pre: [{method: middleware.apiAuth}],
+            pre: [{method: Middleware.apiAuth}],
             description: 'Create New Company',
         },
     },
     {
         method: 'POST',
         path: '/company/user/add',
-        handler: Company.addUser,
+        handler: Controllers.company.addUser,
         config: {
-            pre: [{method: middleware.apiAuth}],
+            pre: [{method: Middleware.apiAuth}],
             description: 'Assign User to a Company',
         },
     },
     {
         method: 'POST',
         path: '/company/user/remove',
-        handler: Company.removeUser,
+        handler: Controllers.company.removeUser,
         config: {
-            pre: [{method: middleware.apiAuth}],
+            pre: [{method: Middleware.apiAuth}],
             description: 'Remove a user from Company',
         },
     },
     {
         method: 'POST',
         path: '/company/group/add',
-        handler: Company.addGroup,
+        handler: Controllers.company.addGroup,
         config: {
-            pre: [{method: middleware.apiAuth}],
+            pre: [{method: Middleware.apiAuth}],
             description: 'Assign Group to a Company',
         },
     },
     {
         method: 'POST',
         path: '/company/group/remove',
-        handler: Company.removeGroup,
+        handler: Controllers.company.removeGroup,
         config: {
-            pre: [{method: middleware.apiAuth}],
+            pre: [{method: Middleware.apiAuth}],
             description: 'Remove a group from Company',
         },
     },

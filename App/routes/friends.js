@@ -3,7 +3,7 @@ const Friends = require(path.join(
     __dirname,
     '../controllers/friendsController'
 ));
-const {middleware} = require(path.join(__dirname, '../../Core/middleware'));
+const middleware = require(path.join(__dirname, '../../Core/middleware'));
 
 module.exports = [
     {

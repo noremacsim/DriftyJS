@@ -11,7 +11,16 @@ const {ValidationError} = require('sequelize');
 const Boom = require('boom');
 
 module.exports = {
+    name: 'user',
+
     signinView: async (request, h) => {
+        if (
+            request.state.twoFAPassed === true &&
+            request.state.isLoggedIn === true
+        ) {
+            return h.redirect(`/`);
+        }
+
         if (
             request.state.twoFAPassed === false &&
             request.state.isLoggedIn === true

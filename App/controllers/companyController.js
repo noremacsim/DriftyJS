@@ -7,6 +7,8 @@ const {ValidationError} = require('sequelize');
 const Boom = require('boom');
 
 module.exports = {
+    name: 'company',
+
     newCompany: async (request, h) => {
         if (!request.payload.name) {
             throw Boom.badRequest('Company Name Required');

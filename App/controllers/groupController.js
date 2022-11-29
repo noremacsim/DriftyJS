@@ -4,6 +4,8 @@ const {ValidationError} = require('sequelize');
 const Boom = require('boom');
 
 module.exports = {
+    name: 'group',
+
     newGroup: async (request, h) => {
         if (!request.payload.name) {
             throw Boom.badRequest('Group Name Required');
