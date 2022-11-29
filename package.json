@@ -8,7 +8,10 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint:check": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "drifty:start": "node ./bin/drifty-serve.js",
+    "drifty:migrate": "node ./bin/run-migrations.js",
+    "drifty:module-install": "node ./bin/install-module.js"
   },
   "author": "noremacsim",
   "license": "MIT",
