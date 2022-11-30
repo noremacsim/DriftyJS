@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/DriftyJS-UserAuth-Module" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/DriftyJs/new" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Modules/DriftyJS-Core-Module" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/DriftyJS-UserAuth-Module.git" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Modules/user-auth" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/myDrifty" vcs="Git" />

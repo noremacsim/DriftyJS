@@ -1,3 +1,0 @@
-// In here we will build custom routes from the DB.
-// This will be needed as we will start to save our routes within the DB instead of a file.
-// Our routes I think.... are defined before db let me check......
