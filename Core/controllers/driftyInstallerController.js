@@ -9,7 +9,6 @@ module.exports = {
     name: 'driftyInstaller',
 
     setName: async (request, h) => {
-        console.log(request.payload.name);
         let settings = await Models.Drifty_Settings.create(
             {name: request.payload.name, step: 1}
         );
@@ -29,24 +28,33 @@ module.exports = {
         for (const gitRepo of constCoreModules) {
             let repoUrl = gitRepo.split("/");
             let name = repoUrl.slice(-1)[0]
-            try {
-                const { stdout, stderr } = await exec(`git clone ${gitRepo} Modules/${name}`);
-                console.log('stdout:', stdout);
-                console.log('stderr:', stderr);
-            } catch (e) {
-                console.error(e);
-            }
-        }
 
-        if (fs.existsSync(`Modules/${name}/themes`)) {
-            fs.readdirSync(`Modules/${name}/themes`)
-                .filter((folder) => folder.indexOf('.') !== 0 && folder !== 'index.js' && folder !== 'readme.md')
-                .forEach((folder) => {
-                    fsExtra.copy(`Modules/${name}/themes/${folder}/templates`, `App/themes/${folder}/`, err => {
-                        if(err) return console.error(err);
-                        console.log('success!');
-                    });
-                });
+            if (!fs.existsSync(`Modules/${name}`)) {
+                try {
+                    const { stdout, stderr } = await exec(`git clone ${gitRepo} Modules/${name}`);
+                    console.log('stdout:', stdout);
+                    console.log('stderr:', stderr);
+                } catch (e) {
+                    console.error(e);
+                }
+
+                if (fs.existsSync(`Modules/${name}/themes`)) {
+                    fs.readdirSync(`Modules/${name}/themes`)
+                        .filter((folder) => folder.indexOf('.') !== 0 && folder !== 'index.js' && folder !== 'readme.md')
+                        .forEach((folder) => {
+                            fsExtra.copy(`Modules/${name}/themes/${folder}/templates`, `App/themes/${folder}/`, err => {
+                                if(err) return console.error(err);
+                                console.log('success!');
+                            });
+                        });
+                }
+
+                let moduleData = fs.readFileSync(`Modules/${name}/config.json`);
+                let moduleJson = JSON.parse(moduleData);
+                let module = await Models.Drifty_Modules.create(
+                    {name: moduleJson.name, status: enabled, url: gitRepo}
+                );
+            }
         }
 
         let settings = await Models.Drifty_Settings.findOne();
