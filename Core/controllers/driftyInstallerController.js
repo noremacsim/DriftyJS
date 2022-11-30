@@ -22,7 +22,7 @@ module.exports = {
 
     installModules: async (request, h) => {
         const constCoreModules = [
-            'https://github.com/DriftyJS/DriftyJS-UserAuth-Module.git'
+            'https://github.com/DriftyJS/DriftyJS-Core-Module.git'
         ];
 
         for (const gitRepo of constCoreModules) {
