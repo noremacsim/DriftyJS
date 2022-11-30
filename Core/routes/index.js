@@ -3,6 +3,7 @@ const path = require('path');
 const {Sequelize} = require("sequelize");
 
 let CustomRoutes = [];
+
 // Core Routes
 fs.readdirSync(path.join(__dirname, '/'))
     .filter((file) => file !== 'index.js')
@@ -12,7 +13,7 @@ fs.readdirSync(path.join(__dirname, '/'))
         );
     });
 
-// Create Modules Routes
+// Create Modules Routes This can override Core Routes
 fs.readdirSync(__dirname + '/../../Modules')
     .filter((module) => module.indexOf('.') !== 0 && module !== 'index.js' && module !== 'readme.md')
     .forEach((module) => {
@@ -25,7 +26,7 @@ fs.readdirSync(__dirname + '/../../Modules')
             });
     });
 
-// Custom Routes
+// Custom Routes - Custom Routes can override Moduled Routes and Core
 fs.readdirSync(path.join(__dirname, '../../App/routes/'))
     .filter((file) => file !== 'index.js')
     .forEach((file) => {
