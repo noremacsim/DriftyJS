@@ -3,6 +3,7 @@ const util = require("util");
 const exec = util.promisify(require('child_process').exec);
 const fs = require("fs");
 const os = require("os");
+const fsExtra = require('fs-extra');
 
 module.exports = {
     name: 'driftyInstaller',
@@ -35,6 +36,17 @@ module.exports = {
             } catch (e) {
                 console.error(e);
             }
+        }
+
+        if (fs.existsSync(`Modules/${name}/themes`)) {
+            fs.readdirSync(`Modules/${name}/themes`)
+                .filter((folder) => folder.indexOf('.') !== 0 && folder !== 'index.js' && folder !== 'readme.md')
+                .forEach((folder) => {
+                    fsExtra.copy(`Modules/${name}/themes/${folder}/templates`, `App/themes/${folder}/`, err => {
+                        if(err) return console.error(err);
+                        console.log('success!');
+                    });
+                });
         }
 
         let settings = await Models.Drifty_Settings.findOne();
