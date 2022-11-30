@@ -2,6 +2,7 @@ const Hapi = require('@hapi/hapi');
 const path = require('path');
 const {Routes, Models, Plugins} = require(path.join(__dirname, './'));
 const cookies = require(path.join(__dirname, '../App/config/cookies.js'));
+const Boom = require("boom");
 const PORT = process.env.PORT || 4101;
 
 const init = async (type) => {
@@ -50,7 +51,27 @@ const init = async (type) => {
     }
 
     // Build Server Routes
-    server.route(Routes);
+    let CustomRoutes;
+    if (!process.env.INSTALLED) {
+        CustomRoutes = [];
+        CustomRoutes = CustomRoutes.concat(require(path.join(__dirname, `/routes/assets.js`)));
+        CustomRoutes = CustomRoutes.concat(require(path.join(__dirname, `/installer/routes.js`)));
+        CustomRoutes = CustomRoutes.concat(
+            {
+                method: ['GET', 'POST'],
+                path: '/{any*}',
+                handler: (request, h) => {
+                    const accept = request.headers.accept;
+                        return h.view('core/installer/main', null, {layout: 'core/layout/installer'});
+                },
+            }
+        );
+        console.log('starting installer');
+        server.route(CustomRoutes);
+    } else {
+        console.log('starting main app');
+        server.route(Routes);
+    }
 
     // Build View Handler to render templates
     server.views({
@@ -58,11 +79,7 @@ const init = async (type) => {
             html: require('ejs'),
         },
         relativeTo: __dirname + '/../App/',
-        path: 'views',
-        layout: true,
-        layoutPath: 'views/layouts',
-        partialsPath: 'views/partials',
-        helpersPath: 'views/helpers',
+        path: 'themes',
     });
 
     // Start Server

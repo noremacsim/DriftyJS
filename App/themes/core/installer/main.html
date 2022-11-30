@@ -1,0 +1,125 @@
+<div class="row g-0 app-auth-wrapper">
+    <div class="col-12 col-md-7 col-lg-6 auth-main-col text-center p-5">
+        <div class="flex-column align-content-end" id="installmodules" style="display: none;">
+            <h2 class="auth-heading text-center mb-4">Installing Core Modules</h2>
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div class="flex-column align-content-end" id="setname" style="display: none;">
+            <div class="app-auth-body mx-auto">
+                <h2 class="auth-heading text-center mb-4">Installer</h2>
+                <div class="auth-intro mb-4 text-center">We need to go through the installer to enable any necessary modules and setup DB access</div>
+                <div class="auth-form-container text-left">
+                    <form class="auth-form resetpass-form">
+                        <div class="email mb-3">
+                            <label class="sr-only" for="app-name">Application Name</label>
+                            <input id="app-name" name="name" type="text" class="form-control login-email" placeholder="Application Name" required="required">
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn app-btn-primary btn-block theme-btn mx-auto">Next</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="flex-column align-content-end" id="complete" style="display: none;">
+            <h2 class="auth-heading text-center mb-4">Complete. Please Restart DriftyJS</h2>
+        </div>
+    </div>
+    <div class="col-12 col-md-5 col-lg-6 h-100 auth-background-col">
+        <div class="auth-background-holder">
+        </div>
+        <div class="auth-background-mask"></div>
+        <div class="auth-background-overlay p-3 p-lg-5">
+            <div class="d-flex flex-column align-content-end h-100">
+                <div class="h-100"></div>
+                <div class="overlay-content p-3 p-lg-4 rounded">
+                    <h5 class="mb-3 overlay-title">DriftyJS</h5>
+                    <div>DriftyJS is a NodeJS Framework making it easy to build large scale applications</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $( document ).ready(function() {
+        checkStep();
+    });
+
+    $('form').submit(function(event) {
+        event.preventDefault(); // Prevent the form from submitting via the browser
+        var form = $(this);
+        $.ajax({
+            type: 'POST',
+            url: '/setname',
+            data: form.serialize()
+        }).done(function(data) {
+            step2();
+        }).fail(function(data) {
+            console.log(data);
+        });
+    });
+
+
+    function checkStep()
+    {
+        $.ajax({
+            type: 'POST',
+            url: '/getsteps',
+        }).done(function(data) {
+            if (data === 0) {
+                step1();
+            } else if (data === 1) {
+                step2();
+            } else if (data === 2) {
+                complete();
+            }
+        }).fail(function(data) {
+            step1();
+        });
+    }
+
+    function step1()
+    {
+        $('#setname').show();
+        $('#installmodules').hide();
+        $('#complete').hide();
+
+    }
+
+    function step2()
+    {
+        $('#setname').hide();
+        $('#complete').hide();
+        $('#installmodules').show();
+        $.ajax({
+            type: 'POST',
+            url: '/installModules',
+        }).done(function(data) {
+            complete();
+        }).fail(function(data) {
+            console.log(data);
+        });
+
+    }
+
+    function complete()
+    {
+        $.ajax({
+            type: 'POST',
+            url: '/complete',
+        }).done(function(data) {
+            $('#setname').hide();
+            $('#installmodules').hide();
+            $('#complete').show();
+        }).fail(function(data) {
+            $('#setname').hide();
+            $('#installmodules').hide();
+            $('#complete').show();
+        });
+    }
+</script>

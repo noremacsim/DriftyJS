@@ -1,5 +1,4 @@
 const Boom = require('boom');
-const {Helpers} = require('../');
 
 module.exports = [
     {
@@ -8,16 +7,16 @@ module.exports = [
         handler: (request, h) => {
             const accept = request.headers.accept;
 
-            const requestedPath = Helpers.path.exists(request, h);
-            if (requestedPath) {
-                return h.redirect(`/user/login?path=${requestedPath}`);
+            if (!process.env.INSTALLED) {
+                return h.view('core/installer/main', null, {layout: 'core/layout/installer'});
             }
 
             if (accept && accept.match(/json/)) {
                 return Boom.notFound('This resource isn’t available.');
             }
 
-            return h.fullView('error/404', null).code(404);
+            return h.view('core/errors/404', null).code(404);
         },
     },
 ];
+
