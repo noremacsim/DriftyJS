@@ -50,28 +50,7 @@ const init = async (type) => {
         await server.register(customPlugin);
     }
 
-    // Build Server Routes
-    let CustomRoutes;
-    if (!process.env.INSTALLED) {
-        CustomRoutes = [];
-        CustomRoutes = CustomRoutes.concat(require(path.join(__dirname, `/routes/assets.js`)));
-        CustomRoutes = CustomRoutes.concat(require(path.join(__dirname, `/installer/routes.js`)));
-        CustomRoutes = CustomRoutes.concat(
-            {
-                method: ['GET', 'POST'],
-                path: '/{any*}',
-                handler: (request, h) => {
-                    const accept = request.headers.accept;
-                        return h.view('core/installer/main', null, {layout: 'core/layout/app'});
-                },
-            }
-        );
-        console.log('starting installer');
-        server.route(CustomRoutes);
-    } else {
-        console.log('starting main app');
-        server.route(Routes);
-    }
+    server.route(Routes);
 
     // Build View Handler to render templates
     server.views({
