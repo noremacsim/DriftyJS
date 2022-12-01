@@ -6,7 +6,7 @@ const plugins = {};
 
 // Core Plugins
 fs.readdirSync(__dirname + '/')
-    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js' && file !== 'readme.md')
     .forEach((file) => {
         type = require(path.join(__dirname + '/', file));
         plugins[type.name] = type.object;
@@ -26,7 +26,7 @@ fs.readdirSync(__dirname + '/../../Modules')
 
 // Custom Plugins
 fs.readdirSync(__dirname + '/../../App/plugins/')
-    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js' && file !== 'readme.md')
     .forEach((file) => {
         type = require(path.join(__dirname + '/../../App/plugins/', file));
         plugins[type.name] = type.object;

@@ -21,7 +21,7 @@ fs.readdirSync(__dirname + '/../../Modules')
 
 // Core Controllers
 fs.readdirSync(path.join(__dirname, '/'))
-    .filter((file) => file !== 'index.js')
+    .filter((file) => file !== 'index.js' && file !== 'readme.md')
     .forEach((file) => {
         controller = require(path.join(
             __dirname + '/',
@@ -33,7 +33,7 @@ fs.readdirSync(path.join(__dirname, '/'))
 
 // Custom Controllers
 fs.readdirSync(path.join(__dirname, '../../App/controllers/'))
-    .filter((file) => file !== 'index.js')
+    .filter((file) => file !== 'index.js' && file !== 'readme.md')
     .forEach((file) => {
         controller = require(path.join(
             __dirname + '../../../App/controllers/',

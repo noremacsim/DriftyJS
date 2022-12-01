@@ -6,7 +6,7 @@ const middleware = {};
 
 //Core MiddleWare
 fs.readdirSync(__dirname + '/')
-    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js' && file !== 'readme.md')
     .forEach((file) => {
         type = require(path.join(__dirname + '/', file));
         middleware[type.name] = type.function;
@@ -26,7 +26,7 @@ fs.readdirSync(__dirname + '/../../Modules')
 
 // Custom MiddleWare
 fs.readdirSync(__dirname + '/../../App/middleware/')
-    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js' && file !== 'readme.md')
     .forEach((file) => {
         type = require(path.join(__dirname + '/../../App/middleware/', file));
         middleware[type.name] = type.function;

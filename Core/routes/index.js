@@ -6,7 +6,7 @@ let CustomRoutes = [];
 
 // Core Routes
 fs.readdirSync(path.join(__dirname, '/'))
-    .filter((file) => file !== 'index.js')
+    .filter((file) => file !== 'index.js' && file !== 'readme.md')
     .forEach((file) => {
         CustomRoutes = CustomRoutes.concat(
             require(path.join(__dirname, `/${file}`))
@@ -28,7 +28,7 @@ fs.readdirSync(__dirname + '/../../Modules')
 
 // Custom Routes - Custom Routes can override Moduled Routes and Core
 fs.readdirSync(path.join(__dirname, '../../App/routes/'))
-    .filter((file) => file !== 'index.js')
+    .filter((file) => file !== 'index.js' && file !== 'readme.md')
     .forEach((file) => {
         CustomRoutes = CustomRoutes.concat(
             require(path.join(__dirname, `../../App/routes/${file}`))
