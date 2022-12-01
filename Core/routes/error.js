@@ -15,7 +15,7 @@ module.exports = [
                 return Boom.notFound('This resource isn’t available.');
             }
 
-            return h.view('core/errors/404', null).code(404);
+            return h.view('core/errors/404', null, {layout: 'core/layout/app'}).code(404);
         },
     },
 ];

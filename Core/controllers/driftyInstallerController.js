@@ -46,6 +46,11 @@ module.exports = {
                                 if(err) return console.error(err);
                                 console.log('success!');
                             });
+
+                            fsExtra.copy(`Modules/${name}/themes/${folder}/assets`, `App/assets/themes/${folder}/`, err => {
+                                if(err) return console.error(err);
+                                console.log('success!');
+                            });
                         });
                 }
 

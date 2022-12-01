@@ -62,7 +62,7 @@ const init = async (type) => {
                 path: '/{any*}',
                 handler: (request, h) => {
                     const accept = request.headers.accept;
-                        return h.view('core/installer/main', null, {layout: 'core/layout/installer'});
+                        return h.view('core/installer/main', null, {layout: 'core/layout/app'});
                 },
             }
         );
