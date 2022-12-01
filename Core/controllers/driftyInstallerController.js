@@ -57,7 +57,7 @@ module.exports = {
                 let moduleData = fs.readFileSync(`Modules/${name}/config.json`);
                 let moduleJson = JSON.parse(moduleData);
                 let module = await Models.Drifty_Modules.create(
-                    {name: moduleJson.name, status: enabled, url: gitRepo}
+                    {name: moduleJson.name, status: 'enabled', url: gitRepo}
                 );
             }
         }
