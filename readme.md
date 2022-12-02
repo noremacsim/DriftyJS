@@ -85,7 +85,18 @@ DriftyJS is Build with:
 5. Update .env variables with your setup
 6. Start The Application
    ```sh
-   ./bin/drifty-serve.js
+   npm run drifty:start
+   ```
+## Other Commands
+
+To Install Modules..... More Info Coming Soon
+   ```sh
+   npm run drifty:module-install {GIT_REPO_URL}
+   ```
+
+To Run your migrations
+   ```sh
+   npm run drifty:migrate
    ```
 
 ## DB Support
