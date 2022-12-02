@@ -2,7 +2,6 @@ const Hapi = require('@hapi/hapi');
 const path = require('path');
 const {Routes, Models, Plugins} = require(path.join(__dirname, './'));
 const cookies = require(path.join(__dirname, '../App/config/cookies.js'));
-const Boom = require("boom");
 const PORT = process.env.PORT || 4101;
 
 const init = async (type) => {

@@ -1,6 +1,6 @@
 const dotenv = require('dotenv');
 const path = require('path');
-const { Models } = require(path.join(__dirname, '../../Core/'));
+const {Models} = require(path.join(__dirname, '../../Core/'));
 const Boom = require('boom');
 
 dotenv.config();

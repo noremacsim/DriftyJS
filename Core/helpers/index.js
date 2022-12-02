@@ -6,7 +6,12 @@ const helpers = {};
 
 // Core Plugins
 fs.readdirSync(__dirname + '/')
-    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js' && file !== 'readme.md')
+    .filter(
+        (file) =>
+            file.indexOf('.') !== 0 &&
+            file !== 'index.js' &&
+            file !== 'readme.md'
+    )
     .forEach((file) => {
         type = require(path.join(__dirname + '/', file));
         helpers[type.name] = type.functions;
@@ -14,13 +19,23 @@ fs.readdirSync(__dirname + '/')
 
 // Create Modules Helpers
 fs.readdirSync(__dirname + '/../../Modules')
-    .filter((module) => module.indexOf('.') !== 0 && module !== 'index.js' && module !== 'readme.md')
+    .filter(
+        (module) =>
+            module.indexOf('.') !== 0 &&
+            module !== 'index.js' &&
+            module !== 'readme.md'
+    )
     .forEach((module) => {
         if (fs.existsSync(__dirname + `/../../Modules/${module}/helpers/`)) {
             fs.readdirSync(__dirname + `/../../Modules/${module}/helpers/`)
-                .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+                .filter(
+                    (file) => file.indexOf('.') !== 0 && file !== 'index.js'
+                )
                 .forEach((file) => {
-                    type = require(path.join(__dirname + `/../../Modules/${module}/helpers/`, file));
+                    type = require(path.join(
+                        __dirname + `/../../Modules/${module}/helpers/`,
+                        file
+                    ));
                     helpers[type.name] = type.functions;
                 });
         }
@@ -28,7 +43,12 @@ fs.readdirSync(__dirname + '/../../Modules')
 
 // Custom Plugins
 fs.readdirSync(__dirname + '/../../App/helpers/')
-    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js' && file !== 'readme.md')
+    .filter(
+        (file) =>
+            file.indexOf('.') !== 0 &&
+            file !== 'index.js' &&
+            file !== 'readme.md'
+    )
     .forEach((file) => {
         type = require(path.join(__dirname + '/../../App/helpers/', file));
         helpers[type.name] = type.functions;
