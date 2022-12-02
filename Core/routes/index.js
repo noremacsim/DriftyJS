@@ -17,13 +17,15 @@ fs.readdirSync(path.join(__dirname, '/'))
 fs.readdirSync(__dirname + '/../../Modules')
     .filter((module) => module.indexOf('.') !== 0 && module !== 'index.js' && module !== 'readme.md')
     .forEach((module) => {
-        fs.readdirSync(__dirname + `/../../Modules/${module}/routes/`)
-            .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
-            .forEach((file) => {
-                CustomRoutes = CustomRoutes.concat(
-                    require(path.join(__dirname, `/../../Modules/${module}/routes/${file}`))
-                );
-            });
+        if (fs.existsSync(__dirname + `/../../Modules/${module}/routes/`)) {
+            fs.readdirSync(__dirname + `/../../Modules/${module}/routes/`)
+                .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+                .forEach((file) => {
+                    CustomRoutes = CustomRoutes.concat(
+                        require(path.join(__dirname, `/../../Modules/${module}/routes/${file}`))
+                    );
+                });
+        }
     });
 
 // Custom Routes - Custom Routes can override Moduled Routes and Core

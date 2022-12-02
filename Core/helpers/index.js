@@ -16,12 +16,14 @@ fs.readdirSync(__dirname + '/')
 fs.readdirSync(__dirname + '/../../Modules')
     .filter((module) => module.indexOf('.') !== 0 && module !== 'index.js' && module !== 'readme.md')
     .forEach((module) => {
-        fs.readdirSync(__dirname + `/../../Modules/${module}/helpers/`)
-            .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
-            .forEach((file) => {
-                type = require(path.join(__dirname + `/../../Modules/${module}/helpers/`, file));
-                helpers[type.name] = type.functions;
-            });
+        if (fs.existsSync(__dirname + `/../../Modules/${module}/helpers/`)) {
+            fs.readdirSync(__dirname + `/../../Modules/${module}/helpers/`)
+                .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+                .forEach((file) => {
+                    type = require(path.join(__dirname + `/../../Modules/${module}/helpers/`, file));
+                    helpers[type.name] = type.functions;
+                });
+        }
     });
 
 // Custom Plugins
