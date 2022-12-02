@@ -49,7 +49,6 @@ const init = async (type) => {
         await server.register(customPlugin);
     }
 
-    // Build Server Routes
     server.route(Routes);
 
     // Build View Handler to render templates
@@ -58,11 +57,7 @@ const init = async (type) => {
             html: require('ejs'),
         },
         relativeTo: __dirname + '/../App/',
-        path: 'views',
-        layout: true,
-        layoutPath: 'views/layouts',
-        partialsPath: 'views/partials',
-        helpersPath: 'views/helpers',
+        path: 'themes',
     });
 
     // Start Server

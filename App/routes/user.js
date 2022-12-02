@@ -1,28 +1,65 @@
 const path = require('path');
-const {Controllers} = require(path.join(__dirname, '../../Core/'));
-const middleware = require(path.join(__dirname, '../../Core/middleware'));
+const {Controllers, Middleware} = require(path.join(__dirname, '../../Core/'));
 
 module.exports = [
     {
-        method: 'GET',
-        path: '/user/login',
-        handler: Controllers.user.signinView,
+        method: 'POST',
+        path: '/admin/user/login',
+        handler: Controllers.user.login,
         config: {
             description: 'Login User',
         },
     },
     {
-        method: 'GET',
-        path: '/user/settings',
+        method: 'POST',
+        path: '/admin/user/logout',
+        handler: Controllers.user.logout,
         config: {
-            handler: async function (request, h) {
-                const connect = await middleware.auth(request, h);
-                if (connect === 'passed') {
-                    return Controllers.user.settingsView(request, h);
-                }
-                return connect;
-            },
-            description: 'Goto User Settings Page',
+            description: 'Logout User',
+        },
+    },
+    {
+        method: 'POST',
+        path: '/admin/user/register',
+        handler: Controllers.user.register,
+        config: {
+            description: 'Register User',
+        },
+    },
+    {
+        method: 'GET',
+        path: '/admin/user',
+        handler: Controllers.user.details,
+        config: {
+            pre: [{method: Middleware.apiAuth}],
+            description: 'User Details',
+        },
+    },
+    {
+        method: 'POST',
+        path: '/admin/user/update',
+        handler: Controllers.user.update,
+        config: {
+            pre: [{method: Middleware.apiAuth}],
+            description: 'Update User',
+        },
+    },
+    {
+        method: 'GET',
+        path: '/admin/user/2fa/new',
+        handler: Controllers.user.new2Fa,
+        config: {
+            pre: [{method: Middleware.apiAuth}],
+            description: 'User Details',
+        },
+    },
+    {
+        method: 'POST',
+        path: '/admin/user/2fa/validate',
+        handler: Controllers.user.enable2Fa,
+        config: {
+            pre: [{method: Middleware.twofaCheck}],
+            description: 'User Details',
         },
     },
 ];

@@ -27,7 +27,12 @@ const db = {};
 
 // Create Core Models
 fs.readdirSync(__dirname + '/')
-    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+    .filter(
+        (file) =>
+            file.indexOf('.') !== 0 &&
+            file !== 'index.js' &&
+            file !== 'readme.md'
+    )
     .forEach((file) => {
         const model = require(path.join(__dirname + '/', file))(
             sequelize,
@@ -36,9 +41,38 @@ fs.readdirSync(__dirname + '/')
         db[model.name] = model;
     });
 
+// Create Modules Models
+fs.readdirSync(__dirname + '/../../Modules')
+    .filter(
+        (module) =>
+            module.indexOf('.') !== 0 &&
+            module !== 'index.js' &&
+            module !== 'readme.md'
+    )
+    .forEach((module) => {
+        if (fs.existsSync(__dirname + `/../../Modules/${module}/models/`)) {
+            fs.readdirSync(__dirname + `/../../Modules/${module}/models/`)
+                .filter(
+                    (file) => file.indexOf('.') !== 0 && file !== 'index.js'
+                )
+                .forEach((file) => {
+                    const model = require(path.join(
+                        __dirname + `/../../Modules/${module}/models/`,
+                        file
+                    ))(sequelize, Sequelize.DataTypes);
+                    db[model.name] = model;
+                });
+        }
+    });
+
 // Create Custom Models
 fs.readdirSync(__dirname + '/../../App/models/')
-    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+    .filter(
+        (file) =>
+            file.indexOf('.') !== 0 &&
+            file !== 'index.js' &&
+            file !== 'readme.md'
+    )
     .forEach((file) => {
         const model = require(path.join(
             __dirname + '/../../App/models/',

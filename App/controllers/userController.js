@@ -13,28 +13,6 @@ const Boom = require('boom');
 module.exports = {
     name: 'user',
 
-    signinView: async (request, h) => {
-        if (
-            request.state.twoFAPassed === true &&
-            request.state.isLoggedIn === true
-        ) {
-            return h.redirect(`/`);
-        }
-
-        if (
-            request.state.twoFAPassed === false &&
-            request.state.isLoggedIn === true
-        ) {
-            return h.simsView('user/2fa', {}, request);
-        } else {
-            return h.simsView('user/login', {}, request);
-        }
-    },
-
-    settingsView: async (request, h) => {
-        return h.simsView('user/settings', {}, request);
-    },
-
     login: async (request, h) => {
         if (!request.payload.username || !request.payload.password) {
             h.state('isLoggedIn', false);
